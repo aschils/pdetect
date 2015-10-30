@@ -27,6 +27,6 @@ void first_grid(){
 
 int main() {
 	first_grid();
-	cout << "Third" << endl;
+	std::cout << "Third" << std::endl;
 	return 0;
 }
