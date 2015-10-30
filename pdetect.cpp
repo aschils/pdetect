@@ -26,6 +26,10 @@ void first_grid (){
 
 
 int main() {
+<<<<<<< HEAD
 	first_grid ();
+=======
+	cout << "Third" << endl;
+>>>>>>> f6c5d69d56851a39aff393fd57ac6698e3fc48fc
 	return 0;
 }
