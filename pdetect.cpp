@@ -20,18 +20,29 @@ void first_grid(){
   GridGenerator::hyper_cube(triangulation);
   triangulation.refine_global(3);
 
+  unsigned level = 0;
 
   Triangulation<2>::active_cell_iterator cell, endc;
-
-  unsigned level = 0;
-  unsigned nbr_of_cell_to_refine = 50;
   cell = triangulation.begin_active(level),
   endc = triangulation.end();
 
-  for (unsigned i = 0; cell!=endc && i!=nbr_of_cell_to_refine; cell++, i++)
-	  cell->set_refine_flag ();
+  const Point<2> bottom_left(0,0);
 
-  triangulation.execute_coarsening_and_refinement ();
+  for (; cell!=endc; cell++){
+	  for(unsigned j=0; j<GeometryInfo<2>::vertices_per_cell; j++){
+
+          const double distance_from_bottom_left
+            = (cell->vertex(j)).distance(bottom_left);
+
+		  if(distance_from_bottom_left < triangulation.space_dimension/4.0){
+			  cell->set_refine_flag ();
+			  break;
+		  }
+	  }
+  }
+
+
+  triangulation.execute_coarsening_and_refinement();
 
 
   std::string fileName = "grid-";
