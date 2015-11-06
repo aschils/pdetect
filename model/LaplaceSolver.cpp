@@ -34,10 +34,10 @@ void LaplaceSolver<dim>::setup_system() {
 
 template<int dim>
 void LaplaceSolver<dim>::assemble_system() {
-	QGauss < dim > quadrature_formula(2);
+
+	QGauss<dim> quadrature_formula(2);
 	const RightHandSide<dim> right_hand_side;
-	FEValues < dim
-			> fe_values(fe, quadrature_formula,
+	FEValues<dim> fe_values(fe, quadrature_formula,
 					update_values | update_gradients | update_quadrature_points
 							| update_JxW_values);
 	const unsigned int dofs_per_cell = fe.dofs_per_cell;
@@ -47,13 +47,17 @@ void LaplaceSolver<dim>::assemble_system() {
 	std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
+
 	for (; cell != endc; ++cell) {
+
 		fe_values.reinit(cell);
 		cell_matrix = 0;
 		cell_rhs = 0;
+
 		for (unsigned int q_index = 0; q_index < n_q_points; ++q_index)
 			for (unsigned int i = 0; i < dofs_per_cell; ++i) {
 				for (unsigned int j = 0; j < dofs_per_cell; ++j)
+
 					cell_matrix(i, j) += (fe_values.shape_grad(i, q_index)
 							* fe_values.shape_grad(j, q_index)
 							* fe_values.JxW(q_index));
@@ -62,7 +66,9 @@ void LaplaceSolver<dim>::assemble_system() {
 								fe_values.quadrature_point(q_index))
 						* fe_values.JxW(q_index));
 			}
+
 		cell->get_dof_indices(local_dof_indices);
+
 		for (unsigned int i = 0; i < dofs_per_cell; ++i) {
 			for (unsigned int j = 0; j < dofs_per_cell; ++j)
 				system_matrix.add(local_dof_indices[i], local_dof_indices[j],
@@ -70,6 +76,7 @@ void LaplaceSolver<dim>::assemble_system() {
 			system_rhs(local_dof_indices[i]) += cell_rhs(i);
 		}
 	}
+
 	std::map<types::global_dof_index, double> boundary_values;
 	VectorTools::interpolate_boundary_values(dof_handler, 0,
 			BoundaryValues<dim>(), boundary_values);
