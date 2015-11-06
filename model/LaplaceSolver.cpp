@@ -13,7 +13,7 @@ LaplaceSolver<dim>::LaplaceSolver() :
 template<int dim>
 void LaplaceSolver<dim>::make_grid() {
 	GridGenerator::hyper_cube(triangulation, -1, 1);
-	triangulation.refine_global(5);
+	triangulation.refine_global(7);
 	std::cout << "   Number of active cells: " << triangulation.n_active_cells()
 			<< std::endl << "   Total number of cells: "
 			<< triangulation.n_cells() << std::endl;
