@@ -6,7 +6,7 @@
  */
 
 template <int dim>
-double BoundaryValues<dim>::value (const Point<dim> &p,
+double Rect2DBoundaryValues<dim>::value (const Point<dim> &p,
                                    const unsigned int /*component*/) const
 {
 	//2D case

@@ -14,14 +14,14 @@
 using namespace dealii;
 
 template <int dim>
-class BoundaryValues : public Function<dim>
+class Rect2DBoundaryValues : public Function<dim>
 {
 public:
-  BoundaryValues () : Function<dim>() {}
+	Rect2DBoundaryValues () : Function<dim>() {}
   virtual double value (const Point<dim>   &p,
                         const unsigned int  component = 0) const;
 };
 
-#include "BoundaryValues.cpp"
+#include "Rect2DBoundaryValues.cpp"
 
 #endif
