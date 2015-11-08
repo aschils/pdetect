@@ -2,10 +2,9 @@
  * Author: Arnaud Schils, Simon Lardinois, Catholic University of Louvain, 2015
  */
 
-#include "model/LaplaceSolver.hpp"
+#include "test/potential2D.cpp"
 
 int main() {
-    LaplaceSolver<2> laplace_problem_2d;
-    laplace_problem_2d.run ();
+	test_2D_potentiel();
 	return 0;
 }
