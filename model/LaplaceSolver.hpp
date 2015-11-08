@@ -42,7 +42,7 @@ class LaplaceSolver {
 
 public:
 	LaplaceSolver(const Function<dim> *right_hand_side,
-			Function<dim> *boundary_values);
+			Function<dim> *boundary_values, std::string result_file_path);
 	void run();
 
 private:
@@ -56,6 +56,7 @@ private:
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
 	Function<dim> *boundary_values_fun;
+	std::string result_file_path;
 
 	void make_grid();
 	void setup_system();

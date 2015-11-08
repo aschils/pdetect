@@ -7,17 +7,18 @@
 
 template<int dim>
 LaplaceSolver<dim>::LaplaceSolver(const Function<dim> *right_hand_side,
-		Function<dim> *boundary_values_fun) :
+		Function<dim> *boundary_values_fun, std::string result_file_path) :
 		fe(1), dof_handler(triangulation) {
 	this->right_hand_side = right_hand_side;
 	this->boundary_values_fun = boundary_values_fun;
+	this->result_file_path = result_file_path;
 }
 
 template<int dim>
 void LaplaceSolver<dim>::make_grid() {
 
-	Point<dim> point_bot(-2,-1);
-	Point<dim> point_top(2,1);
+	Point<dim> point_bot(-5,-1);
+	Point<dim> point_top(5,1);
 
 	GridGenerator::hyper_rectangle(triangulation, point_bot, point_top);
 	triangulation.refine_global(7);
@@ -93,7 +94,7 @@ void LaplaceSolver<dim>::assemble_system() {
 
 template<int dim>
 void LaplaceSolver<dim>::solve() {
-	SolverControl solver_control(1000, 1e-12);
+	SolverControl solver_control(10000, 1e-12);
 	SolverCG<> solver(solver_control);
 	solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
 	std::cout << "   " << solver_control.last_step()
@@ -106,7 +107,7 @@ void LaplaceSolver<dim>::output_results() const {
 	data_out.attach_dof_handler(dof_handler);
 	data_out.add_data_vector(solution, "solution");
 	data_out.build_patches();
-	std::ofstream output(dim == 2 ? "solution-2d.vtk" : "solution-3d.vtk");
+	std::ofstream output(result_file_path);
 	data_out.write_vtk(output);
 }
 
