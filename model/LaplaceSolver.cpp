@@ -6,8 +6,11 @@
  */
 
 template<int dim>
-LaplaceSolver<dim>::LaplaceSolver() :
+LaplaceSolver<dim>::LaplaceSolver(const Function<dim> *right_hand_side,
+		Function<dim> *boundary_values_fun) :
 		fe(1), dof_handler(triangulation) {
+	this->right_hand_side = right_hand_side;
+	this->boundary_values_fun = boundary_values_fun;
 }
 
 template<int dim>
@@ -40,7 +43,7 @@ template<int dim>
 void LaplaceSolver<dim>::assemble_system() {
 
 	QGauss<dim> quadrature_formula(2);
-	const RightHandSide<dim> right_hand_side;
+	//const RightHandSide<dim> right_hand_side;
 	FEValues<dim> fe_values(fe, quadrature_formula,
 					update_values | update_gradients | update_quadrature_points
 							| update_JxW_values);
@@ -66,7 +69,7 @@ void LaplaceSolver<dim>::assemble_system() {
 							* fe_values.shape_grad(j, q_index)
 							* fe_values.JxW(q_index));
 				cell_rhs(i) += (fe_values.shape_value(i, q_index)
-						* right_hand_side.value(
+						* (*right_hand_side).value(
 								fe_values.quadrature_point(q_index))
 						* fe_values.JxW(q_index));
 			}
@@ -83,7 +86,7 @@ void LaplaceSolver<dim>::assemble_system() {
 
 	std::map<types::global_dof_index, double> boundary_values;
 	VectorTools::interpolate_boundary_values(dof_handler, 0,
-			BoundaryValues<dim>(), boundary_values);
+			*boundary_values_fun, boundary_values);
 	MatrixTools::apply_boundary_values(boundary_values, system_matrix, solution,
 			system_rhs);
 }

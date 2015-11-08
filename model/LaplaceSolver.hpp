@@ -32,8 +32,8 @@
 #include <iostream>
 #include <deal.II/base/logstream.h>
 
-#include "RightHandSide.hpp"
-#include "BoundaryValues.hpp"
+#include "Rect2DBoundaryValues.hpp"
+//#include "ZeroRightHandSide.hpp"
 
 using namespace dealii;
 
@@ -41,7 +41,8 @@ template<int dim>
 class LaplaceSolver {
 
 public:
-	LaplaceSolver();
+	LaplaceSolver(const Function<dim> *right_hand_side,
+			Function<dim> *boundary_values);
 	void run();
 
 private:
@@ -53,6 +54,8 @@ private:
 	SparseMatrix<double> system_matrix;
 	Vector<double> solution;
 	Vector<double> system_rhs;
+	const Function<dim> *right_hand_side;
+	Function<dim> *boundary_values_fun;
 
 	void make_grid();
 	void setup_system();
