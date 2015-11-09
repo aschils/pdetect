@@ -42,9 +42,6 @@ bool Rect2DBoundaryValues<dim>::is_strip(double component) const {
 	double translated_component = rect_length_fe/2+component;
 	unsigned strip_picth_pair_before = (strip_pitch_pair_length_fe > 0)?
 			translated_component/strip_pitch_pair_length_fe: 0;
-
-	std::cout << strip_picth_pair_before << std::endl;
-
 	double delta_from_strip_pitch_pair =
 			translated_component - strip_picth_pair_before*strip_pitch_pair_length_fe;
 	return delta_from_strip_pitch_pair < strip_length_fe;
