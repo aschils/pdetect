@@ -33,9 +33,6 @@ Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
 	pitch_length_fe = (nbr_of_strip > 1)?
 			total_pitches_length_fe/(nbr_of_strip-1): 0;
 	strip_pitch_pair_length_fe = strip_length_fe+pitch_length_fe;
-
-	std::cout << strip_length_fe << std::endl;
-	std::cout << pitch_length_fe  << std::endl;
 }
 
 template<int dim>
