@@ -5,8 +5,8 @@
  *      Author: aschils
  */
 
-#ifndef __ZERO_RIGHT__HAND_SIDE__HPP__
-#define __ZERO_RIGHT__HAND_SIDE__HPP__
+#ifndef __ZERO_RIGHT_HAND_SIDE_HPP__
+#define __ZERO_RIGHT_HAND_SIDE_HPP__
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/base/function.h>

@@ -5,8 +5,8 @@
  *      Author: aschils
  */
 
-#ifndef __LAPLACE_SOLVER__HPP__
-#define __LAPLACE_SOLVER__HPP__
+#ifndef __LAPLACE_SOLVER_HPP__
+#define __LAPLACE_SOLVER_HPP__
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -33,7 +33,6 @@
 #include <deal.II/base/logstream.h>
 
 #include "Rect2DBoundaryValues.hpp"
-//#include "ZeroRightHandSide.hpp"
 
 using namespace dealii;
 

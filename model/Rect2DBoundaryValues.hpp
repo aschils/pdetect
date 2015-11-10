@@ -5,8 +5,8 @@
  *      Author: aschils
  */
 
-#ifndef __BOUNDARY_VALUES__HPP__
-#define __BOUNDARY_VALUES__HPP__
+#ifndef __BOUNDARY_VALUES_HPP__
+#define __BOUNDARY_VALUES_HPP__
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/base/function.h>

@@ -5,8 +5,8 @@
  *      Author: aschils
  */
 
-#ifndef __ERRORS__HPP__
-#define __ERRORS__HPP__
+#ifndef __ERRORS_HPP__
+#define __ERRORS_HPP__
 
 #define ZERO_OR_NEGATIVE_DOMAIN_LENGTH_ERROR 1
 
