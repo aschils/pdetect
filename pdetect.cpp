@@ -5,6 +5,6 @@
 #include "test/potential2D.cpp"
 
 int main() {
-	test_2D_potentiel();
+	test_2D_potential();
 	return 0;
 }
