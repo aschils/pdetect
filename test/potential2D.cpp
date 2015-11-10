@@ -8,6 +8,7 @@
 #include "../model/LaplaceSolver.hpp"
 #include "../model/Rect2DBoundaryValues.hpp"
 #include "../model/ZeroRightHandSide.hpp"
+#include "../model/Rect2DDetector.hpp"
 
 void test_2D_potential(){
 
@@ -15,15 +16,17 @@ void test_2D_potential(){
 
 	ZeroRightHandSide<2> rhs;
 	double strip_potential = 1;
-	unsigned strip_width = 1;
+	unsigned strip_length = 1;
 	unsigned pitch = 1;
 
 	for(unsigned nbr_of_strips=0; nbr_of_strips<=5; nbr_of_strips++){
-		Rect2DBoundaryValues<2> bv(nbr_of_strips, strip_width, pitch,
+		Rect2DDetector rdd(nbr_of_strips, strip_length,
+					pitch, strip_potential);
+		/*Rect2DBoundaryValues<2> bv(nbr_of_strips, strip_length, pitch,
 				rect_length_fe, strip_potential);
 		LaplaceSolver<2> rect_potential_solver(rect_length_fe, &rhs, &bv, 
 				std::to_string(nbr_of_strips)+".vtk");
-		rect_potential_solver.run();
+		rect_potential_solver.run();*/
 	}
 }
 
