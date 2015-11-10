@@ -46,14 +46,14 @@ bool Rect2DBoundaryValues<dim>::is_strip(double pos) const {
 			translated_component - strip_picth_pair_before*this->strip_pitch_pair_length_fe;
 	return delta_from_strip_pitch_pair < this->strip_length_fe;*/
 
-	if(strip_length_fe == 0)
+	if(this->strip_length_fe == 0)
 		return 0;
 
-	double i = -rect_length_fe/2 + pitch_length_fe;
+	double i = -this->rect_length_fe/2 + this->pitch_length_fe;
 	double j = -i;
 
-	for(; i <= j; i = i+strip_pitch_pair_length_fe){
-		double in_strip = pos >= i && pos <= i+strip_length_fe;
+	for(; i <= j; i = i+this->strip_pitch_pair_length_fe){
+		double in_strip = pos >= i && pos <= i+this->strip_length_fe;
 		if(in_strip)
 			return 1;
 	}
