@@ -23,9 +23,9 @@ public:
 
 	/**
 	 * @pre:
-	 * - rect_length is the length of the rectangular finite element
+	 * - rect_length_fe is the length of the rectangular finite element
 	 * mathematical domain.
-	 * - rect_length > 0.0
+	 * - rect_length_fe > 0.0
 	 * - strip_width and pitch are values in the domain language
 	 * (i.e. microm,...).
 	 * TODO complete this @pre
@@ -42,8 +42,7 @@ private:
 	double rect_length_fe = 1.0;
 
 	bool is_strip(double length_component) const;
-}
-;
+};
 
 #include "Rect2DBoundaryValues.cpp"
 

@@ -13,5 +13,5 @@ double ZeroRightHandSide<dim>::value (const Point<dim> &p,
   for (unsigned int i=0; i<dim; ++i)
     return_value += 4.0 * std::pow(p(i), 4.0);
   return return_value;*/
-  return 0.0;
+  return p[0] != p[0];
 }

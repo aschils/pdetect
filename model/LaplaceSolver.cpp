@@ -6,32 +6,33 @@
  */
 
 template<int dim>
-LaplaceSolver<dim>::LaplaceSolver(const Function<dim> *right_hand_side,
+LaplaceSolver<dim>::LaplaceSolver(double rect_length_fe, const Function<dim> *right_hand_side,
 		Function<dim> *boundary_values_fun, std::string result_file_path) :
 		fe(1), dof_handler(triangulation) {
 	this->right_hand_side = right_hand_side;
 	this->boundary_values_fun = boundary_values_fun;
 	this->result_file_path = result_file_path;
+	this->rect_length_fe = rect_length_fe;
 }
 
 template<int dim>
 void LaplaceSolver<dim>::make_grid() {
 
-	Point<dim> point_bot(-5,-1);
-	Point<dim> point_top(5,1);
+	Point<dim> point_bot(-this->rect_length_fe/2,-1);
+	Point<dim> point_top(this->rect_length_fe/2,1);
 
 	GridGenerator::hyper_rectangle(triangulation, point_bot, point_top);
 	triangulation.refine_global(7);
-	std::cout << "   Number of active cells: " << triangulation.n_active_cells()
+	/*std::cout << "   Number of active cells: " << triangulation.n_active_cells()
 			<< std::endl << "   Total number of cells: "
-			<< triangulation.n_cells() << std::endl;
+			<< triangulation.n_cells() << std::endl;*/
 }
 
 template<int dim>
 void LaplaceSolver<dim>::setup_system() {
 	dof_handler.distribute_dofs(fe);
-	std::cout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
-			<< std::endl;
+	/*std::cout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
+			<< std::endl;*/
 	DynamicSparsityPattern dsp(dof_handler.n_dofs());
 	DoFTools::make_sparsity_pattern(dof_handler, dsp);
 	sparsity_pattern.copy_from(dsp);
@@ -44,7 +45,7 @@ template<int dim>
 void LaplaceSolver<dim>::assemble_system() {
 
 	QGauss<dim> quadrature_formula(2);
-	//const RightHandSide<dim> right_hand_side;
+
 	FEValues<dim> fe_values(fe, quadrature_formula,
 					update_values | update_gradients | update_quadrature_points
 							| update_JxW_values);
@@ -97,13 +98,13 @@ void LaplaceSolver<dim>::solve() {
 	SolverControl solver_control(10000, 1e-12);
 	SolverCG<> solver(solver_control);
 	solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
-	std::cout << "   " << solver_control.last_step()
-			<< " CG iterations needed to obtain convergence." << std::endl;
+	/*std::cout << "   " << solver_control.last_step()
+			<< " CG iterations needed to obtain convergence." << std::endl;*/
 }
 
 template<int dim>
 void LaplaceSolver<dim>::output_results() const {
-	DataOut < dim > data_out;
+	DataOut<dim> data_out;
 	data_out.attach_dof_handler(dof_handler);
 	data_out.add_data_vector(solution, "solution");
 	data_out.build_patches();
@@ -113,8 +114,8 @@ void LaplaceSolver<dim>::output_results() const {
 
 template<int dim>
 void LaplaceSolver<dim>::run() {
-	std::cout << "Solving problem in " << dim << " space dimensions."
-			<< std::endl;
+	/*std::cout << "Solving problem in " << dim << " space dimensions."
+			<< std::endl;*/
 	make_grid();
 	setup_system();
 	assemble_system();
