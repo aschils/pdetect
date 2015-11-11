@@ -34,7 +34,8 @@ public:
 	 *
 	 */
 	Rect2DBoundaryValues(unsigned nbr_of_strip, unsigned strip_length,
-			unsigned pitch, double rect_length_fe, double strip_potential);
+			unsigned pitch, double rect_length_fe, double rect_width_fe,
+			double strip_potential);
 	virtual double value(const Point<dim> &p,
 			const unsigned int component = 0) const;
 
@@ -43,6 +44,7 @@ private:
 	double pitch_length_fe = 1.0;
 	double strip_pitch_pair_length_fe = 1.0;
 	double rect_length_fe = 1.0;
+	double half_rect_width_fe = 1.0;
 	double half_pitch_length_fe = 1.0;
 	double strip_potential = 1.0;
 

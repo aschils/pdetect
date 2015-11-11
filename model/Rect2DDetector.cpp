@@ -7,14 +7,23 @@
 
 #include "Rect2DDetector.hpp"
 
+/**
+ * Rectangle width should always be 300microm. So finite element rectangle
+ * width should be adapted depending on the length of the rectangle in microm.
+ */
+void compute_rect_width_fe(){
+
+}
+
 Rect2DDetector::Rect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
 		unsigned pitch, double strip_potential) {
 	//TODO compute rect_length_fe depending on problem size
-	double rect_length_fe = 4;
+	double rect_length_fe = 10000;
+	double rect_width_fe = 3000;
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
-			pitch, rect_length_fe, strip_potential);
-	rect_potential_solver = new LaplaceSolver<2>(rect_length_fe,
+			pitch, rect_length_fe, rect_width_fe, strip_potential);
+	rect_potential_solver = new LaplaceSolver<2>(rect_length_fe, rect_width_fe,
 			zero_right_hand_side, boundary_val,
 			std::to_string(nbr_of_strips) + ".vtk");
 

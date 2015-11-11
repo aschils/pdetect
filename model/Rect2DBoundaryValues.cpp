@@ -8,7 +8,7 @@
 template<int dim>
 Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
 		unsigned strip_width, unsigned pitch, double rect_length_fe,
-		double strip_potential){
+		double rect_width_fe, double strip_potential){
 
 	if(rect_length_fe <= 0)
 		throw ZERO_OR_NEGATIVE_DOMAIN_LENGTH_ERROR;
@@ -36,7 +36,8 @@ Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
 
 	//Computing these values here for performance reason
 	strip_pitch_pair_length_fe = strip_length_fe + pitch_length_fe;
-	half_pitch_length_fe = pitch_length_fe/2;
+	half_pitch_length_fe = pitch_length_fe/2.0;
+	half_rect_width_fe = rect_width_fe/2.0;
 }
 
 /**
@@ -60,7 +61,7 @@ Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
 template<int dim>
 bool Rect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 
-	if(p[1] != 1)
+	if(p[1] != half_rect_width_fe)
 		return false;
 
 	double component = p[0];
@@ -82,8 +83,10 @@ bool Rect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 template<int dim>
 double Rect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		const unsigned int /*component*/) const {
-	if(is_strip(p))
+	if(is_strip(p)){
 		return strip_potential;
+		std::cout << "potential setted"<< std::endl;
+	}
 	else
 		return 0.0;
 }
