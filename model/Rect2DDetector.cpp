@@ -10,7 +10,7 @@
 Rect2DDetector::Rect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
 		unsigned pitch, double strip_potential) {
 	//TODO compute rect_length_fe depending on problem size
-	double rect_length_fe = 2;
+	double rect_length_fe = 4;
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
 			pitch, rect_length_fe, strip_potential);
