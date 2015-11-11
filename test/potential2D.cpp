@@ -22,6 +22,7 @@ void test_2D_potential(){
 	for(unsigned nbr_of_strips=0; nbr_of_strips<=5; nbr_of_strips++){
 		Rect2DDetector rdd(nbr_of_strips, strip_length,
 					pitch, strip_potential);
+		rdd.compute_potential();
 		/*Rect2DBoundaryValues<2> bv(nbr_of_strips, strip_length, pitch,
 				rect_length_fe, strip_potential);
 		LaplaceSolver<2> rect_potential_solver(rect_length_fe, &rhs, &bv, 
