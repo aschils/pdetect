@@ -6,23 +6,26 @@
  */
 
 template<int dim>
-LaplaceSolver<dim>::LaplaceSolver(double rect_length_fe, const Function<dim> *right_hand_side,
+LaplaceSolver<dim>::LaplaceSolver(double rect_length_fe, double rect_width_fe,
+		const Function<dim> *right_hand_side,
 		Function<dim> *boundary_values_fun, std::string result_file_path) :
 		fe(1), dof_handler(triangulation) {
 	this->right_hand_side = right_hand_side;
 	this->boundary_values_fun = boundary_values_fun;
 	this->result_file_path = result_file_path;
 	this->rect_length_fe = rect_length_fe;
+	this->rect_width_fe = rect_width_fe;
 }
 
 template<int dim>
 void LaplaceSolver<dim>::make_grid() {
 
-	Point<dim> point_bot(-this->rect_length_fe/2,-1);
-	Point<dim> point_top(this->rect_length_fe/2,1);
+	Point<dim> point_bot(-this->rect_length_fe/2, -rect_width_fe/2);
+	Point<dim> point_top(this->rect_length_fe/2, rect_width_fe/2);
 
 	GridGenerator::hyper_rectangle(triangulation, point_bot, point_top);
 	triangulation.refine_global(7);
+
 	/*std::cout << "   Number of active cells: " << triangulation.n_active_cells()
 			<< std::endl << "   Total number of cells: "
 			<< triangulation.n_cells() << std::endl;*/

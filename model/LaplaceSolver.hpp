@@ -40,13 +40,14 @@ template<int dim>
 class LaplaceSolver {
 
 public:
-	LaplaceSolver(double rect_length_fe, const Function<dim> *right_hand_side,
+	LaplaceSolver(double rect_length_fe, double rect_width_fe,
+			const Function<dim> *right_hand_side,
 			Function<dim> *boundary_values, std::string result_file_path);
 	void run();
 
 private:
 
-	double rect_length_fe = 1.0;
+	double rect_length_fe, rect_width_fe = 1.0;
 	Triangulation<dim> triangulation;
 	FE_Q<dim> fe;
 	DoFHandler<dim> dof_handler;
