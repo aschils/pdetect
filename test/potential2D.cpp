@@ -21,11 +21,6 @@ void test_2D_potential(){
 		Rect2DDetector rdd(nbr_of_strips, strip_length,
 					pitch, strip_potential);
 		rdd.compute_potential();
-		/*Rect2DBoundaryValues<2> bv(nbr_of_strips, strip_length, pitch,
-				rect_length_fe, strip_potential);
-		LaplaceSolver<2> rect_potential_solver(rect_length_fe, &rhs, &bv, 
-				std::to_string(nbr_of_strips)+".vtk");
-		rect_potential_solver.run();*/
 	}
 }
 
