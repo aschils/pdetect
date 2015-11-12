@@ -83,10 +83,8 @@ bool Rect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 template<int dim>
 double Rect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		const unsigned int /*component*/) const {
-	if(is_strip(p)){
+	if(is_strip(p))
 		return strip_potential;
-		std::cout << "potential setted"<< std::endl;
-	}
 	else
 		return 0.0;
 }

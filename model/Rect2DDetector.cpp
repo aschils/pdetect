@@ -36,9 +36,6 @@ Rect2DDetector::Rect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
 	total_length = compute_total_length();
 	rect_width_fe = compute_rect_width_fe();
 
-	std::cout << total_length << std::endl;
-	std::cout << rect_width_fe << std::endl;
-
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
 			pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
