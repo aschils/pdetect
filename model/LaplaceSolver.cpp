@@ -7,10 +7,13 @@
 
 template<int dim>
 LaplaceSolver<dim>::LaplaceSolver(double rect_length_fe, double rect_width_fe,
-		const Function<dim> *right_hand_side,
-		Function<dim> *boundary_values_fun, std::string result_file_path) :
-		fe(1), dof_handler(triangulation) {
+									const Function<dim> *right_hand_side,
+									Function<dim> *boundary_values_fun, 
+									PeriodicConstraints<dim> *periodic_constraints,
+									std::string result_file_path) :
+									fe(1), dof_handler(triangulation) {
 	this->right_hand_side = right_hand_side;
+	this->periodic_constraints = periodic_constraints;
 	this->boundary_values_fun = boundary_values_fun;
 	this->result_file_path = result_file_path;
 	this->rect_length_fe = rect_length_fe;
@@ -24,14 +27,29 @@ void LaplaceSolver<dim>::make_grid() {
 	Point<dim> point_top(this->rect_length_fe/2, rect_width_fe/2);
 
 	GridGenerator::hyper_rectangle(triangulation, point_bot, point_top);
+	triangulation.begin_active()->face(0)->set_boundary_id(1);
+    triangulation.begin_active()->face(1)->set_boundary_id(1);
 	triangulation.refine_global(7);
 }
 
 template<int dim>
 void LaplaceSolver<dim>::setup_system() {
 	dof_handler.distribute_dofs(fe);
-	DynamicSparsityPattern dsp(dof_handler.n_dofs());
-	DoFTools::make_sparsity_pattern(dof_handler, dsp);
+ 	
+	constraints.clear();
+	periodic_constraints->set_utilities(&constraints, &dof_handler);
+    periodic_constraints->make_periodicity_constraints();
+
+    VectorTools::interpolate_boundary_values(dof_handler, 1,
+                                             ZeroFunction<2>(),
+                                             constraints);
+    constraints.close ();
+
+
+	DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
+	DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+	dsp.compress();
+
 	sparsity_pattern.copy_from(dsp);
 	system_matrix.reinit(sparsity_pattern);
 	solution.reinit(dof_handler.n_dofs());
@@ -77,8 +95,10 @@ void LaplaceSolver<dim>::assemble_system() {
 
 		for (unsigned int i = 0; i < dofs_per_cell; ++i) {
 			for (unsigned int j = 0; j < dofs_per_cell; ++j)
+			{
 				system_matrix.add(local_dof_indices[i], local_dof_indices[j],
-						cell_matrix(i, j));
+									cell_matrix(i, j));
+			}
 			system_rhs(local_dof_indices[i]) += cell_rhs(i);
 		}
 	}

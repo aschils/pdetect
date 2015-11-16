@@ -11,6 +11,8 @@
 #include "LaplaceSolver.hpp"
 #include "ZeroRightHandSide.hpp"
 #include "Rect2DBoundaryValues.hpp"
+#include "PeriodicConstraints.hpp"
+
 
 class Rect2DDetector {
 
@@ -29,6 +31,7 @@ private:
 
 	ZeroRightHandSide<2> *zero_right_hand_side;
 	Rect2DBoundaryValues<2> *boundary_val;
+	PeriodicConstraints<2> *periodic_constraints;
 	LaplaceSolver<2> *rect_potential_solver;
 
 	double compute_total_length();

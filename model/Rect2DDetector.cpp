@@ -37,15 +37,20 @@ Rect2DDetector::Rect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
 	rect_width_fe = compute_rect_width_fe();
 
 	zero_right_hand_side = new ZeroRightHandSide<2>();
+
+	periodic_constraints = new PeriodicConstraints<2>();
+
 	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
-			pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
+					pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
 	rect_potential_solver = new LaplaceSolver<2>(RECT_LENGTH_FE, rect_width_fe,
-			zero_right_hand_side, boundary_val,
-			std::to_string(nbr_of_strips) + ".vtk");
+							zero_right_hand_side, boundary_val, 
+							periodic_constraints, 
+							std::to_string(nbr_of_strips) + ".vtk");
 }
 
 Rect2DDetector::~Rect2DDetector() {
 	delete zero_right_hand_side;
+	delete periodic_constraints;
 	delete boundary_val;
 	delete rect_potential_solver;
 }
