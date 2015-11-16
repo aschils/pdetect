@@ -5,6 +5,7 @@
 #include "test/potential2D.cpp"
 
 int main() {
-	test_2D_potential();
+	//test_2D_potential();
+	test_serrated_2D_potential();
 	return 0;
 }
