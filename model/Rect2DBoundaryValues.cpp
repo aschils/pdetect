@@ -7,7 +7,7 @@
 
 template<int dim>
 Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
-		unsigned strip_width, unsigned pitch, double rect_length_fe,
+		unsigned strip_length, unsigned pitch, double rect_length_fe,
 		double rect_width_fe, double strip_potential){
 
 	if(rect_length_fe <= 0)
@@ -16,14 +16,14 @@ Rect2DBoundaryValues<dim>::Rect2DBoundaryValues(unsigned nbr_of_strip,
 	this->rect_length_fe = rect_length_fe;
 	this->strip_potential = strip_potential;
 
-	if(nbr_of_strip == 0 || strip_width == 0){
+	if(nbr_of_strip == 0 || strip_length == 0){
 		strip_length_fe = 0;
 		pitch_length_fe = 0;
 		strip_pitch_pair_length_fe = 0;
 		return;
 	}
 
-	double total_strips_length = nbr_of_strip*strip_width;
+	double total_strips_length = nbr_of_strip*strip_length;
 	double total_pitches_length = nbr_of_strip*pitch;
 	double total_length = total_strips_length + total_pitches_length;
 
