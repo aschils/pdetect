@@ -12,13 +12,8 @@ class PeriodicConstraints {
 
 public:
 	PeriodicConstraints();
-	void set_utilities(ConstraintMatrix *constraints, DoFHandler<dim> *dof_handler);
-	void make_periodicity_constraints();
-
-private:
-	ConstraintMatrix *constraints;
-	DoFHandler<dim> *dof_handler;
-
+	void make_periodicity_constraints(ConstraintMatrix *constraints,
+            						DoFHandler<dim> *dof_handler);
 };
 
 #include "PeriodicConstraints.cpp"

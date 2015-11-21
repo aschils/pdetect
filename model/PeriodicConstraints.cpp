@@ -1,19 +1,12 @@
 
-
 template<int dim>
 PeriodicConstraints<dim>::PeriodicConstraints(){
 
 }
 
 template<int dim>
-void PeriodicConstraints<dim>::set_utilities(ConstraintMatrix *constraints,
-                                            DoFHandler<dim> *dof_handler) {
-    this->constraints = constraints;
-    this->dof_handler = dof_handler;
-}
-
-template<int dim>
-void PeriodicConstraints<dim>::make_periodicity_constraints() { 
+void PeriodicConstraints<dim>::make_periodicity_constraints(ConstraintMatrix *constraints,
+        													DoFHandler<dim> *dof_handler) {
     std::map<unsigned int, double> dof_locations;
 
     for(DoFHandler<2>::active_cell_iterator cell = dof_handler->begin_active(); 
