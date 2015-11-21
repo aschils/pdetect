@@ -37,8 +37,7 @@ void LaplaceSolver<dim>::setup_system() {
 	dof_handler.distribute_dofs(fe);
  	
 	constraints.clear();
-	periodic_constraints->set_utilities(&constraints, &dof_handler);
-    periodic_constraints->make_periodicity_constraints();
+    periodic_constraints->make_periodicity_constraints(&constraints, &dof_handler);
 
     VectorTools::interpolate_boundary_values(dof_handler, 1,
                                              ZeroFunction<2>(),
@@ -115,6 +114,7 @@ void LaplaceSolver<dim>::solve() {
 	SolverControl solver_control(10000, 1e-12);
 	SolverCG<> solver(solver_control);
 	solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
+	//fe.get_function_gradients(solution, gradients_solution);
 }
 
 template<int dim>

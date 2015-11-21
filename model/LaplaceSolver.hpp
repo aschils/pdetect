@@ -58,6 +58,8 @@ private:
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
 	Vector<double> solution;
+	Vector<double> gradients_solution;
+
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
 	Function<dim> *boundary_values_fun;
