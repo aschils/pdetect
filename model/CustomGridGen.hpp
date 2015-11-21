@@ -25,7 +25,8 @@
 
 using namespace dealii;
 
-void serrated_rectangle(Triangulation<2> &tria,
-		unsigned nbr_of_strips);
+void serrated_rectangle(Triangulation<2> &tria, double length_fe, double width_fe,
+		unsigned nbr_of_strips, unsigned strip_length, unsigned strip_width,
+		unsigned pitch);
 
 #endif
