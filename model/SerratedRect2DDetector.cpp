@@ -40,7 +40,18 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
 			pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
+
+
+	/*
+	 * double rect_length_fe,
+			double rect_width_fe, unsigned nbr_of_strips, unsigned strip_length,
+			unsigned strip_width, unsigned pitch,
+			const Function<dim> *right_hand_side,
+			Function<dim> *boundary_values_fun, std::string result_file_path
+	 */
+
 	rect_potential_solver = new SerratedLaplaceSolver<2>(RECT_LENGTH_FE, rect_width_fe,
+			nbr_of_strips, strip_length, strip_width, pitch,
 			zero_right_hand_side, boundary_val,
 			std::to_string(nbr_of_strips) + ".vtk");
 }

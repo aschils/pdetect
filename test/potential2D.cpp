@@ -29,10 +29,10 @@ void test_serrated_2D_potential() {
 	ZeroRightHandSide<2> rhs;
 	double strip_potential = 1;
 	unsigned strip_length = 100;
-	unsigned strip_width = 30;
+	unsigned strip_width = 100;
 	unsigned pitch = 100;
 
-	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 0; nbr_of_strips++) {
+	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 10; nbr_of_strips++) {
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width, pitch, strip_potential);
 		srdd.compute_potential();
 	}

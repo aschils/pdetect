@@ -14,7 +14,9 @@
  */
 
 template<int dim>
-SerratedLaplaceSolver<dim>::SerratedLaplaceSolver(double rect_length_fe, double rect_width_fe,
+SerratedLaplaceSolver<dim>::SerratedLaplaceSolver(double rect_length_fe,
+		double rect_width_fe, unsigned nbr_of_strips, unsigned strip_length,
+		unsigned strip_width, unsigned pitch,
 		const Function<dim> *right_hand_side,
 		Function<dim> *boundary_values_fun, std::string result_file_path) :
 		fe(1), dof_handler(triangulation) {
@@ -23,18 +25,25 @@ SerratedLaplaceSolver<dim>::SerratedLaplaceSolver(double rect_length_fe, double 
 	this->result_file_path = result_file_path;
 	this->rect_length_fe = rect_length_fe;
 	this->rect_width_fe = rect_width_fe;
+	this->nbr_of_strips = nbr_of_strips;
+	this->strip_length = strip_length;
+	this->strip_width = strip_width;
+	this->pitch = pitch;
 }
 
 template<int dim>
 void SerratedLaplaceSolver<dim>::make_grid() {
 
-	std::cout << "kikoo" << std::endl;
-
 	Point<dim> point_bot(-this->rect_length_fe/2, -rect_width_fe/2);
 	Point<dim> point_top(this->rect_length_fe/2, rect_width_fe/2);
 
-	serrated_rectangle(triangulation, 9);
-	triangulation.refine_global(7);
+	//Triangulation<2> &tria, double length_fe, double width_fe,
+	//unsigned nbr_of_strips, unsigned strip_length, unsigned strip_width,
+	//unsigned pitch
+
+	serrated_rectangle(triangulation, rect_length_fe, rect_width_fe,
+			nbr_of_strips, strip_length, strip_width, pitch);
+	//triangulation.refine_global(7);
 }
 
 template<int dim>
