@@ -38,7 +38,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	rect_width_fe = compute_rect_width_fe();
 
 	zero_right_hand_side = new ZeroRightHandSide<2>();
-	boundary_val = new Rect2DBoundaryValues<2>(nbr_of_strips, strip_length,
+	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips, strip_length,
+			strip_width,
 			pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
 
 

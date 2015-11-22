@@ -10,7 +10,7 @@
 
 #include "SerratedLaplaceSolver.hpp"
 #include "ZeroRightHandSide.hpp"
-#include "Rect2DBoundaryValues.hpp"
+#include "SerratedRect2DBoundaryValues.hpp"
 
 class SerratedRect2DDetector {
 
@@ -28,7 +28,7 @@ private:
 	double rect_width_fe = 1.0;
 
 	ZeroRightHandSide<2> *zero_right_hand_side;
-	Rect2DBoundaryValues<2> *boundary_val;
+	SerratedRect2DBoundaryValues<2> *boundary_val;
 	SerratedLaplaceSolver<2> *rect_potential_solver;
 
 	double compute_total_length();

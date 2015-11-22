@@ -43,7 +43,7 @@ void SerratedLaplaceSolver<dim>::make_grid() {
 
 	serrated_rectangle(triangulation, rect_length_fe, rect_width_fe,
 			nbr_of_strips, strip_length, strip_width, pitch);
-	//triangulation.refine_global(7);
+	triangulation.refine_global(2);
 }
 
 template<int dim>
