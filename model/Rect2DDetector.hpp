@@ -8,17 +8,22 @@
 #ifndef __RECT_2D_DETECTOR_HPP__
 #define __RECT_2D_DETECTOR_HPP__
 
+#include <deal.II/grid/grid_generator.h>
+
+#include "Detector.hpp"
 #include "LaplaceSolver.hpp"
+#include "MyGridGenerator.hpp"
 #include "ZeroRightHandSide.hpp"
 #include "Rect2DBoundaryValues.hpp"
-#include "PeriodicConstraints.hpp"
 
+using namespace dealii;
 
-class Rect2DDetector {
+class Rect2DDetector : public Detector {
 
 public:
 	Rect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
-			unsigned pitch, double strip_potential);
+			unsigned pitch, double strip_potential, unsigned refine_level,
+			unsigned max_iter, double stop_accuracy, std::string output_file);
 	~Rect2DDetector();
 	void compute_potential();
 
@@ -29,9 +34,9 @@ private:
 	const double RECT_LENGTH_FE = 10000.0;
 	double rect_width_fe = 1.0;
 
+	Triangulation<2> *triangulation;
 	ZeroRightHandSide<2> *zero_right_hand_side;
 	Rect2DBoundaryValues<2> *boundary_val;
-	PeriodicConstraints<2> *periodic_constraints;
 	LaplaceSolver<2> *rect_potential_solver;
 
 	double compute_total_length();

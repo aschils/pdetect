@@ -6,50 +6,96 @@
  */
 
 template<int dim>
-LaplaceSolver<dim>::LaplaceSolver(double rect_length_fe, double rect_width_fe,
-									const Function<dim> *right_hand_side,
-									Function<dim> *boundary_values_fun, 
-									PeriodicConstraints<dim> *periodic_constraints,
-									std::string result_file_path) :
-									fe(1), dof_handler(triangulation) {
+LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
+		unsigned refine_level, unsigned max_iter, double stop_accuracy,
+		const Function<dim> *right_hand_side, Function<dim> *boundary_values,
+		std::string result_file_path, bool constraints_are_periodic) :
+		fe(1), dof_handler(*triangulation) {
+
+	this->constraints_are_periodic = constraints_are_periodic;
+	this->triangulation = triangulation;
 	this->right_hand_side = right_hand_side;
-	this->periodic_constraints = periodic_constraints;
-	this->boundary_values_fun = boundary_values_fun;
+	this->boundary_values_fun = boundary_values;
 	this->result_file_path = result_file_path;
-	this->rect_length_fe = rect_length_fe;
-	this->rect_width_fe = rect_width_fe;
+	this->max_iter = max_iter;
+	this->stop_accuracy = stop_accuracy;
+
+	if(constraints_are_periodic){
+		this->triangulation->begin_active()->face(0)->set_boundary_id(1);
+		this->triangulation->begin_active()->face(1)->set_boundary_id(1);
+	}
+
+	this->triangulation->refine_global(refine_level);
 }
 
 template<int dim>
-void LaplaceSolver<dim>::make_grid() {
+void LaplaceSolver<dim>::make_periodicity_constraints(
+		ConstraintMatrix *constraints, DoFHandler<dim> *dof_handler) {
+    std::map<unsigned int, double> dof_locations;
 
-	Point<dim> point_bot(-this->rect_length_fe/2, -rect_width_fe/2);
-	Point<dim> point_top(this->rect_length_fe/2, rect_width_fe/2);
+    for(DoFHandler<2>::active_cell_iterator cell = dof_handler->begin_active();
+    			cell != dof_handler->end(); ++cell) {
+		if(cell->at_boundary() && cell->face(1)->at_boundary()) {
 
-	GridGenerator::hyper_rectangle(triangulation, point_bot, point_top);
-	triangulation.begin_active()->face(0)->set_boundary_id(1);
-    triangulation.begin_active()->face(1)->set_boundary_id(1);
-	triangulation.refine_global(7);
+			dof_locations[cell->face(1)->vertex_dof_index(0, 0)]
+            				= cell->face(1)->vertex(0)[1];
+          	dof_locations[cell->face(1)->vertex_dof_index(1, 0)]
+            				= cell->face(1)->vertex(1)[1];
+        }
+    }
+
+    for (DoFHandler<2>::active_cell_iterator cell = dof_handler->begin_active ();
+         			cell != dof_handler->end (); ++cell) {
+		if (cell->at_boundary() && cell->face(0)->at_boundary()) {
+          	for (unsigned int face_vertex = 0; face_vertex<2; ++face_vertex) {
+
+				constraints->add_line(cell->face(0)->vertex_dof_index(face_vertex, 0));
+				std::map<unsigned int, double>::const_iterator p = dof_locations.begin();
+              	for(; p != dof_locations.end(); ++p) {
+                	if(std::fabs(p->second-cell->face(0)->vertex(face_vertex)[1])
+                					< 1e-8) {
+						constraints->add_entry(cell->face(0)->vertex_dof_index(face_vertex, 0),
+                                    p->first, 1.0);
+                    	break;
+                  	}
+                }
+              	Assert (p != dof_locations.end(),
+                    ExcMessage ("No corresponding degree of freedom was found!"));
+            }
+        }
+    }
 }
 
 template<int dim>
 void LaplaceSolver<dim>::setup_system() {
+
 	dof_handler.distribute_dofs(fe);
- 	
-	constraints.clear();
-    periodic_constraints->make_periodicity_constraints(&constraints, &dof_handler);
 
-    VectorTools::interpolate_boundary_values(dof_handler, 1,
-                                             ZeroFunction<2>(),
-                                             constraints);
-    constraints.close ();
+	if(constraints_are_periodic){
+		ConstraintMatrix constraints;
+		std::cout << "before clear" << std::endl;
+		constraints.clear();
+		std::cout << "before period constr" << std::endl;
+		make_periodicity_constraints(&constraints, &dof_handler);
+		std::cout << "before interpolate bv" << std::endl;
+		VectorTools::interpolate_boundary_values(dof_handler, 1, ZeroFunction<2>(),
+				constraints);
+		std::cout << "before const close" << std::endl;
+		constraints.close();
+		std::cout << "before dsp" << std::endl;
+		DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
+		std::cout << "before make_sparsit" << std::endl;
+		DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
+		dsp.compress();
+		sparsity_pattern.copy_from(dsp);
+	}
 
+	else{
+		DynamicSparsityPattern dsp(dof_handler.n_dofs());
+		DoFTools::make_sparsity_pattern(dof_handler, dsp);
+		sparsity_pattern.copy_from(dsp);
+	}
 
-	DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
-	DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
-	dsp.compress();
-
-	sparsity_pattern.copy_from(dsp);
 	system_matrix.reinit(sparsity_pattern);
 	solution.reinit(dof_handler.n_dofs());
 	system_rhs.reinit(dof_handler.n_dofs());
@@ -58,9 +104,10 @@ void LaplaceSolver<dim>::setup_system() {
 template<int dim>
 void LaplaceSolver<dim>::assemble_system() {
 
-	QGauss<dim> quadrature_formula(2);
+	QGauss < dim > quadrature_formula(2);
 
-	FEValues<dim> fe_values(fe, quadrature_formula,
+	FEValues < dim
+			> fe_values(fe, quadrature_formula,
 					update_values | update_gradients | update_quadrature_points
 							| update_JxW_values);
 	const unsigned int dofs_per_cell = fe.dofs_per_cell;
@@ -93,10 +140,9 @@ void LaplaceSolver<dim>::assemble_system() {
 		cell->get_dof_indices(local_dof_indices);
 
 		for (unsigned int i = 0; i < dofs_per_cell; ++i) {
-			for (unsigned int j = 0; j < dofs_per_cell; ++j)
-			{
+			for (unsigned int j = 0; j < dofs_per_cell; ++j) {
 				system_matrix.add(local_dof_indices[i], local_dof_indices[j],
-									cell_matrix(i, j));
+						cell_matrix(i, j));
 			}
 			system_rhs(local_dof_indices[i]) += cell_rhs(i);
 		}
@@ -111,15 +157,14 @@ void LaplaceSolver<dim>::assemble_system() {
 
 template<int dim>
 void LaplaceSolver<dim>::solve() {
-	SolverControl solver_control(10000, 1e-12);
+	SolverControl solver_control(max_iter, stop_accuracy); //10000 1e-12
 	SolverCG<> solver(solver_control);
 	solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
-	//fe.get_function_gradients(solution, gradients_solution);
 }
 
 template<int dim>
 void LaplaceSolver<dim>::output_results() const {
-	DataOut<dim> data_out;
+	DataOut < dim > data_out;
 	data_out.attach_dof_handler(dof_handler);
 	data_out.add_data_vector(solution, "solution");
 	data_out.build_patches();
@@ -129,10 +174,13 @@ void LaplaceSolver<dim>::output_results() const {
 
 template<int dim>
 void LaplaceSolver<dim>::run() {
-	make_grid();
+	std::cout << "before setup" << std::endl;
 	setup_system();
+	std::cout << "after setup" << std::endl;
 	assemble_system();
+	std::cout << "assemble system" << std::endl;
 	solve();
+	std::cout << "after sovle" << std::endl;
 	output_results();
 }
 

@@ -32,8 +32,8 @@
 #include <iostream>
 #include <deal.II/base/logstream.h>
 
+#include "MyGridGenerator.hpp"
 #include "Rect2DBoundaryValues.hpp"
-#include "CustomGridGen.hpp"
 
 using namespace dealii;
 

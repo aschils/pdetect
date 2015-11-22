@@ -34,7 +34,6 @@
 #include <iostream>
 
 #include "Rect2DBoundaryValues.hpp"
-#include "PeriodicConstraints.hpp"
 
 using namespace dealii;
 
@@ -42,36 +41,41 @@ template<int dim>
 class LaplaceSolver {
 
 public:
-	LaplaceSolver(double rect_length_fe, double rect_width_fe,
+	LaplaceSolver(Triangulation<dim> *triangulation,
+					unsigned refine_level,
+					unsigned max_iter,
+					double stop_accuracy,
 					const Function<dim> *right_hand_side,
-					Function<dim> *boundary_values, 
-					PeriodicConstraints<dim> *periodic_constraints,
-					std::string result_file_path);
+					Function<dim> *boundary_values,
+					std::string result_file_path,
+					bool constraints_are_periodic);
 	void run();
 
 private:
 
-	double rect_length_fe, rect_width_fe = 1.0;
-	Triangulation<dim> triangulation;
+	bool constraints_are_periodic;
+	unsigned max_iter;
+	double stop_accuracy;
+
+	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;
 	DoFHandler<dim> dof_handler;
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
 	Vector<double> solution;
-	Vector<double> gradients_solution;
 
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
 	Function<dim> *boundary_values_fun;
 	std::string result_file_path;
-	PeriodicConstraints<dim> *periodic_constraints;
-	ConstraintMatrix constraints;
 
-	void make_grid();
+
 	void setup_system();
 	void assemble_system();
 	void solve();
 	void output_results() const;
+	void make_periodicity_constraints(ConstraintMatrix *constraints,
+			DoFHandler<dim> *dof_handler);
 };
 
 #include "LaplaceSolver.cpp"

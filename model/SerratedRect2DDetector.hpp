@@ -8,15 +8,19 @@
 #ifndef __SERRATED_RECT_2D_DETECTOR_HPP__
 #define __SERRATED_RECT_2D_DETECTOR_HPP__
 
-#include "SerratedLaplaceSolver.hpp"
+#include "LaplaceSolver.hpp"
+#include "MyGridGenerator.hpp"
 #include "ZeroRightHandSide.hpp"
 #include "SerratedRect2DBoundaryValues.hpp"
+#include "Detector.hpp"
 
-class SerratedRect2DDetector {
+class SerratedRect2DDetector : public Detector {
 
 public:
-	SerratedRect2DDetector(unsigned nbr_of_strips, unsigned strip_length,
-			unsigned strip_width, unsigned pitch, double strip_potential);
+	SerratedRect2DDetector(unsigned nbr_of_strips,
+			unsigned strip_length, unsigned strip_width, unsigned pitch,
+			double strip_potential, unsigned refine_level, unsigned max_iter,
+			double stop_accuracy, std::string ouput_file);
 	~SerratedRect2DDetector();
 	void compute_potential();
 
@@ -27,12 +31,17 @@ private:
 	const double RECT_LENGTH_FE = 10000.0;
 	double rect_width_fe = 1.0;
 
+	double strip_length_fe, strip_width_fe, pitch_length_fe = 1.0;
+
+	Triangulation<2> *triangulation;
 	ZeroRightHandSide<2> *zero_right_hand_side;
 	SerratedRect2DBoundaryValues<2> *boundary_val;
-	SerratedLaplaceSolver<2> *rect_potential_solver;
+	LaplaceSolver<2> *rect_potential_solver;
 
 	double compute_total_length();
 	double compute_rect_width_fe();
+	void compute_fe_values();
+
 };
 
 #endif
