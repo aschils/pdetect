@@ -55,7 +55,7 @@ void test_serrated_2D_potential() {
 			double strip_potential, unsigned refine_level, unsigned max_iter,
 			double stop_accuracy, std::string ouput_file)
 	 */
-	unsigned refine_level = 1;
+	unsigned refine_level = 3;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 

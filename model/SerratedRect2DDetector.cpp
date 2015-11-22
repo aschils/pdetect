@@ -83,7 +83,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy,
 			zero_right_hand_side, boundary_val,
-			ouput_file, true);
+			ouput_file, false);
 }
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {

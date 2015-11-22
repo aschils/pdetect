@@ -62,8 +62,13 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(unsigned nbr_of_
 template<int dim>
 bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 
-	std::cout << "x: " << p[0] << "y: " << p[1] << std::endl;
+	double x = p[0];
+	double y = p[1];
 
+	return !(y == rect_width_fe || x == 0 || x == rect_length_fe || y == 0);
+
+
+/*
 	if(p[1] < rect_width_fe-strip_width_fe)
 		return false;
 
@@ -80,7 +85,7 @@ bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 	else if(delta_from_prev_periodic_str <= strip_length_fe+half_pitch_length_fe)
 		return true;
 	else
-		return false;
+		return false;*/
 }
 
 template<int dim>
