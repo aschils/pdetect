@@ -51,7 +51,7 @@ void SerratedRect2DDetector::compute_fe_values(){
 
 	strip_length_fe = total_strips_length_fe/nbr_of_strips;
 
-	this->strip_width_fe = strip_width/strip_length*strip_length_fe;
+	this->strip_width_fe = strip_width/(double)strip_length*strip_length_fe;
 	pitch_length_fe = total_pitches_length_fe/nbr_of_strips;
 }
 
@@ -76,9 +76,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
 
 	zero_right_hand_side = new ZeroRightHandSide<2>();
-	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips, strip_length,
-			strip_width,
-			pitch, RECT_LENGTH_FE, rect_width_fe, strip_potential);
+	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
+			RECT_LENGTH_FE, rect_width_fe, strip_potential);
 
 	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy,
