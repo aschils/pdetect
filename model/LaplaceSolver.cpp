@@ -73,18 +73,12 @@ void LaplaceSolver<dim>::setup_system() {
 
 	if(constraints_are_periodic){
 		ConstraintMatrix constraints;
-		std::cout << "before clear" << std::endl;
 		constraints.clear();
-		std::cout << "before period constr" << std::endl;
 		make_periodicity_constraints(&constraints, &dof_handler);
-		std::cout << "before interpolate bv" << std::endl;
 		VectorTools::interpolate_boundary_values(dof_handler, 1, ZeroFunction<2>(),
 				constraints);
-		std::cout << "before const close" << std::endl;
 		constraints.close();
-		std::cout << "before dsp" << std::endl;
 		DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
-		std::cout << "before make_sparsit" << std::endl;
 		DoFTools::make_sparsity_pattern(dof_handler, dsp, constraints);
 		dsp.compress();
 		sparsity_pattern.copy_from(dsp);
@@ -174,13 +168,9 @@ void LaplaceSolver<dim>::output_results() const {
 
 template<int dim>
 void LaplaceSolver<dim>::run() {
-	std::cout << "before setup" << std::endl;
 	setup_system();
-	std::cout << "after setup" << std::endl;
 	assemble_system();
-	std::cout << "assemble system" << std::endl;
 	solve();
-	std::cout << "after sovle" << std::endl;
 	output_results();
 }
 
