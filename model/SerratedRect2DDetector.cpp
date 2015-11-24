@@ -22,37 +22,28 @@ double SerratedRect2DDetector::compute_total_length(){
  * width should be adapted depending on the length of the rectangle in microm.
  */
 double SerratedRect2DDetector::compute_rect_width_fe() {
-	double one_micron_fe = RECT_LENGTH_FE/total_length;
+	double one_micron_fe = (total_length == 0)? 1 :
+			RECT_LENGTH_FE/total_length;
 	return RECT_WIDTH*one_micron_fe;
 }
 
 void SerratedRect2DDetector::compute_fe_values(){
-	//if(rect_length_fe <= 0)
-	//	throw ZERO_OR_NEGATIVE_DOMAIN_LENGTH_ERROR;
 
-	/*
-	this->rect_length_fe = rect_length_fe;
-	this->strip_potential = strip_potential;
+	unsigned total_strips_length = nbr_of_strips*strip_length;
+	unsigned total_pitches_length = nbr_of_strips*pitch;
+	unsigned total_length = total_strips_length + total_pitches_length;
 
-	if(nbr_of_strip == 0 || strip_length == 0){
-		strip_length_fe = 0;
-		pitch_length_fe = 0;
-		strip_pitch_pair_length_fe = 0;
-		return;
-	}*/
-
-	double total_strips_length = nbr_of_strips*strip_length;
-	double total_pitches_length = nbr_of_strips*pitch;
-	double total_length = total_strips_length + total_pitches_length;
-
-	double total_strips_length_fe =
-			total_strips_length/total_length*RECT_LENGTH_FE;
+	double total_strips_length_fe = (total_length == 0)? 0:
+			total_strips_length/(double)total_length*RECT_LENGTH_FE;
 	double total_pitches_length_fe = RECT_LENGTH_FE - total_strips_length_fe;
 
-	strip_length_fe = total_strips_length_fe/nbr_of_strips;
-
-	this->strip_width_fe = strip_width/(double)strip_length*strip_length_fe;
-	pitch_length_fe = total_pitches_length_fe/nbr_of_strips;
+	strip_length_fe = (nbr_of_strips == 0)? 0 :
+			total_strips_length_fe/nbr_of_strips;
+	strip_width_fe = (strip_length == 0)? 0 :
+			strip_width/(double)strip_length*strip_length_fe;
+	pitch_length_fe = (nbr_of_strips == 0)? 0 :
+			total_pitches_length_fe/nbr_of_strips;
+	rect_width_fe = compute_rect_width_fe();
 }
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
@@ -66,14 +57,13 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	this->pitch = pitch;
 	this->strip_potential = strip_potential;
 	total_length = compute_total_length();
-	rect_width_fe = compute_rect_width_fe();
 
 	compute_fe_values();
 
 	triangulation = new Triangulation<2>();
 
-	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, RECT_LENGTH_FE,
-			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
+	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width_fe,
+			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
 
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
