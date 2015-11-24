@@ -90,23 +90,17 @@ void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
 
 /**
  * Verify the following conditions on parameters:
- * @pre:
- * - length > 0
  * - width > 0
- * - 0 <= hole_length <= length
+ * - 0 <= hole_length
  * - 0 <= hole_width <= width
- * - 0 <= inter_hole_space <= length
- * - holes_nbr*(hole_length+inter_hole_space) = length
+ * - 0 <= inter_hole_space
  */
 template <int dim>
-bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double length,
-		double width, unsigned holes_nbr, double hole_length, double hole_width,
-		double inter_hole_space) {
+bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
+		double hole_length, double hole_width, double inter_hole_space) {
 
-	return length > 0.0 && width > 0.0 && hole_length >= 0
-			&& hole_length <= length && hole_width >= 0 && hole_width <= width
-			&& inter_hole_space >= 0.0 && inter_hole_space <= length
-			&& holes_nbr * (hole_length + inter_hole_space) == length;
+	return width > 0.0 && hole_length >= 0	&& hole_width >= 0
+			&& hole_width <= width && inter_hole_space >= 0.0;
 }
 
 /**
@@ -130,24 +124,28 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double length,
  *
  * @pre:
  * - tria is an instantiated object.
- * - length > 0
  * - width > 0
- * - 0 <= hole_length <= length
+ * - 0 <= hole_length
  * - 0 <= hole_width <= width
- * - 0 <= inter_hole_space <= length
- * - holes_nbr*(hole_length+inter_hole_space) = length
+ * - 0 <= inter_hole_space
  *
- * if pre not respected (except for the tria one), a standard rectangle of length
- * "length" and width "width" is built.
+ * if pre not respected (except for the tria one), the exception
+ * PRECONDITIONS_VIOLATED is throwned.
  *
  */
 template<int dim>
 void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
-		double length, double width, unsigned holes_nbr, double hole_length,
+		double width, unsigned holes_nbr, double hole_length,
 		double hole_width, double inter_hole_space) {
 
-	if(!are_precond_fullfilled_serr_hrect(length, width, holes_nbr,
-			hole_length, hole_width, inter_hole_space))
+	if(!are_precond_fullfilled_serr_hrect(width, hole_length, hole_width,
+			inter_hole_space))
+		throw PRECONDITIONS_VIOLATED;
+
+	double length = holes_nbr * (hole_length + inter_hole_space);
+
+	if(length == 0.0 || hole_width == 0.0 || hole_length == 0.0
+			|| inter_hole_space == 0.0)
 		return hyper_rectangle(tria, abs(length), abs(width));
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
