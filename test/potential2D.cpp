@@ -48,21 +48,23 @@ void test_serrated_2D_potential() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
 	unsigned pitch = 100;
-
-	/*
-	 * SerratedRect2DDetector(unsigned nbr_of_strips,
-			unsigned strip_length, unsigned strip_width, unsigned pitch,
-			double strip_potential, unsigned refine_level, unsigned max_iter,
-			double stop_accuracy, std::string ouput_file)
-	 */
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
 	std::string output_dir = "tests_output";
-
+	/*
 	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
 		std::string output_file = output_dir+"/"+std::to_string(nbr_of_strips)+".vtk";
+		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
+				pitch, strip_potential, refine_level, max_iter, stop_accuracy, output_file);
+		srdd.compute_potential();
+	}*/
+
+	pitch = 0;
+	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 3; nbr_of_strips++) {
+		std::string output_file = output_dir+"/"+"pitch_"+std::to_string(pitch)
+		+"_"+std::to_string(nbr_of_strips)+".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy, output_file);
 		srdd.compute_potential();
