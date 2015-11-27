@@ -58,13 +58,13 @@ public:
 	 *
 	 * @pre:
 	 * - tria is an instantiated object.
-	 * - width > 0
+	 * - 0 <= width
 	 * - 0 <= hole_length
 	 * - 0 <= hole_width <= width
 	 * - 0 <= inter_hole_space
 	 *
 	 * if pre not respected (except for the tria one), the exception
-	 * PRECONDITIONS_VIOLATED is throwned.
+	 * PRECONDITIONS_VIOLATED is thrown.
 	 *
 	 */
 	//TODO generalize to 3D

@@ -8,8 +8,8 @@
 template<int dim>
 void MyGridGenerator<dim>::hyper_rectangle(dealii::Triangulation<dim> &triangulation,
 		double length, double width) {
-	Point < dim > point_bottom(-length / 2, -width / 2);
-	Point < dim > point_top(length / 2, width / 2);
+	Point < dim > point_bottom(0, 0);
+	Point < dim > point_top(length, width);
 	dealii::GridGenerator::hyper_rectangle(triangulation, point_bottom, point_top);
 }
 
@@ -90,7 +90,7 @@ void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
 
 /**
  * Verify the following conditions on parameters:
- * - width > 0
+ * - 0 <= width
  * - 0 <= hole_length
  * - 0 <= hole_width <= width
  * - 0 <= inter_hole_space
@@ -99,7 +99,7 @@ template <int dim>
 bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
 		double hole_length, double hole_width, double inter_hole_space) {
 
-	return width > 0.0 && hole_length >= 0	&& hole_width >= 0
+	return width >= 0.0 && hole_length >= 0	&& hole_width >= 0
 			&& hole_width <= width && inter_hole_space >= 0.0;
 }
 
@@ -124,7 +124,7 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
  *
  * @pre:
  * - tria is an instantiated object.
- * - width > 0
+ * - 0 <= width
  * - 0 <= hole_length
  * - 0 <= hole_width <= width
  * - 0 <= inter_hole_space
@@ -144,9 +144,11 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 	double length = holes_nbr * (hole_length + inter_hole_space);
 
-	if(length == 0.0 || hole_width == 0.0 || hole_length == 0.0
-			|| inter_hole_space == 0.0)
-		return hyper_rectangle(tria, abs(length), abs(width));
+	if(length == 0.0 || width == 0.0 || hole_width == 0.0 || hole_length == 0.0)
+		return hyper_rectangle(tria, length, width);
+
+	if(inter_hole_space == 0.0)
+		return hyper_rectangle(tria, length, width-hole_width);
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
 	unsigned nbr_of_cells_scd_dim = ceil(width / hole_width);
