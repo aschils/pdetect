@@ -11,9 +11,7 @@
  * Compute the length of the rectangle (detector) in the domain language unit
  * (microm) depending on the number of strips, the strip length and the pitch.
  */
-double SerratedRect2DDetector::compute_total_length(){
-	if(nbr_of_strips == 0 || strip_length == 0)
-		return RECT_WIDTH;
+double SerratedRect2DDetector::compute_total_length() {
 	return nbr_of_strips * (strip_length + pitch);
 }
 
@@ -22,35 +20,53 @@ double SerratedRect2DDetector::compute_total_length(){
  * width should be adapted depending on the length of the rectangle in microm.
  */
 double SerratedRect2DDetector::compute_rect_width_fe() {
-	double one_micron_fe = (total_length == 0)? 1 :
-			RECT_LENGTH_FE/total_length;
-	return RECT_WIDTH*one_micron_fe;
+	double one_micron_fe =
+			(total_length == 0) ? 1 : RECT_LENGTH_FE / total_length;
+	return rect_width * one_micron_fe;
 }
 
-void SerratedRect2DDetector::compute_fe_values(){
+/**
+ * Translate lengths expressed in the domain langage (i.e. microm,...) in
+ * length in the finite elements domain.
+ */
+void SerratedRect2DDetector::compute_fe_values() {
 
-	unsigned total_strips_length = nbr_of_strips*strip_length;
-	unsigned total_pitches_length = nbr_of_strips*pitch;
+	unsigned total_strips_length = nbr_of_strips * strip_length;
+	unsigned total_pitches_length = nbr_of_strips * pitch;
 	unsigned total_length = total_strips_length + total_pitches_length;
 
-	double total_strips_length_fe = (total_length == 0)? 0:
-			total_strips_length/(double)total_length*RECT_LENGTH_FE;
+	double total_strips_length_fe =
+			(total_length == 0) ?
+					0 :
+					total_strips_length / (double) total_length
+							* RECT_LENGTH_FE;
 	double total_pitches_length_fe = RECT_LENGTH_FE - total_strips_length_fe;
 
-	strip_length_fe = (nbr_of_strips == 0)? 0 :
-			total_strips_length_fe/nbr_of_strips;
-	strip_width_fe = (strip_length == 0)? 0 :
-			strip_width/(double)strip_length*strip_length_fe;
-	pitch_length_fe = (nbr_of_strips == 0)? 0 :
-			total_pitches_length_fe/nbr_of_strips;
+	strip_length_fe =
+			(nbr_of_strips == 0) ? 0 : total_strips_length_fe / nbr_of_strips;
+	strip_width_fe =
+			(strip_length == 0) ?
+					0 : strip_width / (double) strip_length * strip_length_fe;
+	pitch_length_fe =
+			(nbr_of_strips == 0) ? 0 : total_pitches_length_fe / nbr_of_strips;
 	rect_width_fe = compute_rect_width_fe();
 }
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		unsigned strip_length, unsigned strip_width, unsigned pitch,
 		double strip_potential, unsigned refine_level, unsigned max_iter,
-		double stop_accuracy, std::string ouput_file) {
+		double stop_accuracy, std::string ouput_file) :
+		SerratedRect2DDetector(nbr_of_strips, DEFAULT_RECT_WIDTH, strip_length,
+				strip_width, pitch, strip_potential, refine_level, max_iter,
+				stop_accuracy, ouput_file) {
+}
 
+SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
+		unsigned width, unsigned strip_length, unsigned strip_width,
+		unsigned pitch, double strip_potential, unsigned refine_level,
+		unsigned max_iter, double stop_accuracy, std::string ouput_file) {
+
+	this->rect_width = width;
 	this->nbr_of_strips = nbr_of_strips;
 	this->strip_length = strip_length;
 	this->strip_width = strip_width;
@@ -67,11 +83,11 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
-			RECT_LENGTH_FE, rect_width_fe, strip_potential);
+			RECT_LENGTH_FE, rect_width_fe, strip_potential, pitch_length_fe,
+			strip_length_fe, strip_width_fe);
 
 	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
-			max_iter, stop_accuracy,
-			zero_right_hand_side, boundary_val,
+			max_iter, stop_accuracy, zero_right_hand_side, boundary_val,
 			ouput_file, false);
 }
 

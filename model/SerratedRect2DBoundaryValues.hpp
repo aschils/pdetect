@@ -22,7 +22,8 @@ class SerratedRect2DBoundaryValues: public Function<dim> {
 public:
 
 	SerratedRect2DBoundaryValues(unsigned nbr_of_strips, double rect_length_fe,
-			double rect_width_fe, double strip_potential);
+			double rect_width_fe, double strip_potential, double pitch_fe,
+			double strip_length_fe, double strip_width_fe);
 
 	virtual double value(const Point<dim> &p,
 			const unsigned int component = 0) const;
@@ -32,6 +33,9 @@ private:
 	double rect_length_fe = 1.0;
 	double rect_width_fe = 1.0;
 	double strip_potential = 1.0;
+
+	double strip_width_fe, strip_length_fe = 1.0;
+	double periodic_str_length_fe, half_pitch_fe = 1.0;
 
 	bool is_strip(const Point<dim> &p) const;
 };

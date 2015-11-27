@@ -14,6 +14,9 @@
 #include "SerratedRect2DBoundaryValues.hpp"
 #include "Detector.hpp"
 
+#define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
+
+
 class SerratedRect2DDetector : public Detector {
 
 public:
@@ -21,13 +24,18 @@ public:
 			unsigned strip_length, unsigned strip_width, unsigned pitch,
 			double strip_potential, unsigned refine_level, unsigned max_iter,
 			double stop_accuracy, std::string ouput_file);
+
+	SerratedRect2DDetector(unsigned nbr_of_strips, unsigned width,
+				unsigned strip_length, unsigned strip_width, unsigned pitch,
+				double strip_potential, unsigned refine_level, unsigned max_iter,
+				double stop_accuracy, std::string ouput_file);
 	~SerratedRect2DDetector();
 	void compute_potential();
 
 private:
 	unsigned nbr_of_strips, strip_length, strip_width, pitch, total_length = 1;
 	double strip_potential = 1.0;
-	const double RECT_WIDTH = 300.0; //i.e. in domain language (microm,..)
+	double rect_width = 1.0;
 	const double RECT_LENGTH_FE = 10000.0;
 	double rect_width_fe = 1.0;
 
