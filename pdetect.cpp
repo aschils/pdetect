@@ -2,10 +2,10 @@
  * Author: Arnaud Schils, Simon Lardinois, Catholic University of Louvain, 2015
  */
 
-#include "test/potential2D.cpp"
+#include "test/test_potential2D.cpp"
 
 int main() {
-	//test_2D_potential();
-	test_serrated_2D_potential();
+	//test_serrated_2D_potential();
+	test_serrated_rect_limit_cases();
 	return 0;
 }
