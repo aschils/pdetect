@@ -12,7 +12,7 @@
  * (microm) depending on the number of strips, the strip length and the pitch.
  */
 double SerratedRect2DDetector::compute_total_length() {
-	if(nbr_of_strips == 0)
+	if (nbr_of_strips == 0)
 		return pitch;
 	else
 		return nbr_of_strips * (strip_length + pitch);
@@ -34,7 +34,7 @@ double SerratedRect2DDetector::compute_rect_width_fe() {
  */
 void SerratedRect2DDetector::compute_and_set_fe_values() {
 
-	rect_length_fe = (total_length == 0)? 0 : DEFAULT_RECT_LENGTH_FE;
+	rect_length_fe = (total_length == 0) ? 0 : DEFAULT_RECT_LENGTH_FE;
 	unsigned total_strips_length = nbr_of_strips * strip_length;
 	double total_strips_length_fe =
 			(total_length == 0) ?
@@ -49,7 +49,8 @@ void SerratedRect2DDetector::compute_and_set_fe_values() {
 			(strip_length == 0) ?
 					0 : strip_width / (double) strip_length * strip_length_fe;
 	pitch_length_fe =
-			(nbr_of_strips == 0) ? rect_length_fe : total_pitches_length_fe / nbr_of_strips;
+			(nbr_of_strips == 0) ?
+					rect_length_fe : total_pitches_length_fe / nbr_of_strips;
 	rect_width_fe = compute_rect_width_fe();
 }
 
@@ -104,8 +105,23 @@ void SerratedRect2DDetector::compute_potential(std::string result_file_path) {
 	rect_potential_solver->run(result_file_path);
 }
 
-void SerratedRect2DDetector::compute_electric_field(std::string output_file){
+void SerratedRect2DDetector::compute_electric_field(std::string output_file) {
 	rect_potential_solver->compute_solution_gradient(output_file);
+}
+
+void SerratedRect2DDetector::compute_weighting_potential(
+		std::string output_file) {
+
+	SerratedRect2DBoundaryValuesWeight<2> boundary_val(nbr_of_strips,
+			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
+			strip_length_fe, strip_width_fe);
+	Triangulation<2> triangulation;
+	MyGridGenerator<2>::serrated_hyper_rectangle(triangulation, rect_width_fe,
+			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
+	LaplaceSolver<2> rect_potential_solver_weight(&triangulation, refine_level,
+			max_iter, stop_accuracy, zero_right_hand_side, &boundary_val,
+			false);
+	rect_potential_solver_weight.run(output_file);
 }
 
 std::string SerratedRect2DDetector::params_to_string() {

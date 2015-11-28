@@ -12,6 +12,7 @@
 #include "MyGridGenerator.hpp"
 #include "ZeroRightHandSide.hpp"
 #include "SerratedRect2DBoundaryValues.hpp"
+#include "SerratedRect2DBoundaryValuesWeight.hpp"
 #include "Detector.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
@@ -35,6 +36,8 @@ public:
 	void compute_potential(std::string result_file_path);
 
 	void compute_electric_field(std::string output_file);
+
+	void compute_weighting_potential(std::string output_file);
 
 	std::string params_to_string();
 
