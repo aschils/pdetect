@@ -12,6 +12,7 @@ class Detector {
 
 public:
 	virtual void compute_potential(std::string output_file) = 0;
+	virtual void compute_weighting_potential(std::string output_file) = 0;
 	virtual void compute_electric_field(std::string output_file) = 0;
 	virtual ~Detector(){}
 };
