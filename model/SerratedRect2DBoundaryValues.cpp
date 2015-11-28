@@ -13,7 +13,6 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 	this->rect_width_fe = rect_width_fe;
 	this->rect_length_fe = rect_length_fe;
 	this->strip_potential = strip_potential;
-
 	this->strip_length_fe = strip_length_fe;
 	this->strip_width_fe = strip_width_fe;
 	this->nbr_of_strips = nbr_of_strips;
@@ -36,7 +35,7 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 template<int dim>
 bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 
-	double epsilon = 0.000001;
+	double epsilon = 0.00000001;
 
 	double x = p[0];
 	double y = p[1];

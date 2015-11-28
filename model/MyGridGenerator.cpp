@@ -6,11 +6,13 @@
  */
 
 template<int dim>
-void MyGridGenerator<dim>::hyper_rectangle(dealii::Triangulation<dim> &triangulation,
-		double length, double width) {
+void MyGridGenerator<dim>::hyper_rectangle(
+		dealii::Triangulation<dim> &triangulation, double length,
+		double width) {
 	Point < dim > point_bottom(0, 0);
 	Point < dim > point_top(length, width);
-	dealii::GridGenerator::hyper_rectangle(triangulation, point_bottom, point_top);
+	dealii::GridGenerator::hyper_rectangle(triangulation, point_bottom,
+			point_top);
 }
 
 template<int dim>
@@ -95,11 +97,11 @@ void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
  * - 0 <= hole_width <= width
  * - 0 <= inter_hole_space
  */
-template <int dim>
+template<int dim>
 bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
 		double hole_length, double hole_width, double inter_hole_space) {
 
-	return width >= 0.0 && hole_length >= 0	&& hole_width >= 0
+	return width >= 0.0 && hole_length >= 0 && hole_width >= 0
 			&& hole_width <= width && inter_hole_space >= 0.0;
 }
 
@@ -135,20 +137,24 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
  */
 template<int dim>
 void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
-		double width, unsigned holes_nbr, double hole_length,
-		double hole_width, double inter_hole_space) {
+		double width, unsigned holes_nbr, double hole_length, double hole_width,
+		double inter_hole_space) {
 
-	if(!are_precond_fullfilled_serr_hrect(width, hole_length, hole_width,
+	if (!are_precond_fullfilled_serr_hrect(width, hole_length, hole_width,
 			inter_hole_space))
 		throw PRECONDITIONS_VIOLATED;
 
-	double length = holes_nbr * (hole_length + inter_hole_space);
+	double length =
+			(holes_nbr == 0) ?
+					inter_hole_space :
+					holes_nbr * (hole_length + inter_hole_space);
 
-	if(length == 0.0 || width == 0.0 || hole_width == 0.0 || hole_length == 0.0)
+	if (length == 0.0 || width == 0.0 || hole_width == 0.0
+			|| hole_length == 0.0 || holes_nbr == 0)
 		return hyper_rectangle(tria, length, width);
 
-	if(inter_hole_space == 0.0)
-		return hyper_rectangle(tria, length, width-hole_width);
+	if (inter_hole_space == 0.0)
+		return hyper_rectangle(tria, length, width - hole_width);
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
 	unsigned nbr_of_cells_scd_dim = ceil(width / hole_width);
