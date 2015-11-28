@@ -28,7 +28,7 @@ public:
 	virtual double value(const Point<dim> &p,
 			const unsigned int component = 0) const;
 
-private:
+protected:
 	unsigned nbr_of_strips = 1;
 	double rect_length_fe = 1.0;
 	double rect_width_fe = 1.0;
