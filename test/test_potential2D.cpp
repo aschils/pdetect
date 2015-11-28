@@ -141,12 +141,33 @@ void test_electric_field() {
 
 	std::string output_dir = "tests_output/";
 
-	std::string output_file = output_dir + "pitch_"
-			+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
-			+ ".vtk";
-	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width, pitch,
-			strip_potential, refine_level, max_iter, stop_accuracy);
+	std::string output_file = output_dir + "pitch_" + std::to_string(pitch)
+			+ "_" + std::to_string(nbr_of_strips) + ".vtk";
+	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
+			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 	srdd.compute_potential(output_file);
-	srdd.compute_electric_field(output_dir+"EE.vtk");
+	srdd.compute_electric_field(output_dir + "EE.vtk");
+}
+
+void test_weighting_potential() {
+	ZeroRightHandSide<2> rhs;
+	double strip_potential = 100;
+	unsigned strip_length = 100;
+	unsigned strip_width = 50;
+	unsigned pitch = 100;
+	unsigned refine_level = 5;
+	unsigned max_iter = 10000;
+	double stop_accuracy = 10e-12;
+
+	std::string output_dir = "tests_output";
+
+	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
+		std::string output_file = output_dir + "/" + "pitch_"
+				+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
+				+ ".vtk";
+		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
+				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+		srdd.compute_weighting_potential(output_file);
+	}
 }
 
