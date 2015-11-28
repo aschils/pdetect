@@ -45,9 +45,8 @@ public:
 					double stop_accuracy,
 					const Function<dim> *right_hand_side,
 					Function<dim> *boundary_values,
-					std::string result_file_path,
 					bool constraints_are_periodic);
-	void run();
+	void run(std::string result_file_path);
 
 private:
 
@@ -65,13 +64,11 @@ private:
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
 	Function<dim> *boundary_values_fun;
-	std::string result_file_path;
-
 
 	void setup_system();
 	void assemble_system();
 	void solve();
-	void output_results() const;
+	void output_results(std::string result_file_path) const;
 	void make_periodicity_constraints(ConstraintMatrix *constraints,
 			DoFHandler<dim> *dof_handler);
 };

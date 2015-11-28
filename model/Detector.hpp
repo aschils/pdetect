@@ -11,7 +11,7 @@
 class Detector {
 
 public:
-	virtual void compute_potential() = 0;
+	virtual void compute_potential(std::string output_file) = 0;
 	virtual ~Detector(){}
 };
 

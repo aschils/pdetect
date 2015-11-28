@@ -9,14 +9,13 @@ template<int dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 		unsigned refine_level, unsigned max_iter, double stop_accuracy,
 		const Function<dim> *right_hand_side, Function<dim> *boundary_values,
-		std::string result_file_path, bool constraints_are_periodic) :
+		bool constraints_are_periodic) :
 		fe(1), dof_handler(*triangulation) {
 
 	this->constraints_are_periodic = constraints_are_periodic;
 	this->triangulation = triangulation;
 	this->right_hand_side = right_hand_side;
 	this->boundary_values_fun = boundary_values;
-	this->result_file_path = result_file_path;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
@@ -157,7 +156,7 @@ void LaplaceSolver<dim>::solve() {
 }
 
 template<int dim>
-void LaplaceSolver<dim>::output_results() const {
+void LaplaceSolver<dim>::output_results(std::string result_file_path) const {
 	DataOut < dim > data_out;
 	data_out.attach_dof_handler(dof_handler);
 	data_out.add_data_vector(solution, "solution");
@@ -167,10 +166,10 @@ void LaplaceSolver<dim>::output_results() const {
 }
 
 template<int dim>
-void LaplaceSolver<dim>::run() {
+void LaplaceSolver<dim>::run(std::string result_file_path) {
 	setup_system();
 	assemble_system();
 	solve();
-	output_results();
+	output_results(result_file_path);
 }
 
