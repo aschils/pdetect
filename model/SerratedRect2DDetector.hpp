@@ -34,6 +34,8 @@ public:
 
 	void compute_potential(std::string result_file_path);
 
+	void compute_electric_field(std::string output_file);
+
 	std::string params_to_string();
 
 private:

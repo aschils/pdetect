@@ -104,6 +104,10 @@ void SerratedRect2DDetector::compute_potential(std::string result_file_path) {
 	rect_potential_solver->run(result_file_path);
 }
 
+void SerratedRect2DDetector::compute_electric_field(std::string output_file){
+	rect_potential_solver->compute_solution_gradient(output_file);
+}
+
 std::string SerratedRect2DDetector::params_to_string() {
 
 	std::string str = "nbr_of_strips_" + std::to_string(nbr_of_strips)

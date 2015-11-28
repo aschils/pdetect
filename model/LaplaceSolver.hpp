@@ -30,8 +30,11 @@
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/fe_field_function.h>
 #include <fstream>
 #include <iostream>
+
+#include "Gradient.hpp"
 
 using namespace dealii;
 
@@ -47,6 +50,8 @@ public:
 					Function<dim> *boundary_values,
 					bool constraints_are_periodic);
 	void run(std::string result_file_path);
+
+	void compute_solution_gradient(std::string result_file_path);
 
 private:
 
