@@ -8,17 +8,17 @@
 #ifndef __SERRATED_RECT_2D_DETECTOR_HPP__
 #define __SERRATED_RECT_2D_DETECTOR_HPP__
 
+#include "Detector2D.hpp"
 #include "LaplaceSolver.hpp"
 #include "MyGridGenerator.hpp"
 #include "ZeroRightHandSide.hpp"
 #include "SerratedRect2DBoundaryValues.hpp"
 #include "SerratedRect2DBoundaryValuesWeight.hpp"
-#include "Detector.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 
 
-class SerratedRect2DDetector : public Detector {
+class SerratedRect2DDetector : public Detector2D {
 
 public:
 	SerratedRect2DDetector(unsigned nbr_of_strips,
@@ -33,15 +33,16 @@ public:
 
 	~SerratedRect2DDetector();
 
-	void compute_potential(std::string result_file_path);
+	Solution<2> compute_potential();
 
-	void compute_electric_field(std::string output_file);
+	void compute_electric_field(std::string gradient_file_path);
 
-	void compute_weighting_potential(std::string output_file);
+	Solution<2> compute_weighting_potential();
 
 	std::string params_to_string();
 
 private:
+
 	unsigned nbr_of_strips, strip_length, strip_width, pitch, total_length = 1;
 	unsigned refine_level, max_iter = 1;
 	double strip_potential = 1.0;
@@ -57,6 +58,10 @@ private:
 	ZeroRightHandSide<2> *zero_right_hand_side;
 	SerratedRect2DBoundaryValues<2> *boundary_val;
 	LaplaceSolver<2> *rect_potential_solver;
+
+	Triangulation<2> *triangulation_weight;
+	SerratedRect2DBoundaryValuesWeight<2> *boundary_val_weight;
+	LaplaceSolver<2> *rect_potential_solver_weight;
 
 	double compute_total_length();
 	double compute_rect_width_fe();

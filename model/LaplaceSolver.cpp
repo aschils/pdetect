@@ -95,7 +95,7 @@ void LaplaceSolver<dim>::setup_system() {
 	}
 
 	system_matrix.reinit(sparsity_pattern);
-	solution.reinit(dof_handler.n_dofs());
+	solution_vec.reinit(dof_handler.n_dofs());
 	system_rhs.reinit(dof_handler.n_dofs());
 }
 
@@ -149,51 +149,71 @@ void LaplaceSolver<dim>::assemble_system() {
 	std::map<types::global_dof_index, double> boundary_values;
 	VectorTools::interpolate_boundary_values(dof_handler, 0,
 			*boundary_values_fun, boundary_values);
-	MatrixTools::apply_boundary_values(boundary_values, system_matrix, solution,
-			system_rhs);
+	MatrixTools::apply_boundary_values(boundary_values, system_matrix,
+			solution_vec, system_rhs);
 }
 
 template<int dim>
 void LaplaceSolver<dim>::solve() {
 	SolverControl solver_control(max_iter, stop_accuracy); //10000 1e-12
 	SolverCG<> solver(solver_control);
-	solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
+	solver.solve(system_matrix, solution_vec, system_rhs,
+			PreconditionIdentity());
 }
 
-template<int dim>
-void LaplaceSolver<dim>::output_results(std::string result_file_path) const {
-	DataOut < dim > data_out;
-	data_out.attach_dof_handler(dof_handler);
-	data_out.add_data_vector(solution, "solution");
-	data_out.build_patches();
-	std::ofstream output(result_file_path);
-	data_out.write_vtk(output);
-}
+/*
+ template<int dim>
+ void LaplaceSolver<dim>::output_results(std::string result_file_path) const {
+ DataOut < dim > data_out;
+ data_out.attach_dof_handler(dof_handler);
+ data_out.add_data_vector(solution, "solution");
+ data_out.build_patches();
+ std::ofstream output(result_file_path);
+ data_out.write_vtk(output);
+ }*/
 
 template<int dim>
-void LaplaceSolver<dim>::run(std::string result_file_path) {
+void LaplaceSolver<dim>::compute_solution() {
 	setup_system();
 	assemble_system();
 	solve();
-	output_results(result_file_path);
+	//output_results(result_file_path);
 }
 
 template<int dim>
-void LaplaceSolver<dim>::compute_solution_gradient(
-		std::string result_file_path) {
-
+void LaplaceSolver<dim>::compute_gradient_of_solution(std::string
+		gradient_file_path) {
 
 	Gradient<dim> grad;
-	DataOut<dim> data_out;
-	data_out.attach_dof_handler (dof_handler);
+
+	DataOut < dim > data_out;
+	data_out.attach_dof_handler(dof_handler);
 
 	std::vector<std::string> solution_names;
-	solution_names.push_back ("Electric_field");
-	data_out.add_data_vector (solution, solution_names);
-	data_out.add_data_vector (solution, grad);
+	solution_names.push_back("Electric_field");
+	data_out.add_data_vector(solution_vec, solution_names);
+	data_out.add_data_vector(solution_vec, grad);
 	data_out.build_patches();
-	std::ofstream output(result_file_path);
+	std::ofstream output(gradient_file_path);
     data_out.write_vtk(output);
+
+
+
+	//FEValuesBase::get_function_values(grad, vec);
+
+	/*
+	 DataOut < dim > data_out;
+	 data_out.attach_dof_handler(dof_handler);
+
+	 std::vector<std::string> solution_names;
+	 solution_names.push_back("Electric_field");
+	 data_out.add_data_vector(solution, solution_names);
+	 data_out.add_data_vector(solution, grad);
+	 data_out.build_patches();
+	 std::ofstream output(result_file_path);
+	 data_out.write_vtk(output);
+
+	 */
 
 //
 //	/*
@@ -309,3 +329,8 @@ void LaplaceSolver<dim>::compute_solution_gradient(
 //	 data_out.write_vtk (output);*/
 }
 
+template<int dim>
+Solution<dim> LaplaceSolver<dim>::get_solution() {
+	Solution<dim> sol(solution_vec, &dof_handler);
+	return sol;
+}

@@ -35,6 +35,7 @@
 #include <iostream>
 
 #include "Gradient.hpp"
+#include "Solution.hpp"
 
 using namespace dealii;
 
@@ -49,9 +50,10 @@ public:
 					const Function<dim> *right_hand_side,
 					Function<dim> *boundary_values,
 					bool constraints_are_periodic);
-	void run(std::string result_file_path);
 
-	void compute_solution_gradient(std::string result_file_path);
+	void compute_solution();
+	Solution<dim> get_solution();
+	void compute_gradient_of_solution(std::string gradient_file_path);
 
 private:
 
@@ -64,7 +66,7 @@ private:
 	DoFHandler<dim> dof_handler;
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
-	Vector<double> solution;
+	Vector<double> solution_vec;
 
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;

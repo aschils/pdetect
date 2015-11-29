@@ -84,14 +84,23 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 
 	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width_fe,
 			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
-
 	zero_right_hand_side = new ZeroRightHandSide<2>();
 	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
 			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
 			strip_length_fe, strip_width_fe);
-
 	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_val, false);
+
+	boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
+			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
+			pitch_length_fe, strip_length_fe, strip_width_fe);
+	triangulation_weight = new Triangulation<2>();
+	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation_weight,
+			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
+			pitch_length_fe);
+	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
+			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
+			boundary_val_weight, false);
 }
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {
@@ -99,29 +108,25 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete boundary_val;
 	delete rect_potential_solver;
 	delete triangulation;
+
+	delete boundary_val_weight;
+	delete rect_potential_solver_weight;
+	delete triangulation_weight;
 }
 
-void SerratedRect2DDetector::compute_potential(std::string result_file_path) {
-	rect_potential_solver->run(result_file_path);
+Solution<2> SerratedRect2DDetector::compute_potential() {
+	rect_potential_solver->compute_solution();
+	return rect_potential_solver->get_solution();
 }
 
-void SerratedRect2DDetector::compute_electric_field(std::string output_file) {
-	rect_potential_solver->compute_solution_gradient(output_file);
+void SerratedRect2DDetector::compute_electric_field(
+		std::string gradient_file_path) {
+	rect_potential_solver->compute_gradient_of_solution(gradient_file_path);
 }
 
-void SerratedRect2DDetector::compute_weighting_potential(
-		std::string output_file) {
-
-	SerratedRect2DBoundaryValuesWeight<2> boundary_val(nbr_of_strips,
-			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
-			strip_length_fe, strip_width_fe);
-	Triangulation<2> triangulation;
-	MyGridGenerator<2>::serrated_hyper_rectangle(triangulation, rect_width_fe,
-			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
-	LaplaceSolver<2> rect_potential_solver_weight(&triangulation, refine_level,
-			max_iter, stop_accuracy, zero_right_hand_side, &boundary_val,
-			false);
-	rect_potential_solver_weight.run(output_file);
+Solution<2> SerratedRect2DDetector::compute_weighting_potential() {
+	rect_potential_solver_weight->compute_solution();
+	return rect_potential_solver_weight->get_solution();
 }
 
 std::string SerratedRect2DDetector::params_to_string() {
