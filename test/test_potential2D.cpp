@@ -17,14 +17,14 @@ void test_serrated_2D_potential() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
 	unsigned pitch = 100;
-	unsigned refine_level = 5;
+	unsigned refine_level = 4;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
+	for(unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
 
 		std::cout << "Computing potential for " << nbr_of_strips << " strips" << std::endl;
 
@@ -40,14 +40,9 @@ void test_serrated_2D_potential() {
 
 void test_serrated_rect_limit_cases() {
 
-	//unsigned max_nbr_of_strips = 5;
-
 	ZeroRightHandSide<2> rhs;
 	double strip_potential = 1;
-	//unsigned strip_length = 100;
 	unsigned width = 300;
-	//unsigned strip_width = 300;
-	//unsigned pitch = 50;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
@@ -55,15 +50,15 @@ void test_serrated_rect_limit_cases() {
 	std::string output_dir = "tests_output_limit_cases/";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 3; nbr_of_strips++) {
+	for(unsigned nbr_of_strips = 0; nbr_of_strips <= 3; nbr_of_strips++) {
 
 		std::cout << "Computing potential for " << nbr_of_strips << " strips in limit case" << std::endl;
 
-		for (unsigned strip_length = 0; strip_length <= 50; strip_length +=
+		for(unsigned strip_length = 0; strip_length <= 50; strip_length +=
 				50) {
-			for (unsigned strip_width = 0; strip_width <= 30; strip_width +=
+			for(unsigned strip_width = 0; strip_width <= 30; strip_width +=
 					30) {
-				for (unsigned pitch = 0; pitch <= 50; pitch += 50) {
+				for(unsigned pitch = 0; pitch <= 50; pitch += 50) {
 
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
 							strip_length, strip_width, pitch, strip_potential,
@@ -77,10 +72,6 @@ void test_serrated_rect_limit_cases() {
 			}
 		}
 	}
-
-	//Limit case: hole_width = width && strip_length = 0
-
-	//Limit case: hole_width = width && strip_length = 0
 }
 
 void test_electric_field() {

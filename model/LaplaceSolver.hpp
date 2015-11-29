@@ -36,6 +36,7 @@
 
 #include "Gradient.hpp"
 #include "Solution.hpp"
+#include "Utils.hpp"
 
 using namespace dealii;
 

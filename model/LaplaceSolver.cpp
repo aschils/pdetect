@@ -19,15 +19,16 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
-	if (constraints_are_periodic) {
-		for (typename Triangulation<dim>::active_cell_iterator
+	if(constraints_are_periodic) {
+		for(typename Triangulation<dim>::active_cell_iterator
        				cell = triangulation->begin_active();
      				cell != triangulation->end(); ++cell) {
-  			for (unsigned int f=0; f<GeometryInfo<dim>::faces_per_cell; ++f) {
-    			if (cell->face(f)->at_boundary()) {
-      				if (cell->face(f)->center()[0] == 0 ||
-      						cell->face(f)->center()[0] == rect_length_fe || 
-      						cell->face(f)->center()[1] == rect_width_fe)
+  			for(unsigned int f=0; f<GeometryInfo<dim>::faces_per_cell; ++f) {
+    			if(cell->face(f)->at_boundary()) {
+      				if(Utils::equals_double(cell->face(f)->center()[0], 0.0, 0.000001) ||
+      					Utils::equals_double(cell->face(f)->center()[0], rect_length_fe, 0.000001) || 
+      					Utils::equals_double(cell->face(f)->center()[1], rect_width_fe, 0.000001))
+
         				cell->face(f)->set_boundary_id(1);
         		}
 			}
@@ -41,9 +42,9 @@ template<int dim>
 void LaplaceSolver<dim>::make_periodicity_constraints() {
 	std::map<unsigned int, double> dof_locations;
 
-	for (DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
+	for(DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
 			cell != dof_handler.end(); ++cell) {
-		if (cell->at_boundary() && cell->face(1)->at_boundary()) {
+		if(cell->at_boundary() && cell->face(1)->at_boundary()) {
 
 			dof_locations[cell->face(1)->vertex_dof_index(0, 0)] =
 					cell->face(1)->vertex(0)[1];
@@ -52,16 +53,16 @@ void LaplaceSolver<dim>::make_periodicity_constraints() {
 		}
 	}
 
-	for (DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
+	for(DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
 			cell != dof_handler.end(); ++cell) {
-		if (cell->at_boundary() && cell->face(0)->at_boundary()) {
-			for (unsigned int face_vertex = 0; face_vertex < 2; ++face_vertex) {
+		if(cell->at_boundary() && cell->face(0)->at_boundary()) {
+			for(unsigned int face_vertex = 0; face_vertex < 2; ++face_vertex) {
 
 				constraints.add_line(
 						cell->face(0)->vertex_dof_index(face_vertex, 0));
 				std::map<unsigned int, double>::const_iterator p =
 						dof_locations.begin();
-				for (; p != dof_locations.end(); ++p) {
+				for(; p != dof_locations.end(); ++p) {
 					if (std::fabs(
 							p->second - cell->face(0)->vertex(face_vertex)[1])
 							< 1e-8) {
