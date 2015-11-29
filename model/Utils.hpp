@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sys/stat.h>
 
 class Utils {
 
@@ -33,6 +34,15 @@ public:
 
 	static bool greater_than_or_equals_double(double a, double b, double epsilon){
 		return a > b || equals_double(a, b, epsilon);
+	}
+
+	static void create_directory_if_not_exists(std::string path){
+
+		const char *cpath = path.c_str();
+
+		struct stat st;
+		if(!(stat(cpath,&st) == 0 && (st.st_mode & S_IFDIR) != 0))
+			mkdir(cpath, 0777);
 	}
 };
 
