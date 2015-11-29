@@ -23,7 +23,6 @@ void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 
 	//End of half dent on left detector side
 	double left_half_dent_end_x = inter_hole_space / 2.0;
-	double right_half_dent_start_x = length - left_half_dent_end_x;
 
 	double y = 0.0;
 	for (unsigned j = 0; j <= nbr_of_cells_scd_dim; j++) {
@@ -157,7 +156,12 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 		return hyper_rectangle(tria, length, width - hole_width);
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
-	unsigned nbr_of_cells_scd_dim = ceil(width / hole_width);
+
+	double epsilon = 0.000001;
+
+	unsigned nbr_of_cells_scd_dim =
+			(Utils::equals_double(width, hole_width, epsilon))? 1:
+					ceil(width / hole_width);
 
 	std::vector<Point<2> > points;
 	gen_points_for_serrated_hrect(length, hole_length, hole_width,

@@ -28,6 +28,7 @@ using namespace dealii;
 #include <limits>
 
 #include "errors.hpp"
+#include "Utils.hpp"
 
 template <int dim>
 class MyGridGenerator {
