@@ -189,9 +189,9 @@ void LaplaceSolver<dim>::compute_gradient_of_solution(std::string
 	DataOut < dim > data_out;
 	data_out.attach_dof_handler(dof_handler);
 
-	std::vector<std::string> solution_names;
-	solution_names.push_back("Electric_field");
-	data_out.add_data_vector(solution_vec, solution_names);
+	//std::vector<std::string> solution_names;
+	//solution_names.push_back("x_Electric_field");
+	//solution_names.push_back("y_Electric_field");
 	data_out.add_data_vector(solution_vec, grad);
 	data_out.build_patches();
 	std::ofstream output(gradient_file_path);

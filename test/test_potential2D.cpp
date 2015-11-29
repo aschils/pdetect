@@ -133,15 +133,15 @@ void test_serrated_rect_limit_cases() {
 
 void test_electric_field() {
 	ZeroRightHandSide<2> rhs;
-	double strip_potential = 10;
+	double strip_potential = 100;
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
 	unsigned pitch = 100;
-	unsigned refine_level = 5;
+	unsigned refine_level = 6;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
-	unsigned nbr_of_strips = 1;
-	unsigned width = 300;
+	unsigned nbr_of_strips = 3;
+	unsigned width = 30;
 
 	std::string output_dir = "tests_output_electric_field/";
 	Utils::create_directory_if_not_exists(output_dir);
