@@ -26,7 +26,7 @@
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/precondition.h>
-//#include <deal.II/lac/constraint_matrix.h>
+#include <deal.II/lac/constraint_matrix.h>
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
@@ -45,6 +45,7 @@ class LaplaceSolver {
 public:
 	LaplaceSolver(Triangulation<dim> *triangulation,
 					double rect_length_fe,
+					double rect_width_fe,
 					unsigned refine_level,
 					unsigned max_iter,
 					double stop_accuracy,
@@ -68,6 +69,7 @@ private:
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
 	Vector<double> solution_vec;
+	ConstraintMatrix constraints;
 
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
@@ -77,8 +79,7 @@ private:
 	void assemble_system();
 	void solve();
 	void output_results(std::string result_file_path) const;
-	//void make_periodicity_constraints(ConstraintMatrix *constraints,
-			//DoFHandler<dim> *dof_handler);
+	void make_periodicity_constraints();
 };
 
 #include "LaplaceSolver.cpp"

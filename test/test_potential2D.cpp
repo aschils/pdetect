@@ -25,6 +25,9 @@ void test_serrated_2D_potential() {
 	Utils::create_directory_if_not_exists(output_dir);
 
 	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
+
+		std::cout << "Computing potential for " << nbr_of_strips << " strips" << std::endl;
+
 		std::string output_file = output_dir + "/" + "pitch_"
 				+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
 				+ ".vtk";
@@ -37,14 +40,14 @@ void test_serrated_2D_potential() {
 
 void test_serrated_rect_limit_cases() {
 
-	unsigned max_nbr_of_strips = 5;
+	//unsigned max_nbr_of_strips = 5;
 
 	ZeroRightHandSide<2> rhs;
 	double strip_potential = 1;
-	unsigned strip_length = 100;
+	//unsigned strip_length = 100;
 	unsigned width = 300;
-	unsigned strip_width = 300;
-	unsigned pitch = 50;
+	//unsigned strip_width = 300;
+	//unsigned pitch = 50;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
@@ -53,6 +56,9 @@ void test_serrated_rect_limit_cases() {
 	Utils::create_directory_if_not_exists(output_dir);
 
 	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 3; nbr_of_strips++) {
+
+		std::cout << "Computing potential for " << nbr_of_strips << " strips in limit case" << std::endl;
+
 		for (unsigned strip_length = 0; strip_length <= 50; strip_length +=
 				50) {
 			for (unsigned strip_width = 0; strip_width <= 30; strip_width +=
@@ -87,9 +93,12 @@ void test_electric_field() {
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	unsigned nbr_of_strips = 3;
-	unsigned width = 30;
+	unsigned width = 300;
 
 	std::string output_dir = "tests_output_electric_field/";
+
+	std::cout << "Computing electric field for " << nbr_of_strips << " strips" << std::endl;
+
 	Utils::create_directory_if_not_exists(output_dir);
 
 	std::string output_file = output_dir + "pitch_" + std::to_string(pitch)
@@ -116,6 +125,9 @@ void test_weighting_potential() {
 	Utils::create_directory_if_not_exists(output_dir);
 
 	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
+
+		std::cout << "Computing weighting potential for " << nbr_of_strips << " strips" << std::endl;
+
 		std::string output_file = output_dir + "/" + "pitch_"
 				+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
 				+ ".vtk";

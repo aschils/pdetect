@@ -7,8 +7,8 @@
 
 template<int dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
-		double rect_length_fe, unsigned refine_level, unsigned max_iter, 
-		double stop_accuracy, const Function<dim> *right_hand_side, 
+		double rect_length_fe, double rect_width_fe, unsigned refine_level, 
+		unsigned max_iter, double stop_accuracy, const Function<dim> *right_hand_side, 
 		Function<dim> *boundary_values, bool constraints_are_periodic) :
 		fe(1), dof_handler(*triangulation) {
 
@@ -26,7 +26,8 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
   			for (unsigned int f=0; f<GeometryInfo<dim>::faces_per_cell; ++f) {
     			if (cell->face(f)->at_boundary()) {
       				if (cell->face(f)->center()[0] == 0 ||
-      						cell->face(f)->center()[0] == rect_length_fe)
+      						cell->face(f)->center()[0] == rect_length_fe || 
+      						cell->face(f)->center()[1] == rect_width_fe)
         				cell->face(f)->set_boundary_id(1);
         		}
 			}
@@ -36,13 +37,12 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->triangulation->refine_global(refine_level);
 }
 
-/*template<int dim>
-void LaplaceSolver<dim>::make_periodicity_constraints(
-		ConstraintMatrix *constraints, DoFHandler<dim> *dof_handler) {
+template<int dim>
+void LaplaceSolver<dim>::make_periodicity_constraints() {
 	std::map<unsigned int, double> dof_locations;
 
-	for (DoFHandler<2>::active_cell_iterator cell = dof_handler->begin_active();
-			cell != dof_handler->end(); ++cell) {
+	for (DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
+			cell != dof_handler.end(); ++cell) {
 		if (cell->at_boundary() && cell->face(1)->at_boundary()) {
 
 			dof_locations[cell->face(1)->vertex_dof_index(0, 0)] =
@@ -52,12 +52,12 @@ void LaplaceSolver<dim>::make_periodicity_constraints(
 		}
 	}
 
-	for (DoFHandler<2>::active_cell_iterator cell = dof_handler->begin_active();
-			cell != dof_handler->end(); ++cell) {
+	for (DoFHandler<2>::active_cell_iterator cell = dof_handler.begin_active();
+			cell != dof_handler.end(); ++cell) {
 		if (cell->at_boundary() && cell->face(0)->at_boundary()) {
 			for (unsigned int face_vertex = 0; face_vertex < 2; ++face_vertex) {
 
-				constraints->add_line(
+				constraints.add_line(
 						cell->face(0)->vertex_dof_index(face_vertex, 0));
 				std::map<unsigned int, double>::const_iterator p =
 						dof_locations.begin();
@@ -65,7 +65,7 @@ void LaplaceSolver<dim>::make_periodicity_constraints(
 					if (std::fabs(
 							p->second - cell->face(0)->vertex(face_vertex)[1])
 							< 1e-8) {
-						constraints->add_entry(
+						constraints.add_entry(
 								cell->face(0)->vertex_dof_index(face_vertex, 0),
 								p->first, 1.0);
 						break;
@@ -77,17 +77,17 @@ void LaplaceSolver<dim>::make_periodicity_constraints(
 			}
 		}
 	}
-}*/
+}
 
 template<int dim>
 void LaplaceSolver<dim>::setup_system() {
 
 	dof_handler.distribute_dofs(fe);
 
-	/*if (constraints_are_periodic) {
+	if(constraints_are_periodic) {
 		ConstraintMatrix constraints;
 		constraints.clear();
-		make_periodicity_constraints(&constraints, &dof_handler);
+		make_periodicity_constraints();
 		VectorTools::interpolate_boundary_values(dof_handler, 1,
 				ZeroFunction<2>(), constraints);
 		constraints.close();
@@ -97,11 +97,11 @@ void LaplaceSolver<dim>::setup_system() {
 		sparsity_pattern.copy_from(dsp);
 	}
 
-	else {*/
+	else {
 		DynamicSparsityPattern dsp(dof_handler.n_dofs());
 		DoFTools::make_sparsity_pattern(dof_handler, dsp);
 		sparsity_pattern.copy_from(dsp);
-	//}
+	}
 
 	system_matrix.reinit(sparsity_pattern);
 	solution_vec.reinit(dof_handler.n_dofs());
