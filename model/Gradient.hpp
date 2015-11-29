@@ -57,7 +57,7 @@ void Gradient<dim>::compute_derived_quantities_scalar(
 		//for (unsigned int d = 0; d < dim; ++d){
 			computed_quantities[q](0) = sqrt(duh[q][0]*duh[q][0]+duh[q][1]*duh[q][1]);
 		//	grad_u[d] = duh[q][d];
-		//	std::cout << duh[q][d] << std::endl;
+		 	//std::cout << computed_quantities[q](0) << std::endl;
 		//}
 		//computed_quantities[q](0) = grad_u.norm();
 	}
