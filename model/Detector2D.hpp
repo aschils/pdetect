@@ -1,12 +1,12 @@
 /*
- * Detector.hpp
+ * Detector2D.hpp
  *
  *  Created on: 22 nov. 2015
  *      Author: aschils
  */
 
-#ifndef __DETECTOR_HPP__
-#define __DETECTOR_HPP__
+#ifndef __DETECTOR2D_HPP__
+#define __DETECTOR2D_HPP__
 
 #include "Solution.hpp"
 #include "Gradient.hpp"

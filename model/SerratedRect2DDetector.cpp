@@ -88,8 +88,9 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
 			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
 			strip_length_fe, strip_width_fe);
-	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
-			max_iter, stop_accuracy, zero_right_hand_side, boundary_val, false);
+	rect_potential_solver = new LaplaceSolver<2>(triangulation, rect_length_fe, 
+			refine_level, max_iter, stop_accuracy, zero_right_hand_side, 
+			boundary_val, true);
 
 	boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
 			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
@@ -99,8 +100,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
 			pitch_length_fe);
 	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
-			boundary_val_weight, false);
+			rect_length_fe, refine_level, max_iter, stop_accuracy, 
+			zero_right_hand_side, boundary_val_weight, true);
 }
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {

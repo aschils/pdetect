@@ -7,9 +7,9 @@
 
 template<int dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
-		unsigned refine_level, unsigned max_iter, double stop_accuracy,
-		const Function<dim> *right_hand_side, Function<dim> *boundary_values,
-		bool constraints_are_periodic) :
+		double rect_length_fe, unsigned refine_level, unsigned max_iter, 
+		double stop_accuracy, const Function<dim> *right_hand_side, 
+		Function<dim> *boundary_values, bool constraints_are_periodic) :
 		fe(1), dof_handler(*triangulation) {
 
 	this->constraints_are_periodic = constraints_are_periodic;
@@ -20,14 +20,23 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->stop_accuracy = stop_accuracy;
 
 	if (constraints_are_periodic) {
-		this->triangulation->begin_active()->face(0)->set_boundary_id(1);
-		this->triangulation->begin_active()->face(1)->set_boundary_id(1);
+		for (typename Triangulation<dim>::active_cell_iterator
+       				cell = triangulation->begin_active();
+     				cell != triangulation->end(); ++cell) {
+  			for (unsigned int f=0; f<GeometryInfo<dim>::faces_per_cell; ++f) {
+    			if (cell->face(f)->at_boundary()) {
+      				if (cell->face(f)->center()[0] == 0 ||
+      						cell->face(f)->center()[0] == rect_length_fe)
+        				cell->face(f)->set_boundary_id(1);
+        		}
+			}
+    	}
 	}
 
 	this->triangulation->refine_global(refine_level);
 }
 
-template<int dim>
+/*template<int dim>
 void LaplaceSolver<dim>::make_periodicity_constraints(
 		ConstraintMatrix *constraints, DoFHandler<dim> *dof_handler) {
 	std::map<unsigned int, double> dof_locations;
@@ -68,14 +77,14 @@ void LaplaceSolver<dim>::make_periodicity_constraints(
 			}
 		}
 	}
-}
+}*/
 
 template<int dim>
 void LaplaceSolver<dim>::setup_system() {
 
 	dof_handler.distribute_dofs(fe);
 
-	if (constraints_are_periodic) {
+	/*if (constraints_are_periodic) {
 		ConstraintMatrix constraints;
 		constraints.clear();
 		make_periodicity_constraints(&constraints, &dof_handler);
@@ -88,11 +97,11 @@ void LaplaceSolver<dim>::setup_system() {
 		sparsity_pattern.copy_from(dsp);
 	}
 
-	else {
+	else {*/
 		DynamicSparsityPattern dsp(dof_handler.n_dofs());
 		DoFTools::make_sparsity_pattern(dof_handler, dsp);
 		sparsity_pattern.copy_from(dsp);
-	}
+	//}
 
 	system_matrix.reinit(sparsity_pattern);
 	solution_vec.reinit(dof_handler.n_dofs());
