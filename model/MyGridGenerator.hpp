@@ -75,8 +75,8 @@ public:
 
 private:
 
-	static void gen_points_for_serrated_hrect(double length, double hole_length,
-			double hole_width, double inter_hole_space,
+	static void gen_points_for_serrated_hrect(double length, double width,
+			double hole_length,	double hole_width, double inter_hole_space,
 			unsigned nbr_of_cells_fst_dim, unsigned nbr_of_cells_scd_dim,
 			std::vector<Point<2> > &points);
 

@@ -35,7 +35,7 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 template<int dim>
 bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 
-	double epsilon = 0.00000001;
+	double epsilon = 0.00001;
 
 	double x = p[0];
 	double y = p[1];

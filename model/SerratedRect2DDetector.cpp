@@ -132,7 +132,8 @@ Solution<2> SerratedRect2DDetector::compute_weighting_potential() {
 
 std::string SerratedRect2DDetector::params_to_string() {
 
-	std::string str = "nbr_of_strips_" + std::to_string(nbr_of_strips)
+	std::string str = "width"+ std::to_string(rect_width) +"_nbr_of_strips_" +
+			std::to_string(nbr_of_strips)
 			+ +"_strip_length_" + std::to_string(strip_length) + "_strip_width_"
 			+ std::to_string(strip_width) + "_pitch_" + std::to_string(pitch)
 			+ "_strip_potential_" + std::to_string(strip_potential)
