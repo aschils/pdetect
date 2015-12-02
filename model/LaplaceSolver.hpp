@@ -31,8 +31,12 @@
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/fe_field_function.h>
+
+#include <deal.II/numerics/data_out_dof_data.h>
+
 #include <fstream>
 #include <iostream>
+#include <unordered_map>
 
 #include "Gradient.hpp"
 #include "Solution.hpp"
@@ -56,7 +60,7 @@ public:
 
 	void compute_solution();
 	Solution<dim> get_solution();
-	void compute_gradient_of_solution(std::string gradient_file_path);
+	DataOut<dim> compute_gradient_of_solution();
 
 private:
 
