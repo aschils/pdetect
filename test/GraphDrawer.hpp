@@ -27,6 +27,11 @@ public:
 		data_out.write_vtk(output);
 	}
 
+	static void draw_vtk_graph(DataOut<dim> data_out, std::string output_file) {
+		std::ofstream output(output_file);
+		data_out.write_vtk(output);
+	}
+
 };
 
 #endif
