@@ -120,10 +120,20 @@ Solution<2> SerratedRect2DDetector::compute_potential() {
 	return rect_potential_solver->get_solution();
 }
 
-void SerratedRect2DDetector::compute_electric_field(
-		std::string gradient_file_path) {
-	rect_potential_solver->compute_gradient_of_solution(gradient_file_path);
+DataOut<2> SerratedRect2DDetector::compute_electric_field() {
+	electric_field_data_container = rect_potential_solver->compute_gradient_of_solution();
+	std::stringstream gradient_stream;
+	electric_field_data_container.write_gnuplot(gradient_stream);
+    electric_field = Utils::parse_gnuplot_2D(gradient_stream);
+    return electric_field_data_container;
 }
+
+std::pair<double, double> SerratedRect2DDetector::get_electric_field(
+		Point<2> p){
+	std::pair<double, double> coord(p[0], p[1]);
+	return electric_field[coord];
+}
+
 
 Solution<2> SerratedRect2DDetector::compute_weighting_potential() {
 	rect_potential_solver_weight->compute_solution();
