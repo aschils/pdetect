@@ -50,13 +50,10 @@ void Gradient<dim>::compute_derived_quantities_scalar(
 	const unsigned int n_quadrature_points = uh.size();
 
 	for (unsigned int q = 0; q < n_quadrature_points; ++q) {
-
 		for (unsigned int d = 0; d < dim; ++d)
 			computed_quantities[q](d) = duh[q][d];
-
 		//sqrt(
 		//		duh[q][0] * duh[q][0] + duh[q][1] * duh[q][1]);
-
 	}
 }
 
