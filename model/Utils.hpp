@@ -51,15 +51,13 @@ public:
 			mkdir(cpath, 0777);
 	}
 
-	template <unsigned dim>
-	static Vector<double> parse_gnuplot(std::stringstream &gnuplot_stream) {
+	template<unsigned dim>
+	static void parse_gnuplot(std::stringstream &gnuplot_stream,
+			unsigned nbr_of_components,
+			std::vector<std::pair<std::vector<double>, std::vector<double> > > &coord_and_data) {
 
-
-		std::vector<double> vec;
 		std::string line;
-		unsigned numbers_per_line = 2*dim;
-
-		unsigned count = 0;
+		unsigned numbers_per_line = dim + nbr_of_components;
 
 		while (getline(gnuplot_stream, line)) {
 
@@ -67,18 +65,42 @@ public:
 				continue;
 
 			std::vector<double> numbers = parse_gnuplot_line(line);
-
 			if (numbers.size() != numbers_per_line)
 				continue;
 
-			for(unsigned i=dim; i<numbers_per_line; i++)
-				vec.push_back(numbers[i]);
-		}
+			std::vector<double> point_coord(dim);
+			for (unsigned i = 0; i < dim; i++)
+				point_coord[i] = numbers[i];
 
-		Vector<double> data(vec.size());
-		for(unsigned i=0; i<vec.size(); i++)
-			data[i] = vec[i];
-		return data;
+			std::vector<double> point_data(nbr_of_components);
+			for (unsigned i = dim; i < numbers_per_line; i++)
+				point_data[i - dim] = numbers[i];
+
+			std::pair<std::vector<double>, std::vector<double> > coord_and_data_pair(
+					point_coord, point_data);
+			coord_and_data.push_back(coord_and_data_pair);
+		}
+	}
+
+	static void print_vec_components(std::vector<double> vec) {
+		for (unsigned j = 0; j < vec.size(); j++) {
+			std::cout << vec[j];
+
+			if (j != vec.size() - 1)
+				std::cout << ",";
+		}
+	}
+
+	static void print_vec_of_pair_of_vec(
+			std::vector<std::pair<std::vector<double>, std::vector<double> > > vec) {
+		for (unsigned i = 0; i < vec.size(); i++) {
+
+			std::cout << "[(";
+			print_vec_components(vec[i].first);
+			std::cout << ") (";
+			print_vec_components(vec[i].second);
+			std::cout << ")] ";
+		}
 	}
 
 private:
