@@ -16,6 +16,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/lac/vector.h>
 
 #include <iostream>
 #include <fstream>
@@ -23,13 +24,7 @@
 #include <unordered_map>
 #include <functional>
 
-template<>
-struct std::hash<std::pair<double, double> > {
-public:
-	size_t operator()(std::pair<double, double> x) const throw () {
-		return std::hash<double>()(x.first) ^ std::hash<double>()(x.second);
-	}
-};
+using namespace dealii;
 
 class Utils {
 
@@ -56,30 +51,15 @@ public:
 			mkdir(cpath, 0777);
 	}
 
-	/**
-	 * Parse gnuplot file with 4 decimal numbers per line x,y,v1,v2.
-	 * File format:
-	 * #
-	 * # Gnu plot comments are ignored
-	 * .
-	 * .
-	 * .
-	 * #
-	 *
-	 * x y v1 v2
-	 * .
-	 * .
-	 * .
-	 *
-	 * The returned hashmap
-	 *
-	 */
-	static std::unordered_map<std::pair<double, double>,
-			std::pair<double, double> > parse_gnuplot_2D(
-			std::stringstream &gnuplot_stream) {
+	template <unsigned dim>
+	static Vector<double> parse_gnuplot(std::stringstream &gnuplot_stream) {
 
-		std::unordered_map<std::pair<double, double>, std::pair<double, double> > data;
+
+		std::vector<double> vec;
 		std::string line;
+		unsigned numbers_per_line = 2*dim;
+
+		unsigned count = 0;
 
 		while (getline(gnuplot_stream, line)) {
 
@@ -88,15 +68,16 @@ public:
 
 			std::vector<double> numbers = parse_gnuplot_line(line);
 
-			if (numbers.size() != 4)
+			if (numbers.size() != numbers_per_line)
 				continue;
 
-			std::pair<double, double> coord(numbers[0], numbers[1]);
-			std::pair<double, double> vector_values(numbers[2], numbers[3]);
-
-			data[coord] = vector_values;
+			for(unsigned i=dim; i<numbers_per_line; i++)
+				vec.push_back(numbers[i]);
 		}
 
+		Vector<double> data(vec.size());
+		for(unsigned i=0; i<vec.size(); i++)
+			data[i] = vec[i];
 		return data;
 	}
 
