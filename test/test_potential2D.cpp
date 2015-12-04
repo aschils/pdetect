@@ -5,9 +5,10 @@
  *      Author: aschils
  */
 
+#include <deal.II/lac/vector.h>
+
 #include "../model/SerratedRect2DDetector.hpp"
 #include "../model/ZeroRightHandSide.hpp"
-#include "GraphDrawer.hpp"
 #include "../model/Utils.hpp"
 
 void test_serrated_2D_potential() {
@@ -34,8 +35,8 @@ void test_serrated_2D_potential() {
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-		Solution<2> sol = srdd.compute_potential();
-		GraphDrawer<2>::draw_vtk_graph(sol, output_file);
+		SolutionScalar<2> sol = srdd.compute_potential();
+		sol.draw_vtk_graph(output_file);
 	}
 }
 
@@ -67,9 +68,8 @@ void test_serrated_rect_limit_cases() {
 							refine_level, max_iter, stop_accuracy);
 					std::string output_file = output_dir
 							+ srdd.params_to_string() + ".vtk";
-					Solution<2> sol = srdd.compute_potential();
-					GraphDrawer<2>::draw_vtk_graph(sol, output_file);
-
+					SolutionScalar<2> sol = srdd.compute_potential();
+					sol.draw_vtk_graph(output_file);
 				}
 			}
 		}
@@ -99,11 +99,11 @@ void test_electric_field() {
 			+ "_" + std::to_string(nbr_of_strips) + ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-	Solution<2> sol = srdd.compute_potential();
-	DataOut<2> EE_data_container = srdd.compute_electric_field();
+	SolutionScalar<2> sol = srdd.compute_potential();
+	SolutionVector<2> EE_data_container = srdd.compute_electric_field();
 
-	GraphDrawer<2>::draw_vtk_graph(sol, output_file);
-	GraphDrawer<2>::draw_vtk_graph(EE_data_container, output_dir + "EE.vtk");
+	sol.draw_vtk_graph(output_file);
+	EE_data_container.draw_vtk_graph(output_dir + "EE.vtk");
 }
 
 void test_weighting_potential() {
@@ -129,8 +129,8 @@ void test_weighting_potential() {
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-		Solution<2> sol = srdd.compute_weighting_potential();
-		GraphDrawer<2>::draw_vtk_graph(sol, output_file);
+		SolutionScalar<2> sol = srdd.compute_weighting_potential();
+		sol.draw_vtk_graph(output_file);
 	}
 }
 
@@ -152,18 +152,14 @@ void test_various() {
 
 	//for (unsigned width = 60; width <= 300; width += 60) {
 
-		SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length,
-				strip_width, pitch, strip_potential, refine_level, max_iter,
-				stop_accuracy);
-		Solution<2> sol = srdd.compute_potential();
-		DataOut<2> EE_data_container = srdd.compute_electric_field();
-		std::string output_file = output_dir + srdd.params_to_string()+".vtk";
-		GraphDrawer<2>::draw_vtk_graph(sol, output_file);
-		GraphDrawer<2>::draw_vtk_graph(EE_data_container, output_dir + "EE.vtk");
+	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
+			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+	SolutionScalar<2> sol = srdd.compute_potential();
+	SolutionVector<2> EE_data_container = srdd.compute_electric_field();
+	std::string output_file = output_dir + srdd.params_to_string() + ".vtk";
 
-		Point<2> p(0,0);
-		std::pair<double, double> field = srdd.get_electric_field(p);
-		std::cout << field.first << " " <<  field.second << std::endl;
+	sol.draw_vtk_graph(output_file);
+	EE_data_container.draw_vtk_graph(output_dir + "EE.vtk");
 	//}
 }
 

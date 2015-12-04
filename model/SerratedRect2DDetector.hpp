@@ -33,15 +33,13 @@ public:
 
 	~SerratedRect2DDetector();
 
-	Solution<2> compute_potential();
+	SolutionScalar<2> compute_potential();
 
-	DataOut<2> compute_electric_field();
+	SolutionVector<2> compute_electric_field();
 
-	Solution<2> compute_weighting_potential();
+	SolutionScalar<2> compute_weighting_potential();
 
 	std::string params_to_string();
-
-	std::pair<double, double> get_electric_field(Point<2> p);
 
 private:
 
@@ -64,11 +62,6 @@ private:
 	Triangulation<2> *triangulation_weight;
 	SerratedRect2DBoundaryValuesWeight<2> *boundary_val_weight;
 	LaplaceSolver<2> *rect_potential_solver_weight;
-
-	DataOut<2> electric_field_data_container;
-
-	std::unordered_map<std::pair<double, double>, std::pair<double, double> >
-			 electric_field;
 
 	double compute_total_length();
 	double compute_rect_width_fe();
