@@ -16,9 +16,9 @@
 class Detector2D {
 
 public:
-	virtual Solution<2> compute_potential() = 0;
-	virtual Solution<2> compute_weighting_potential() = 0;
-	virtual DataOut<2> compute_electric_field() = 0;
+	virtual SolutionScalar<2> compute_potential() = 0;
+	virtual SolutionScalar<2> compute_weighting_potential() = 0;
+	virtual SolutionVector<2> compute_electric_field() = 0;
 	virtual ~Detector2D(){}
 };
 
