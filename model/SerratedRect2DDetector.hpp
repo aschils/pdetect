@@ -14,6 +14,7 @@
 #include "ZeroRightHandSide.hpp"
 #include "SerratedRect2DBoundaryValues.hpp"
 #include "SerratedRect2DBoundaryValuesWeight.hpp"
+#include "VectorUtils.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 
@@ -35,7 +36,9 @@ public:
 
 	SolutionScalar<2> compute_potential();
 
-	SolutionVector<2> compute_electric_field();
+	SolutionVector<2> compute_gradient_of_potential();
+
+	void compute_electric_field();
 
 	SolutionScalar<2> compute_weighting_potential();
 
@@ -63,10 +66,14 @@ private:
 	SerratedRect2DBoundaryValuesWeight<2> *boundary_val_weight;
 	LaplaceSolver<2> *rect_potential_solver_weight;
 
+	SolutionScalar<2> potential, weighting_potential;
+	SolutionVector<2> gradient_of_potential;
+	std::vector<std::pair<std::vector<double>, std::vector<double> > >
+	electric_field;
+
 	double compute_total_length();
 	double compute_rect_width_fe();
 	void compute_and_set_fe_values();
-
 };
 
 #endif

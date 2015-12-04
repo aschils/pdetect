@@ -117,16 +117,38 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 
 SolutionScalar<2> SerratedRect2DDetector::compute_potential() {
 	rect_potential_solver->compute_solution();
-	return rect_potential_solver->get_solution();
+	potential = rect_potential_solver->get_solution();
+	return potential;
 }
 
-SolutionVector<2> SerratedRect2DDetector::compute_electric_field() {
-	return rect_potential_solver->compute_gradient_of_solution();
+SolutionVector<2> SerratedRect2DDetector::compute_gradient_of_potential() {
+	gradient_of_potential = rect_potential_solver->compute_gradient_of_solution();
+	gradient_of_potential.sort_by_coord();
+	compute_electric_field();
+	return gradient_of_potential;
+}
+
+void SerratedRect2DDetector::compute_electric_field() {
+
+	std::vector<std::pair<std::vector<double>, std::vector<double> > >
+		coord_and_potential_sorted =
+				gradient_of_potential.coord_and_data_sorted;
+	electric_field.resize(coord_and_potential_sorted.size());
+
+	for(unsigned i=0; i<coord_and_potential_sorted.size(); i++){
+		std::pair<std::vector<double>, std::vector<double> > EF_at_one_point;
+		EF_at_one_point.first = coord_and_potential_sorted[i].first;
+		EF_at_one_point.second = VectorUtils::opposite_vector(
+				coord_and_potential_sorted[i].second);
+		electric_field[i] = EF_at_one_point;
+	}
+	VectorUtils::print_vec_of_pair_of_vec(electric_field);
 }
 
 SolutionScalar<2> SerratedRect2DDetector::compute_weighting_potential() {
 	rect_potential_solver_weight->compute_solution();
-	return rect_potential_solver_weight->get_solution();
+	weighting_potential = rect_potential_solver_weight->get_solution();
+	return weighting_potential;
 }
 
 std::string SerratedRect2DDetector::params_to_string() {
