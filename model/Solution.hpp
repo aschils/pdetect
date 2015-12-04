@@ -14,6 +14,8 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_dof_data.h>
 
+#include "Utils.hpp"
+
 using namespace dealii;
 
 class Solution {
@@ -23,6 +25,7 @@ public:
 	virtual void draw_vtk_graph(std::string output_file) = 0;
 
 	virtual ~Solution() {
+
 	}
 };
 
@@ -31,10 +34,12 @@ class SolutionScalar: public Solution {
 
 public:
 
+	std::vector<std::vector<double> > coord;
+
 	DoFHandler<dim> *dof_handler;
 	Vector<double> data;
 
-	SolutionScalar(Vector<double> data, DoFHandler<dim> *dof_handler){
+	SolutionScalar(Vector<double> data, DoFHandler<dim> *dof_handler) {
 		this->dof_handler = dof_handler;
 		this->data = data;
 	}
@@ -55,19 +60,43 @@ class SolutionVector: public Solution {
 public:
 
 	DoFHandler<dim> *dof_handler;
-	Vector<double> data;
+	std::vector<std::pair<std::vector<double>, std::vector<double> > >
+	coord_and_data_sorted;
 	DataOut<dim> data_out; //Used to plot vtk file with deal.ii
 
-	SolutionVector(Vector<double> data, DoFHandler<dim> *dof_handler,
-			DataOut<dim> data_out){
+	SolutionVector(std::vector<std::pair<std::vector<double>,
+			std::vector<double> > > coord_and_data,
+			DoFHandler<dim> *dof_handler, DataOut<dim> data_out) {
 		this->dof_handler = dof_handler;
-		this->data = data;
 		this->data_out = data_out;
+		this->coord_and_data_sorted = coord_and_data;
+		sort_data_and_point();
 	}
 
 	void draw_vtk_graph(std::string output_file) {
 		std::ofstream output(output_file);
 		data_out.write_vtk(output);
+	}
+
+	void sort_data_and_point() {
+
+		auto cmp =
+				[](std::pair<std::vector<double>,
+						std::vector<double>> const & a,
+						std::pair<std::vector<double>,
+						std::vector<double>> const & b){
+			double epsilon = 0.00001;
+			for(int i=dim-1; i>=0; i--){
+				if(!Utils::greater_than_or_equals_double((a.first)[i], (b.first)[i], epsilon))
+					return true;
+				else if(!Utils::less_than_or_equals_double(a.first[i], b.first[i], epsilon))
+					return false;
+			}
+			return false;
+				};
+
+		std::sort(coord_and_data_sorted.begin(), coord_and_data_sorted.end(), cmp);
+		//Utils::print_vec_of_pair_of_vec(coord_and_data_sorted);
 	}
 };
 

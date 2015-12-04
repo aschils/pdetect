@@ -194,9 +194,10 @@ LaplaceSolver<dim>::compute_gradient_of_solution() {
 	 std::stringstream gradient_stream;
 	 //TODO find better way to retrieve data from DataPostProcessor (Gradient)
 	 gradient_data_container.write_gnuplot(gradient_stream);
-	 Vector<double> gradient_val =
-			 Utils::parse_gnuplot<dim>(gradient_stream);
-	 SolutionVector<dim> sol(gradient_val, &dof_handler,
+	 std::vector<std::pair<std::vector<double>, std::vector<double> > >
+	 	coord_and_data;
+	 Utils::parse_gnuplot<dim>(gradient_stream, dim, coord_and_data);
+	 SolutionVector<dim> sol(coord_and_data, &dof_handler,
 					 gradient_data_container);
 	 return sol;
 }
