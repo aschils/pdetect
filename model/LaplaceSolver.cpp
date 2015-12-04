@@ -170,59 +170,39 @@ void LaplaceSolver<dim>::assemble_system() {
 
 template<int dim>
 void LaplaceSolver<dim>::solve() {
-	SolverControl solver_control(max_iter, stop_accuracy); //10000 1e-12
+	SolverControl solver_control(max_iter, stop_accuracy);
 	SolverCG<> solver(solver_control);
 	solver.solve(system_matrix, solution_vec, system_rhs,
 			PreconditionIdentity());
 }
-
-/*
- template<int dim>
- void LaplaceSolver<dim>::output_results(std::string result_file_path) const {
- DataOut < dim > data_out;
- data_out.attach_dof_handler(dof_handler);
- data_out.add_data_vector(solution, "solution");
- data_out.build_patches();
- std::ofstream output(result_file_path);
- data_out.write_vtk(output);
- }*/
 
 template<int dim>
 void LaplaceSolver<dim>::compute_solution() {
 	setup_system();
 	assemble_system();
 	solve();
-	//output_results(result_file_path);
 }
 
 template<int dim>
-DataOut<dim> LaplaceSolver<dim>::compute_gradient_of_solution() {
-
+SolutionVector<dim>
+LaplaceSolver<dim>::compute_gradient_of_solution() {
 	 Gradient<dim> grad;
 	 DataOut<dim> gradient_data_container;
 	 gradient_data_container.attach_dof_handler(dof_handler);
 	 gradient_data_container.add_data_vector(solution_vec, grad);
 	 gradient_data_container.build_patches();
-	 /*
-	 //std::ofstream output(gradient_file_path);
 	 std::stringstream gradient_stream;
-	 //data_out.write_vtk(output);
+	 //TODO find better way to retrieve data from DataPostProcessor (Gradient)
 	 gradient_data_container.write_gnuplot(gradient_stream);
-
-	 std::unordered_map<std::pair<double, double>, std::pair<double, double> >
-	 gradient_values = Utils::parse_gnuplot_2D(gradient_stream);*/
-
-	 return gradient_data_container;
-	//	 for(auto const &ent1 : gradient_values) {
-	//	   std::cout << "coord: (" << ent1.first.first << "," << ent1.first.second << ")"
-	//			  << " vect: (" << ent1.second.first << "," << ent1.second.second << ")" << std::endl;
-	//	 }
-
-	 //std::cout << triangulation->get_vertices().size() << " " << gradient_values.size() << std::endl;
+	 Vector<double> gradient_val =
+			 Utils::parse_gnuplot<dim>(gradient_stream);
+	 SolutionVector<dim> sol(gradient_val, &dof_handler,
+					 gradient_data_container);
+	 return sol;
 }
 
 template<int dim>
-Solution<dim> LaplaceSolver<dim>::get_solution() {
-	Solution<dim> sol(solution_vec, &dof_handler);
+SolutionScalar<dim> LaplaceSolver<dim>::get_solution() {
+	SolutionScalar<dim> sol(solution_vec, &dof_handler);
 	return sol;
 }

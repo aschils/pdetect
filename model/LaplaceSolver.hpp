@@ -59,8 +59,8 @@ public:
 					bool constraints_are_periodic);
 
 	void compute_solution();
-	Solution<dim> get_solution();
-	DataOut<dim> compute_gradient_of_solution();
+	SolutionScalar<dim> get_solution();
+	SolutionVector<dim> compute_gradient_of_solution();
 
 private:
 
