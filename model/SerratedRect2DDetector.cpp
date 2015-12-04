@@ -88,8 +88,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
 			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
 			strip_length_fe, strip_width_fe);
-	rect_potential_solver = new LaplaceSolver<2>(triangulation, rect_length_fe, 
-			rect_width_fe, refine_level, max_iter, stop_accuracy, 
+	rect_potential_solver = new LaplaceSolver<2>(triangulation, rect_length_fe,
+			rect_width_fe, refine_level, max_iter, stop_accuracy,
 			zero_right_hand_side, boundary_val, true);
 
 	boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
@@ -100,8 +100,58 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
 			pitch_length_fe);
 	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			rect_length_fe, rect_width_fe, refine_level, max_iter, stop_accuracy, 
-			zero_right_hand_side, boundary_val_weight, true);
+			rect_length_fe, rect_width_fe, refine_level, max_iter,
+			stop_accuracy, zero_right_hand_side, boundary_val_weight, true);
+	nbr_of_points_along_axes();
+}
+
+template<>
+struct std::hash<Point<2> > {
+public:
+	size_t operator()(Point<2> x) const throw () {
+		return std::hash<double>()(x[0]) ^ std::hash<double>()(x[1]);
+	}
+};
+
+/**
+ * Does not give the expected result:
+ *
+ * without the map, too much points regarding the number of points returned
+ * by LaplaceSolver computation
+ *
+ * with the map, too few points...
+ */
+void SerratedRect2DDetector::nbr_of_points_along_axes() {
+
+	std::unordered_map<Point<2>, bool> already_counted;
+
+	Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
+			endc = triangulation->end();
+	for (; cell != endc; ++cell) {
+		for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v) {
+
+			Point<2> p = cell->vertex(v);
+
+			if (p[1] == 0 && (already_counted.find(p) == already_counted.end())){
+				nbr_of_pts_along_x++;
+				std::pair<Point<2>, bool> pair;
+				pair.first = p;
+				pair.second = true;
+				already_counted.insert(pair);
+			}
+
+			else if (cell->vertex(v)[0] == 0 && (already_counted.find(p) == already_counted.end())){
+				nbr_of_pts_along_y++;
+				std::pair<Point<2>, bool> pair;
+				pair.first = p;
+				pair.second = true;
+				already_counted.insert(pair);
+			}
+		}
+	}
+
+	std::cout << "along x: " << nbr_of_pts_along_x << " along y: "
+			<< nbr_of_pts_along_y << std::endl;
 }
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {
@@ -122,7 +172,8 @@ SolutionScalar<2> SerratedRect2DDetector::compute_potential() {
 }
 
 SolutionVector<2> SerratedRect2DDetector::compute_gradient_of_potential() {
-	gradient_of_potential = rect_potential_solver->compute_gradient_of_solution();
+	gradient_of_potential =
+			rect_potential_solver->compute_gradient_of_solution();
 	gradient_of_potential.sort_by_coord();
 	compute_electric_field();
 	return gradient_of_potential;
@@ -130,19 +181,23 @@ SolutionVector<2> SerratedRect2DDetector::compute_gradient_of_potential() {
 
 void SerratedRect2DDetector::compute_electric_field() {
 
-	std::vector<std::pair<std::vector<double>, std::vector<double> > >
-		coord_and_potential_sorted =
-				gradient_of_potential.coord_and_data_sorted;
+	std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_potential_sorted =
+			gradient_of_potential.coord_and_data_sorted;
 	electric_field.resize(coord_and_potential_sorted.size());
 
-	for(unsigned i=0; i<coord_and_potential_sorted.size(); i++){
+	for (unsigned i = 0; i < coord_and_potential_sorted.size(); i++) {
 		std::pair<std::vector<double>, std::vector<double> > EF_at_one_point;
 		EF_at_one_point.first = coord_and_potential_sorted[i].first;
 		EF_at_one_point.second = VectorUtils::opposite_vector(
 				coord_and_potential_sorted[i].second);
 		electric_field[i] = EF_at_one_point;
 	}
-	VectorUtils::print_vec_of_pair_of_vec(electric_field);
+	std::cout << electric_field.size() << std::endl;
+	//VectorUtils::print_vec_of_pair_of_vec(electric_field);
+}
+
+std::vector<double> SerratedRect2DDetector::get_electric_field(Point<2> p) {
+
 }
 
 SolutionScalar<2> SerratedRect2DDetector::compute_weighting_potential() {
@@ -153,9 +208,9 @@ SolutionScalar<2> SerratedRect2DDetector::compute_weighting_potential() {
 
 std::string SerratedRect2DDetector::params_to_string() {
 
-	std::string str = "width"+ std::to_string(rect_width) +"_nbr_of_strips_" +
-			std::to_string(nbr_of_strips)
-			+ +"_strip_length_" + std::to_string(strip_length) + "_strip_width_"
+	std::string str = "width" + std::to_string(rect_width) + "_nbr_of_strips_"
+			+ std::to_string(nbr_of_strips) + +"_strip_length_"
+			+ std::to_string(strip_length) + "_strip_width_"
 			+ std::to_string(strip_width) + "_pitch_" + std::to_string(pitch)
 			+ "_strip_potential_" + std::to_string(strip_potential)
 			+ "_refine_level_" + std::to_string(refine_level) + "_max_iter_"

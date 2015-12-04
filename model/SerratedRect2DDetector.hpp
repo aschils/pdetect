@@ -8,6 +8,8 @@
 #ifndef __SERRATED_RECT_2D_DETECTOR_HPP__
 #define __SERRATED_RECT_2D_DETECTOR_HPP__
 
+#include <unordered_map>
+
 #include "Detector2D.hpp"
 #include "LaplaceSolver.hpp"
 #include "MyGridGenerator.hpp"
@@ -40,6 +42,8 @@ public:
 
 	void compute_electric_field();
 
+	std::vector<double> get_electric_field(Point<2> p);
+
 	SolutionScalar<2> compute_weighting_potential();
 
 	std::string params_to_string();
@@ -56,6 +60,8 @@ private:
 	double stop_accuracy = 1.0;
 
 	double strip_length_fe, strip_width_fe, pitch_length_fe = 1.0;
+
+	unsigned nbr_of_pts_along_x, nbr_of_pts_along_y = 0;
 
 	Triangulation<2> *triangulation;
 	ZeroRightHandSide<2> *zero_right_hand_side;
@@ -74,6 +80,7 @@ private:
 	double compute_total_length();
 	double compute_rect_width_fe();
 	void compute_and_set_fe_values();
+	void nbr_of_points_along_axes();
 };
 
 #endif
