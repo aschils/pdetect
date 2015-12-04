@@ -82,27 +82,6 @@ public:
 		}
 	}
 
-	static void print_vec_components(std::vector<double> vec) {
-		for (unsigned j = 0; j < vec.size(); j++) {
-			std::cout << vec[j];
-
-			if (j != vec.size() - 1)
-				std::cout << ",";
-		}
-	}
-
-	static void print_vec_of_pair_of_vec(
-			std::vector<std::pair<std::vector<double>, std::vector<double> > > vec) {
-		for (unsigned i = 0; i < vec.size(); i++) {
-
-			std::cout << "[(";
-			print_vec_components(vec[i].first);
-			std::cout << ") (";
-			print_vec_components(vec[i].second);
-			std::cout << ")] ";
-		}
-	}
-
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
