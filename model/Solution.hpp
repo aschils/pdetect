@@ -15,6 +15,7 @@
 #include <deal.II/numerics/data_out_dof_data.h>
 
 #include "Utils.hpp"
+#include "VectorUtils.hpp"
 
 using namespace dealii;
 
@@ -38,6 +39,8 @@ public:
 
 	DoFHandler<dim> *dof_handler;
 	Vector<double> data;
+
+	SolutionScalar(){}
 
 	SolutionScalar(Vector<double> data, DoFHandler<dim> *dof_handler) {
 		this->dof_handler = dof_handler;
@@ -64,13 +67,14 @@ public:
 	coord_and_data_sorted;
 	DataOut<dim> data_out; //Used to plot vtk file with deal.ii
 
+	SolutionVector(){}
+
 	SolutionVector(std::vector<std::pair<std::vector<double>,
 			std::vector<double> > > coord_and_data,
 			DoFHandler<dim> *dof_handler, DataOut<dim> data_out) {
 		this->dof_handler = dof_handler;
 		this->data_out = data_out;
 		this->coord_and_data_sorted = coord_and_data;
-		sort_data_and_point();
 	}
 
 	void draw_vtk_graph(std::string output_file) {
@@ -78,7 +82,7 @@ public:
 		data_out.write_vtk(output);
 	}
 
-	void sort_data_and_point() {
+	void sort_by_coord() {
 
 		auto cmp =
 				[](std::pair<std::vector<double>,
@@ -96,7 +100,7 @@ public:
 				};
 
 		std::sort(coord_and_data_sorted.begin(), coord_and_data_sorted.end(), cmp);
-		//Utils::print_vec_of_pair_of_vec(coord_and_data_sorted);
+		//VectorUtils::print_vec_of_pair_of_vec(coord_and_data_sorted);
 	}
 };
 
