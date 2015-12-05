@@ -17,9 +17,11 @@
 #include "SerratedRect2DBoundaryValues.hpp"
 #include "SerratedRect2DBoundaryValuesWeight.hpp"
 #include "VectorUtils.hpp"
+#include <functional>
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 
+using namespace std;
 
 class SerratedRect2DDetector : public Detector2D {
 
@@ -59,7 +61,7 @@ private:
 
 	double strip_length_fe, strip_width_fe, pitch_length_fe = 1.0;
 
-	unsigned nbr_of_pts_along_x, nbr_of_pts_along_y = 0;
+	unsigned nbr_of_pts_along_x = 0, nbr_of_pts_along_y = 0;
 
 	Triangulation<2> *triangulation;
 	ZeroRightHandSide<2> *zero_right_hand_side;
