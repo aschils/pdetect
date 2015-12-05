@@ -117,12 +117,10 @@ public:
 
 }
 /**
- * Does not give the expected result:
- *
- * without the map, too much points regarding the number of points returned
- * by LaplaceSolver computation
- *
- * with the map, too few points...
+ * The number of points along an axis is simply the number
+ * of cells along this axes plus one. 
+ * (The bottom left corner of each cells plus de bottom right 
+ * corner of the last cell)
  */
 void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
@@ -133,9 +131,9 @@ void SerratedRect2DDetector::nbr_of_points_along_axes() {
 			if(cell->face(v)->at_boundary()){
 				Point<2> p = cell->face(v)->center();
 
-				if (Utils::equals_double(p[1], 0, 0.000001))
+				if(Utils::equals_double(p[1], 0, 0.000001))
 					nbr_of_pts_along_x++;
-				else if (Utils::equals_double(p[0], 0, 0.000001))
+				else if(Utils::equals_double(p[0], 0, 0.000001))
 					nbr_of_pts_along_y++;
 			}
 		}
@@ -143,9 +141,6 @@ void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
 	nbr_of_pts_along_x++;
 	nbr_of_pts_along_y++;
-
-	std::cout << "along x: " << nbr_of_pts_along_x << " along y: "
-			<< nbr_of_pts_along_y << std::endl;
 }
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {
