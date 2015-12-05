@@ -8,11 +8,11 @@
 using namespace dealii;
 
 template<int dim>
-class Gradient: public DataPostprocessor<dim> {
+class Derivatives: public DataPostprocessor<dim> {
 
 public:
 
-	Gradient();
+	Derivatives();
 
 	virtual void compute_derived_quantities_scalar(
 			const std::vector<double> &uh,
@@ -32,15 +32,16 @@ public:
 };
 
 template<int dim>
-Gradient<dim>::Gradient(){}
+Derivatives<dim>::Derivatives(){}
 
 template<int dim>
-UpdateFlags Gradient<dim>::get_needed_update_flags() const {
-	return update_values | update_gradients | update_q_points;
+UpdateFlags Derivatives<dim>::get_needed_update_flags() const {
+	return update_values | update_gradients | update_q_points |
+			update_second_derivatives;
 }
 
 template<int dim>
-void Gradient<dim>::compute_derived_quantities_scalar(
+void Derivatives<dim>::compute_derived_quantities_scalar(
 		const std::vector<double> &uh, const std::vector<Tensor<1, dim> > &duh,
 		const std::vector<Tensor<2, dim> > &dduh,
 		const std::vector<Point<dim> > &normals,
@@ -52,20 +53,28 @@ void Gradient<dim>::compute_derived_quantities_scalar(
 	for (unsigned int q = 0; q < n_quadrature_points; ++q) {
 		for (unsigned int d = 0; d < dim; ++d)
 			computed_quantities[q](d) = duh[q][d];
+
+		for(unsigned int i = 0; i<dim; i++){
+			for(unsigned j = 0; j<dim; j++)
+				computed_quantities[q](dim+i*dim+j) = dduh[q][i][j];
+
+		}
 	}
 }
 
 template<int dim>
-std::vector<std::string> Gradient<dim>::get_names() const {
-	std::vector<std::string> solution_names(dim, "Electric_field");
+std::vector<std::string> Derivatives<dim>::get_names() const {
+	std::vector<std::string> solution_names(dim, "gradient");
+	for(unsigned i=0; i<(dim*dim); i++)
+		solution_names.push_back("seconde_derivatives");
 	return solution_names;
 }
 
 template<int dim>
-std::vector<DataComponentInterpretation::DataComponentInterpretation> Gradient<
+std::vector<DataComponentInterpretation::DataComponentInterpretation> Derivatives<
 		dim>::get_data_component_interpretation() const {
     std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    interpretation (dim,
+    interpretation (dim+dim*dim,
                     DataComponentInterpretation::component_is_part_of_vector);
 	return interpretation;
 }
