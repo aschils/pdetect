@@ -35,8 +35,8 @@ void test_serrated_2D_potential() {
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-		SolutionScalar<2> sol = srdd.compute_potential();
-		sol.draw_vtk_graph(output_file);
+		srdd.compute();
+		srdd.draw_vtk_graph_potential(output_file);
 	}
 }
 
@@ -66,10 +66,10 @@ void test_serrated_rect_limit_cases() {
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
 							strip_length, strip_width, pitch, strip_potential,
 							refine_level, max_iter, stop_accuracy);
+					srdd.compute();
 					std::string output_file = output_dir
 							+ srdd.params_to_string() + ".vtk";
-					SolutionScalar<2> sol = srdd.compute_potential();
-					sol.draw_vtk_graph(output_file);
+					srdd.draw_vtk_graph_potential(output_file);
 				}
 			}
 		}
@@ -99,11 +99,9 @@ void test_electric_field() {
 			+ "_" + std::to_string(nbr_of_strips) + ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-	SolutionScalar<2> sol = srdd.compute_potential();
-	SolutionVector<2> EE_data_container = srdd.compute_gradient_of_potential();
-
-	sol.draw_vtk_graph(output_file);
-	EE_data_container.draw_vtk_graph(output_dir + "EE.vtk");
+	srdd.compute();
+	srdd.draw_vtk_graph_potential(output_file);
+	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
 }
 
 void test_weighting_potential() {
@@ -129,8 +127,9 @@ void test_weighting_potential() {
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-		SolutionScalar<2> sol = srdd.compute_weighting_potential();
-		sol.draw_vtk_graph(output_file);
+		srdd.compute();
+		srdd.draw_vtk_graph_potential(output_file);
+		srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
 	}
 }
 
@@ -154,12 +153,10 @@ void test_various() {
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-	SolutionScalar<2> sol = srdd.compute_potential();
-	SolutionVector<2> EE_data_container = srdd.compute_gradient_of_potential();
+	srdd.compute();
 	std::string output_file = output_dir + srdd.params_to_string() + ".vtk";
-
-	sol.draw_vtk_graph(output_file);
-	EE_data_container.draw_vtk_graph(output_dir + "EE.vtk");
+	srdd.draw_vtk_graph_potential(output_file);
+	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
 	//}
 }
 
