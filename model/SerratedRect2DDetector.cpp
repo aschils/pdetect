@@ -105,14 +105,17 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	nbr_of_points_along_axes();
 }
 
+namespace std {
+
 template<>
-struct std::hash<Point<2> > {
+struct hash<dealii::Point<2> > {
 public:
 	size_t operator()(Point<2> x) const throw () {
-		return std::hash<double>()(x[0]) ^ std::hash<double>()(x[1]);
+		return hash<double>()(x[0]) ^ hash<double>()(x[1]);
 	}
 };
 
+}
 /**
  * Does not give the expected result:
  *
@@ -123,34 +126,23 @@ public:
  */
 void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
-	std::unordered_map<Point<2>, bool> already_counted;
-
 	Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
 			endc = triangulation->end();
-	for (; cell != endc; ++cell) {
-		for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v) {
+	for(; cell != endc; ++cell) {
+		for(unsigned int v = 0; v < GeometryInfo<2>::faces_per_cell; ++v) {
+			if(cell->face(v)->at_boundary()){
+				Point<2> p = cell->face(v)->center();
 
-			Point<2> p = cell->vertex(v);
-
-			if (p[1] == 0
-					&& (already_counted.find(p) == already_counted.end())) {
-				nbr_of_pts_along_x++;
-				std::pair<Point<2>, bool> pair;
-				pair.first = p;
-				pair.second = true;
-				already_counted.insert(pair);
-			}
-
-			else if (cell->vertex(v)[0] == 0
-					&& (already_counted.find(p) == already_counted.end())) {
-				nbr_of_pts_along_y++;
-				std::pair<Point<2>, bool> pair;
-				pair.first = p;
-				pair.second = true;
-				already_counted.insert(pair);
+				if (Utils::equals_double(p[1], 0, 0.000001))
+					nbr_of_pts_along_x++;
+				else if (Utils::equals_double(p[0], 0, 0.000001))
+					nbr_of_pts_along_y++;
 			}
 		}
 	}
+
+	nbr_of_pts_along_x++;
+	nbr_of_pts_along_y++;
 
 	std::cout << "along x: " << nbr_of_pts_along_x << " along y: "
 			<< nbr_of_pts_along_y << std::endl;
@@ -194,9 +186,9 @@ void SerratedRect2DDetector::compute_electric_field() {
 	//VectorUtils::print_vec_of_pair_of_vec(electric_field);
 }
 
-std::vector<double> SerratedRect2DDetector::get_electric_field(Point<2> p) {
+/*std::vector<double> SerratedRect2DDetector::get_electric_field(Point<2> p) {
 
-}
+}*/
 
 void SerratedRect2DDetector::draw_vtk_graph_potential(std::string output_file) {
 	solution_potential.draw_vtk_graph_solution(output_file);
@@ -218,4 +210,3 @@ std::string SerratedRect2DDetector::params_to_string() {
 			+ std::to_string(stop_accuracy);
 	return str;
 }
-

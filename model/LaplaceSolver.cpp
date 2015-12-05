@@ -24,7 +24,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 		for (typename Triangulation<dim>::active_cell_iterator cell =
 				triangulation->begin_active(); cell != triangulation->end();
 				++cell) {
-			for (unsigned int f = 0; f < GeometryInfo < dim > ::faces_per_cell;
+			for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell;
 					++f) {
 				if (cell->face(f)->at_boundary()) {
 					if (Utils::equals_double(cell->face(f)->center()[0], 0.0,
@@ -39,7 +39,6 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 			}
 		}
 	}
-
 	this->triangulation->refine_global(refine_level);
 }
 

@@ -161,8 +161,6 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
 
-	double epsilon = 0.000001;
-
 	unsigned nbr_of_cells_scd_dim =	ceil(width / hole_width);
 
 	std::vector<Point<2> > points;
