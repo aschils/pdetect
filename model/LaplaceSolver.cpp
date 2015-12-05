@@ -24,7 +24,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 		for (typename Triangulation<dim>::active_cell_iterator cell =
 				triangulation->begin_active(); cell != triangulation->end();
 				++cell) {
-			for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell;
+			for (unsigned int f = 0; f < GeometryInfo < dim > ::faces_per_cell;
 					++f) {
 				if (cell->face(f)->at_boundary()) {
 					if (Utils::equals_double(cell->face(f)->center()[0], 0.0,
@@ -118,10 +118,9 @@ void LaplaceSolver<dim>::assemble_system() {
 
 	QGauss < dim > quadrature_formula(2);
 
-	FEValues < dim
-			> fe_values(fe, quadrature_formula,
-					update_values | update_gradients | update_quadrature_points
-							| update_JxW_values);
+	fe_values = new FEValues<dim>(fe, quadrature_formula,
+			update_values | update_gradients | update_quadrature_points
+					| update_JxW_values);
 	const unsigned int dofs_per_cell = fe.dofs_per_cell;
 	const unsigned int n_q_points = quadrature_formula.size();
 	FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
@@ -132,7 +131,7 @@ void LaplaceSolver<dim>::assemble_system() {
 
 	for (; cell != endc; ++cell) {
 
-		fe_values.reinit(cell);
+		fe_values->reinit(cell);
 		cell_matrix = 0;
 		cell_rhs = 0;
 
@@ -140,13 +139,13 @@ void LaplaceSolver<dim>::assemble_system() {
 			for (unsigned int i = 0; i < dofs_per_cell; ++i) {
 				for (unsigned int j = 0; j < dofs_per_cell; ++j)
 
-					cell_matrix(i, j) += (fe_values.shape_grad(i, q_index)
-							* fe_values.shape_grad(j, q_index)
-							* fe_values.JxW(q_index));
-				cell_rhs(i) += (fe_values.shape_value(i, q_index)
+					cell_matrix(i, j) += (fe_values->shape_grad(i, q_index)
+							* fe_values->shape_grad(j, q_index)
+							* fe_values->JxW(q_index));
+				cell_rhs(i) += (fe_values->shape_value(i, q_index)
 						* (*right_hand_side).value(
-								fe_values.quadrature_point(q_index))
-						* fe_values.JxW(q_index));
+								fe_values->quadrature_point(q_index))
+						* fe_values->JxW(q_index));
 			}
 
 		cell->get_dof_indices(local_dof_indices);
@@ -202,21 +201,96 @@ void LaplaceSolver<dim>::compute_solution() {
  }
  */
 
+namespace std {
+
+template<>
+struct hash<dealii::Point<2> > {
+public:
+	size_t operator()(Point<2> x) const throw () {
+		return hash<double>()(x[0]) ^ hash<double>()(x[1]);
+	}
+};
+
+}
+
+template<int dim>
+void LaplaceSolver<dim>::set_gradient_at_that_point_as_already_known(
+		std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point) {
+	std::pair<Point<dim>, bool> pair;
+	pair.first = point;
+	pair.second = true;
+	already_known.insert(pair);
+}
+
+template<int dim>
+void LaplaceSolver<dim>::save_gradient_at_that_point(Point<dim> &point,
+		std::vector<Tensor<1, dim> > &gradient_at_pts_of_one_cell,
+		std::vector<std::pair<std::vector<double>, std::vector<double> > > &gradient_at_all_points,
+		unsigned vertex_idx) {
+	std::pair<std::vector<double>, std::vector<double>> grad_at_one_point;
+	std::vector<double> coord(dim);
+	std::vector<double> grad(dim);
+
+	for (unsigned i = 0; i < dim; i++) {
+		coord[i] = point[i];
+		grad[i] = gradient_at_pts_of_one_cell[vertex_idx][i];
+	}
+
+	grad_at_one_point.first = coord;
+	grad_at_one_point.second = grad;
+	gradient_at_all_points.push_back(grad_at_one_point);
+}
+
+template<int dim>
+void LaplaceSolver<dim>::compute_gradient(
+		std::vector<std::pair<std::vector<double>, std::vector<double> > >
+		&gradient_at_all_points) {
+
+	std::unordered_map<Point<2>, bool> already_known;
+
+	const unsigned int vertices_per_cell = GeometryInfo < dim
+			> ::vertices_per_cell;
+	std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
+
+	typename DoFHandler<dim>::active_cell_iterator cell =
+			dof_handler.begin_active(), endc = dof_handler.end();
+
+	for (; cell != endc; cell++) {
+
+		fe_values->reinit(cell);
+		fe_values->get_function_gradients(solution_vec,
+				gradient_at_pts_of_one_cell);
+
+		for (unsigned int v = 0; v < GeometryInfo < 2 > ::vertices_per_cell;
+				v++) {
+
+			Point < dim > point = cell->vertex(v);
+
+			if (already_known.find(point) == already_known.end()) {
+				set_gradient_at_that_point_as_already_known(already_known,
+						point);
+				save_gradient_at_that_point(point, gradient_at_pts_of_one_cell,
+						gradient_at_all_points, v);
+			}
+
+		}
+
+	}
+}
+
 template<int dim>
 Solution<dim> LaplaceSolver<dim>::get_solution() {
-	Derivatives<dim> derivatives;
-	/*DataOut < dim > gradient_data_container;
-	gradient_data_container.attach_dof_handler(dof_handler);
-	gradient_data_container.add_data_vector(solution_vec, derivatives);
-	gradient_data_container.build_patches();
-	std::stringstream derivatives_stream;
-	//TODO find better way to retrieve data from DataPostProcessor
-	gradient_data_container.write_gnuplot(derivatives_stream);
-	std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_data;
-	Utils::parse_gnuplot<dim>(derivatives_stream, dim, coord_and_data);
-	SolutionVector<dim> sol(coord_and_data, &dof_handler,
-			gradient_data_container);*/
 
-	Solution< dim > sol(solution_vec, derivatives, &dof_handler);
+	//PostProcessor, will be used to ouput vtk file
+	Derivatives<dim> derivatives;
+	std::vector<std::pair<std::vector<double>, std::vector<double> > > gradient_at_all_points;
+	compute_gradient(gradient_at_all_points);
+
+	VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
+
+	std::cout << solution_vec.size() << std::endl;
+	std::cout << gradient_at_all_points.size() << std::endl;
+
+	Solution<dim> sol(solution_vec, derivatives, &dof_handler);
 	return sol;
 }

@@ -70,6 +70,7 @@ private:
 
 	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;
+	FEValues <dim> *fe_values;
 	DoFHandler<dim> dof_handler;
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
@@ -85,6 +86,16 @@ private:
 	void solve();
 	void output_results(std::string result_file_path) const;
 	void make_periodicity_constraints();
+
+	void set_gradient_at_that_point_as_already_known(
+			std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
+	void save_gradient_at_that_point(Point<dim> &point,
+			std::vector<Tensor<1, dim> > &gradient_at_pts_of_one_cell,
+			std::vector<std::pair<std::vector<double>, std::vector<double> > >
+			&gradient_at_all_points, unsigned vertex_idx);
+	void compute_gradient(
+			std::vector<std::pair<std::vector<double>, std::vector<double> > >
+			&gradient_at_all_points);
 };
 
 #include "LaplaceSolver.cpp"
