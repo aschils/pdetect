@@ -105,17 +105,6 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	nbr_of_points_along_axes();
 }
 
-namespace std {
-
-template<>
-struct hash<dealii::Point<2> > {
-public:
-	size_t operator()(Point<2> x) const throw () {
-		return hash<double>()(x[0]) ^ hash<double>()(x[1]);
-	}
-};
-
-}
 /**
  * The number of points along an axis is simply the number
  * of cells along this axes plus one. 
