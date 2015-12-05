@@ -182,7 +182,7 @@ SolutionVector<2> SerratedRect2DDetector::compute_gradient_of_potential() {
 void SerratedRect2DDetector::compute_electric_field() {
 
 	std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_potential_sorted =
-			gradient_of_potential.coord_and_data_sorted;
+			gradient_of_potential.coord_and_data;
 	electric_field.resize(coord_and_potential_sorted.size());
 
 	for (unsigned i = 0; i < coord_and_potential_sorted.size(); i++) {
@@ -193,7 +193,7 @@ void SerratedRect2DDetector::compute_electric_field() {
 		electric_field[i] = EF_at_one_point;
 	}
 	std::cout << electric_field.size() << std::endl;
-	//VectorUtils::print_vec_of_pair_of_vec(electric_field);
+	VectorUtils::print_vec_of_pair_of_vec(electric_field);
 }
 
 std::vector<double> SerratedRect2DDetector::get_electric_field(Point<2> p) {

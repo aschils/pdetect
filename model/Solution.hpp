@@ -25,6 +25,8 @@ public:
 
 	virtual void draw_vtk_graph(std::string output_file) = 0;
 
+	virtual void sort_by_coord() = 0;
+
 	virtual ~Solution() {
 
 	}
@@ -40,7 +42,8 @@ public:
 	DoFHandler<dim> *dof_handler;
 	Vector<double> data;
 
-	SolutionScalar(){}
+	SolutionScalar() {
+	}
 
 	SolutionScalar(Vector<double> data, DoFHandler<dim> *dof_handler) {
 		this->dof_handler = dof_handler;
@@ -55,6 +58,10 @@ public:
 		std::ofstream output(output_file);
 		data_out.write_vtk(output);
 	}
+
+	void sort_by_coord(){
+		//TODO
+	}
 };
 
 template<int dim>
@@ -63,18 +70,18 @@ class SolutionVector: public Solution {
 public:
 
 	DoFHandler<dim> *dof_handler;
-	std::vector<std::pair<std::vector<double>, std::vector<double> > >
-	coord_and_data_sorted;
+	std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_data;
 	DataOut<dim> data_out; //Used to plot vtk file with deal.ii
 
-	SolutionVector(){}
+	SolutionVector() {
+	}
 
-	SolutionVector(std::vector<std::pair<std::vector<double>,
-			std::vector<double> > > coord_and_data,
+	SolutionVector(
+			std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_data,
 			DoFHandler<dim> *dof_handler, DataOut<dim> data_out) {
 		this->dof_handler = dof_handler;
 		this->data_out = data_out;
-		this->coord_and_data_sorted = coord_and_data;
+		this->coord_and_data = coord_and_data;
 	}
 
 	void draw_vtk_graph(std::string output_file) {
@@ -82,26 +89,10 @@ public:
 		data_out.write_vtk(output);
 	}
 
-	void sort_by_coord() {
-
-		auto cmp =
-				[](std::pair<std::vector<double>,
-						std::vector<double>> const & a,
-						std::pair<std::vector<double>,
-						std::vector<double>> const & b){
-			double epsilon = 0.00001;
-			for(int i=dim-1; i>=0; i--){
-				if(!Utils::greater_than_or_equals_double((a.first)[i], (b.first)[i], epsilon))
-					return true;
-				else if(!Utils::less_than_or_equals_double(a.first[i], b.first[i], epsilon))
-					return false;
-			}
-			return false;
-				};
-
-		std::sort(coord_and_data_sorted.begin(), coord_and_data_sorted.end(), cmp);
-		//VectorUtils::print_vec_of_pair_of_vec(coord_and_data_sorted);
+	void sort_by_coord(){
+		VectorUtils::sort_by_coord<dim, std::vector<double>>(coord_and_data);
 	}
+
 };
 
 #endif
