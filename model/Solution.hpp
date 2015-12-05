@@ -61,16 +61,30 @@ public:
 		derivatives_data_container.attach_dof_handler(*dof_handler);
 		derivatives_data_container.add_data_vector(solution_vec, derivatives);
 		derivatives_data_container.build_patches();
+		//Triangulation<2>::active_cell_iterator first = derivatives_data_container.first_cell();
+		//first->vertex(0).
+
+		/*
+		for (; cell != endc; ++cell) {
+				for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v) {
+
+					Point<2> p = cell->vertex(v);
+		*/
+
 
 		std::stringstream derivatives_stream;
 		//TODO find better way to retrieve data from DataPostProcessor
+		//std::stringstream stream_temp;
+		//derivatives_data_container.write_deal_II_intermediate(stream_temp);
+		//std::cout << stream_temp.str() << std::endl;
+
 		derivatives_data_container.write_gnuplot(derivatives_stream);
 		std::vector<std::pair<std::vector<double>, std::vector<double> > >
 		coord_and_derivatives;
 		Utils::parse_gnuplot<dim>(derivatives_stream, dim + dim * dim,
 				coord_and_derivatives);
 
-		std::cout << derivatives_stream.str() << std::endl;
+		//std::cout << derivatives_stream.str() << std::endl;
 
 		coord_and_data.resize(coord_and_derivatives.size());
 
@@ -86,6 +100,8 @@ public:
 				gradient[j] = coord_and_derivatives[i].second[j];
 			for(unsigned j=0; j<(dim*dim); j++)
 				second_derivatives[j] = coord_and_derivatives[i].second[dim+j];
+
+			//std::cout << "i: " << i << " size " << solution.size()  << std::endl;
 
 			SolutionData data_one_point(solution[i], gradient, second_derivatives);
 			coord_and_data_one_point.second = data_one_point;
