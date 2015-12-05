@@ -38,7 +38,7 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "Gradient.hpp"
+#include "Derivatives.hpp"
 #include "Solution.hpp"
 #include "Utils.hpp"
 
@@ -59,8 +59,8 @@ public:
 					bool constraints_are_periodic);
 
 	void compute_solution();
-	SolutionScalar<dim> get_solution();
-	SolutionVector<dim> compute_gradient_of_solution();
+	Solution<dim> get_solution();
+	//SolutionVector<dim> compute_gradient_of_solution();
 
 private:
 

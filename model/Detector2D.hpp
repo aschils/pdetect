@@ -10,15 +10,15 @@
 
 #include <deal.II/numerics/data_out.h>
 
+#include "Derivatives.hpp"
 #include "Solution.hpp"
-#include "Gradient.hpp"
 
 class Detector2D {
 
 public:
-	virtual SolutionScalar<2> compute_potential() = 0;
-	virtual SolutionScalar<2> compute_weighting_potential() = 0;
-	virtual SolutionVector<2> compute_gradient_of_potential() = 0;
+	virtual void compute() = 0;
+	//virtual SolutionScalar<2> compute_weighting_potential() = 0;
+	//virtual SolutionVector<2> compute_gradient_of_potential() = 0;
 	virtual ~Detector2D(){}
 };
 

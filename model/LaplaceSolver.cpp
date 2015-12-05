@@ -183,27 +183,41 @@ void LaplaceSolver<dim>::compute_solution() {
 	solve();
 }
 
-template<int dim>
-SolutionVector<dim>
-LaplaceSolver<dim>::compute_gradient_of_solution() {
-	 Gradient<dim> grad;
-	 DataOut<dim> gradient_data_container;
-	 gradient_data_container.attach_dof_handler(dof_handler);
-	 gradient_data_container.add_data_vector(solution_vec, grad);
-	 gradient_data_container.build_patches();
-	 std::stringstream gradient_stream;
-	 //TODO find better way to retrieve data from DataPostProcessor (Gradient)
-	 gradient_data_container.write_gnuplot(gradient_stream);
-	 std::vector<std::pair<std::vector<double>, std::vector<double> > >
-	 	coord_and_data;
-	 Utils::parse_gnuplot<dim>(gradient_stream, dim, coord_and_data);
-	 SolutionVector<dim> sol(coord_and_data, &dof_handler,
-					 gradient_data_container);
-	 return sol;
-}
+/*template<int dim>
+ SolutionVector<dim>
+ LaplaceSolver<dim>::compute_gradient_of_solution() {
+ Derivatives<dim> grad;
+ DataOut<dim> gradient_data_container;
+ gradient_data_container.attach_dof_handler(dof_handler);
+ gradient_data_container.add_data_vector(solution_vec, grad);
+ gradient_data_container.build_patches();
+ std::stringstream gradient_stream;
+ //TODO find better way to retrieve data from DataPostProcessor (Gradient)
+ gradient_data_container.write_gnuplot(gradient_stream);
+ std::vector<std::pair<std::vector<double>, std::vector<double> > >
+ coord_and_data;
+ Utils::parse_gnuplot<dim>(gradient_stream, dim, coord_and_data);
+ SolutionVector<dim> sol(coord_and_data, &dof_handler,
+ gradient_data_container);
+ return sol;
+ }
+ */
 
 template<int dim>
-SolutionScalar<dim> LaplaceSolver<dim>::get_solution() {
-	SolutionScalar<dim> sol(solution_vec, &dof_handler);
+Solution<dim> LaplaceSolver<dim>::get_solution() {
+	Derivatives<dim> derivatives;
+	/*DataOut < dim > gradient_data_container;
+	gradient_data_container.attach_dof_handler(dof_handler);
+	gradient_data_container.add_data_vector(solution_vec, derivatives);
+	gradient_data_container.build_patches();
+	std::stringstream derivatives_stream;
+	//TODO find better way to retrieve data from DataPostProcessor
+	gradient_data_container.write_gnuplot(derivatives_stream);
+	std::vector<std::pair<std::vector<double>, std::vector<double> > > coord_and_data;
+	Utils::parse_gnuplot<dim>(derivatives_stream, dim, coord_and_data);
+	SolutionVector<dim> sol(coord_and_data, &dof_handler,
+			gradient_data_container);*/
+
+	Solution< dim > sol(solution_vec, derivatives, &dof_handler);
 	return sol;
 }
