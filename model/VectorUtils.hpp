@@ -51,10 +51,10 @@ public:
 
 	static void print_vec_components(std::vector<double> vec) {
 		for (unsigned j = 0; j < vec.size(); j++) {
-			//std::cout << vec[j];
+			std::cout << vec[j];
 
 			if (j != vec.size() - 1){}
-				//std::cout << ",";
+				std::cout << ",";
 		}
 	}
 
@@ -62,11 +62,11 @@ public:
 			std::vector<std::pair<std::vector<double>, std::vector<double> > > vec) {
 		for (unsigned i = 0; i < vec.size(); i++) {
 
-			//std::cout << "[(";
+			std::cout << "[(";
 			print_vec_components(vec[i].first);
-			//std::cout << ") (";
+			std::cout << ") (";
 			print_vec_components(vec[i].second);
-			//std::cout << ")] ";
+			std::cout << ")] ";
 		}
 	}
 
