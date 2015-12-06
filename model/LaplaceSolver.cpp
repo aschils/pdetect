@@ -214,7 +214,7 @@ public:
 }
 
 template<int dim>
-void LaplaceSolver<dim>::set_gradient_at_that_point_as_already_known(
+void LaplaceSolver<dim>::set_solution_at_that_point_as_already_known(
 		std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point) {
 	std::pair<Point<dim>, bool> pair;
 	pair.first = point;
@@ -223,34 +223,36 @@ void LaplaceSolver<dim>::set_gradient_at_that_point_as_already_known(
 }
 
 template<int dim>
-void LaplaceSolver<dim>::save_gradient_at_that_point(Point<dim> &point,
-		std::vector<Tensor<1, dim> > &gradient_at_pts_of_one_cell,
-		std::vector<std::pair<std::vector<double>, std::vector<double> > > &gradient_at_all_points,
-		unsigned vertex_idx) {
-	std::pair<std::vector<double>, std::vector<double>> grad_at_one_point;
+void LaplaceSolver<dim>::save_solution_at_that_point(Point<dim> &point,
+		double &fun_at_point,
+		Tensor<1, dim> &gradient_at_point,
+		Tensor<2, dim> &hessian_at_point,
+		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+		&coord_and_data) {
+
+	std::pair<std::vector<double>, SolutionData<dim> > coord_and_sol_at_one_point;
 	std::vector<double> coord(dim);
-	std::vector<double> grad(dim);
 
-	for (unsigned i = 0; i < dim; i++) {
+	for (unsigned i = 0; i < dim; i++)
 		coord[i] = point[i];
-		grad[i] = gradient_at_pts_of_one_cell[vertex_idx][i];
-	}
 
-	grad_at_one_point.first = coord;
-	grad_at_one_point.second = grad;
-	gradient_at_all_points.push_back(grad_at_one_point);
+	coord_and_sol_at_one_point.first = coord;
+	SolutionData<dim> sol(fun_at_point, gradient_at_point, hessian_at_point);
+	coord_and_sol_at_one_point.second = sol;
+	coord_and_data.push_back(coord_and_sol_at_one_point);
 }
 
 template<int dim>
-void LaplaceSolver<dim>::compute_gradient(
-		std::vector<std::pair<std::vector<double>, std::vector<double> > >
-		&gradient_at_all_points) {
+void LaplaceSolver<dim>::build_solution(
+		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+		&coord_and_data) {
 
 	std::unordered_map<Point<2>, bool> already_known;
-
 	const unsigned int vertices_per_cell = GeometryInfo < dim
 			> ::vertices_per_cell;
+	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
 	std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
+	std::vector<Tensor<2, dim> > hessian_at_pts_of_one_cell(vertices_per_cell);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
@@ -258,19 +260,26 @@ void LaplaceSolver<dim>::compute_gradient(
 	for (; cell != endc; cell++) {
 
 		fe_values->reinit(cell);
+		fe_values->get_function_values(solution_vec, fun_at_pts_of_one_cell);
 		fe_values->get_function_gradients(solution_vec,
 				gradient_at_pts_of_one_cell);
+		fe_values->get_function_hessians(solution_vec,
+				hessian_at_pts_of_one_cell);
 
 		for (unsigned int v = 0; v < GeometryInfo < 2 > ::vertices_per_cell;
 				v++) {
 
 			Point < dim > point = cell->vertex(v);
 
-			if (already_known.find(point) == already_known.end()) {
-				set_gradient_at_that_point_as_already_known(already_known,
+			bool sol_unknown_at_point = already_known.find(point)
+					== already_known.end();
+			if (sol_unknown_at_point) {
+				save_solution_at_that_point(point, fun_at_pts_of_one_cell[v],
+						gradient_at_pts_of_one_cell[v],
+						hessian_at_pts_of_one_cell[v],
+						coord_and_data);
+				set_solution_at_that_point_as_already_known(already_known,
 						point);
-				save_gradient_at_that_point(point, gradient_at_pts_of_one_cell,
-						gradient_at_all_points, v);
 			}
 
 		}
@@ -279,23 +288,37 @@ void LaplaceSolver<dim>::compute_gradient(
 }
 
 template<int dim>
-Solution<dim> LaplaceSolver<dim>::get_solution() {
+void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
-	//PostProcessor, will be used to ouput vtk file
+	//Used only to output vtk file
+	DataOut<2> fun_drawer;
+	fun_drawer.attach_dof_handler(dof_handler);
+	fun_drawer.add_data_vector(solution_vec, "solution");
+	fun_drawer.build_patches();
+
+	//PostProcessor, used only to output vtk file
 	Derivatives<dim> derivatives;
-	std::vector<std::pair<std::vector<double>, std::vector<double> > > gradient_at_all_points;
-	compute_gradient(gradient_at_all_points);
+	DataOut<dim> derivatives_drawer;
+	derivatives_drawer.attach_dof_handler(dof_handler);
+	derivatives_drawer.add_data_vector(solution_vec, derivatives);
+	derivatives_drawer.build_patches();
 
-	VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
+	sol.set_fun_drawer(fun_drawer);
+	sol.set_derivatives_drawer(derivatives_drawer);
+	build_solution(sol.coord_and_data);
 
-	std::cout << solution_vec.size() << std::endl;
-	std::cout << gradient_at_all_points.size() << std::endl;
-
-	Solution<dim> sol(solution_vec, derivatives, &dof_handler);
-	return sol;
+	/*
+	 std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+	 std::vector<std::pair<std::vector<double>, std::vector<double> > > gradient_at_all_points;
+	 std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+	 auto duration = std::chrono::duration_cast<std::chrono::seconds>( t2 - t1 ).count();
+	 std::cout << "temps: " << duration << std::endl;*/
+	//VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
+	//std::cout << solution_vec.size() << std::endl;
+	//std::cout << gradient_at_all_points.size() << std::endl;
 }
 
 template<int dim>
-LaplaceSolver<dim>::~LaplaceSolver(){
+LaplaceSolver<dim>::~LaplaceSolver() {
 	delete fe_values;
 }

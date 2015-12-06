@@ -37,6 +37,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <chrono>
 
 #include "Derivatives.hpp"
 #include "Solution.hpp"
@@ -59,7 +60,7 @@ public:
 					bool constraints_are_periodic);
 
 	void compute_solution();
-	Solution<dim> get_solution();
+	void get_solution(Solution<dim> &sol);
 	~LaplaceSolver();
 
 private:
@@ -87,15 +88,17 @@ private:
 	void output_results(std::string result_file_path) const;
 	void make_periodicity_constraints();
 
-	void set_gradient_at_that_point_as_already_known(
+	void set_solution_at_that_point_as_already_known(
 			std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
-	void save_gradient_at_that_point(Point<dim> &point,
-			std::vector<Tensor<1, dim> > &gradient_at_pts_of_one_cell,
-			std::vector<std::pair<std::vector<double>, std::vector<double> > >
-			&gradient_at_all_points, unsigned vertex_idx);
-	void compute_gradient(
-			std::vector<std::pair<std::vector<double>, std::vector<double> > >
-			&gradient_at_all_points);
+	void save_solution_at_that_point(Point<dim> &point,
+	double &fun_at_point,
+	Tensor<1, dim> &gradient_at_point,
+	Tensor<2, dim> &hessian_at_point,
+	std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+	&coord_and_data);
+	void build_solution(
+			std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+			&coord_and_data);
 };
 
 #include "LaplaceSolver.cpp"
