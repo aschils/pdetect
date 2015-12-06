@@ -61,6 +61,16 @@ public:
 
 	void compute_solution();
 	void get_solution(Solution<dim> &sol);
+
+	SolutionData<dim> extrapolate_data_at_point(
+					std::vector<std::pair
+					<std::vector<double>, SolutionData<dim> > >
+					&coord_and_data, double pos);
+	SolutionData<dim> get_solution_at_point(Point<dim> &point,
+					std::vector<std::pair
+					<std::vector<double>, SolutionData<dim> > >
+					&coord_and_data);
+
 	~LaplaceSolver();
 
 private:
@@ -68,6 +78,8 @@ private:
 	bool constraints_are_periodic;
 	unsigned max_iter;
 	double stop_accuracy;
+
+	double rect_length_fe, rect_width_fe;
 
 	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;

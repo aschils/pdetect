@@ -19,6 +19,8 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->boundary_values_fun = boundary_values;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
+	this->rect_length_fe = rect_length_fe;
+	this->rect_width_fe = rect_width_fe;
 
 	quadrature_formula = new QGauss<dim>(2);;
 	fe_values = new FEValues<dim>(fe, *quadrature_formula,
@@ -296,6 +298,44 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	//VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
 	//std::cout << solution_vec.size() << std::endl;
 	//std::cout << gradient_at_all_points.size() << std::endl;
+}
+
+template<int dim>
+SolutionData<dim> LaplaceSolver<dim>::extrapolate_data_at_point(
+		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+		&coord_and_data, double pos) {
+
+
+}
+template<int dim>
+SolutionData<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
+		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+		&coord_and_data) {
+
+	//Here we are only checking if the point is in our finite elements domain.
+	for(int i = 0; i < dim; i++) {
+		if(point[i] > rect_width_fe || point[i] > rect_length_fe) {
+			std::cout << "Point is not in the detector" << std::endl;
+			return NULL;
+		}
+	}
+
+	int pos = 0;
+	bool notFound = true;
+	while(notFound) {
+		int coord = 0;
+		for(int j = 0; j < dim; j++) {
+			if(greater_than_or_equals_double(coord_and_data[pos+1].first[j],
+					point[j], 0.000001))
+				coord++;
+		}
+		if(coord == dim)
+			notFound = false;
+		pos++;
+	}
+	SolutionData<dim> data_at_point = extrapolate_data_at_point(coord_and_data, pos-1);
+
+	return data_at_point;
 }
 
 template<int dim>
