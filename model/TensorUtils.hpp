@@ -27,7 +27,7 @@ public:
 	 *
 	 *
 	 */
-	template <unsigned dim, typename T>
+	template<unsigned dim, typename T>
 	static void sort_by_coord(
 			std::vector<std::pair<std::vector<double>, T> > &v) {
 
@@ -39,9 +39,9 @@ public:
 					double epsilon = 0.0000000000001;
 					for(int i=dim-1; i>=0; i--) {
 						if(!Utils::greater_than_or_equals_double((a.first)[i], (b.first)[i], epsilon))
-							return true;
+						return true;
 						else if(!Utils::less_than_or_equals_double(a.first[i], b.first[i], epsilon))
-							return false;
+						return false;
 					}
 					return false;
 				};
@@ -49,19 +49,43 @@ public:
 		std::sort(v.begin(), v.end(), cmp);
 	}
 
-	static void print_vec_components(std::vector<double> vec) {
+	static void print_vec_components(std::vector<double> &vec) {
 		for (unsigned j = 0; j < vec.size(); j++) {
 			std::cout << vec[j];
 
-			if (j != vec.size() - 1){}
+			if (j != vec.size() - 1)
 				std::cout << ",";
+		}
+	}
+
+	template<unsigned dim>
+	static void print_tensor_components(Tensor<1, dim> &tens) {
+		for (unsigned j = 0; j < dim; j++) {
+			std::cout << tens[j];
+
+			if (j != dim - 1)
+				std::cout << ",";
+		}
+	}
+
+	template<unsigned dim>
+	static void print_tensor_components(Tensor<2, dim> &tens) {
+		for (unsigned i = 0; i < dim; i++) {
+			for (unsigned j = 0; j < dim; j++) {
+				std::cout << tens[i][j];
+
+				if (j != dim - 1)
+					std::cout << ",";
+			}
+			if (i != dim - 1)
+				std::cout << ";";
 		}
 	}
 
 	static void print_vec_of_pair_of_vec(
 			std::vector<std::pair<std::vector<double>, std::vector<double> > > vec) {
-		for (unsigned i = 0; i < vec.size(); i++) {
 
+		for (unsigned i = 0; i < vec.size(); i++) {
 			std::cout << "[(";
 			print_vec_components(vec[i].first);
 			std::cout << ") (";
