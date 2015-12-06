@@ -60,7 +60,7 @@ public:
 
 	void compute_solution();
 	Solution<dim> get_solution();
-	//SolutionVector<dim> compute_gradient_of_solution();
+	~LaplaceSolver();
 
 private:
 

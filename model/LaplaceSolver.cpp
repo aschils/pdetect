@@ -294,3 +294,8 @@ Solution<dim> LaplaceSolver<dim>::get_solution() {
 	Solution<dim> sol(solution_vec, derivatives, &dof_handler);
 	return sol;
 }
+
+template<int dim>
+LaplaceSolver<dim>::~LaplaceSolver(){
+	delete fe_values;
+}
