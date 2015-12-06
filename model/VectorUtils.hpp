@@ -36,7 +36,7 @@ public:
 						T> const & a,
 						std::pair<std::vector<double>,
 						T> const & b) {
-					double epsilon = 0.00001;
+					double epsilon = 0.0000000000001;
 					for(int i=dim-1; i>=0; i--) {
 						if(!Utils::greater_than_or_equals_double((a.first)[i], (b.first)[i], epsilon))
 							return true;
