@@ -271,20 +271,16 @@ template<int dim>
 void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
 	//Used only to output vtk file
-	DataOut<2> fun_drawer;
-	fun_drawer.attach_dof_handler(dof_handler);
-	fun_drawer.add_data_vector(solution_vec, "solution");
-	fun_drawer.build_patches();
+	sol.fun_drawer.attach_dof_handler(dof_handler);
+	sol.fun_drawer.add_data_vector(solution_vec, "solution");
+	sol.fun_drawer.build_patches();
 
 	//PostProcessor, used only to output vtk file
 	Derivatives<dim> derivatives;
-	DataOut<dim> derivatives_drawer;
-	derivatives_drawer.attach_dof_handler(dof_handler);
-	derivatives_drawer.add_data_vector(solution_vec, derivatives);
-	derivatives_drawer.build_patches();
+	sol.derivatives_drawer.attach_dof_handler(dof_handler);
+	sol.derivatives_drawer.add_data_vector(solution_vec, derivatives);
+	sol.derivatives_drawer.build_patches();
 
-	sol.set_fun_drawer(fun_drawer);
-	sol.set_derivatives_drawer(derivatives_drawer);
 	build_solution(sol.coord_and_data);
 
 	/*

@@ -42,17 +42,14 @@ class Solution {
 
 public:
 
+	//These two structures contain data already available in coord_and_data,
+	//but it is useful to keep them as such to easily output vtk graph file
+	//using deal.ii DataOut class.
+	DataOut<dim> fun_drawer;
+	DataOut<dim> derivatives_drawer;
 	std::vector<std::pair<std::vector<double>, SolutionData<dim> > > coord_and_data;
 
 	Solution() {
-	}
-
-	void set_fun_drawer(DataOut<dim> fun_drawer){
-		this->fun_drawer = fun_drawer;
-	}
-
-	void set_derivatives_drawer(DataOut<dim> derivatives_drawer){
-		this->derivatives_drawer = derivatives_drawer;
 	}
 
 	void draw_vtk_graph_fun(std::string output_file) {
@@ -69,12 +66,19 @@ public:
 		VectorUtils::sort_by_coord<dim, SolutionData<dim> >(coord_and_data);
 	}
 
-private:
-	//These two structures contain data already available in coord_and_data,
-	//but it is useful to keep them as such to easily output vtk graph file
-	//using deal.ii DataOut class.
-	DataOut<dim> fun_drawer;
-	DataOut<dim> derivatives_drawer;
+	void print() {
+
+		for (unsigned i = 0; i < coord_and_data.size(); i++) {
+			std::cout << "[coord: (";
+			VectorUtils::print_vec_components(coord_and_data[i].first);
+			std::cout << "), function: " << coord_and_data[i].second.fun;
+			std::cout << " gradient: (";
+			VectorUtils::print_tensor_components<dim>(
+					coord_and_data[i].second.gradient);
+			std::cout << ")] ";
+		}
+		std::cout << std::endl;
+	}
 };
 
 #endif
