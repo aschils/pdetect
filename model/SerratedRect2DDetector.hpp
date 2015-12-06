@@ -40,9 +40,15 @@ public:
 
 	void compute();
 
+	void compute_weight();
+
 	void draw_vtk_graph_potential(std::string output_file);
 
+	void draw_vtk_graph_weight_potential(std::string output_file);
+
 	void draw_vtk_graph_gradient_of_potential(std::string output_file);
+
+	void draw_vtk_graph_gradient_of_weight_potential(std::string output_file);
 
 	std::vector<double> get_electric_field(Point<2> p);
 
@@ -73,10 +79,14 @@ private:
 	LaplaceSolver<2> *rect_potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
-	std::vector<std::pair<std::vector<double>, std::vector<double> > >
+	std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
 	electric_field;
+	std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
+		electric_field_weight;
 
-	void compute_electric_field();
+	void compute_electric_field(Solution<2> &potential,
+			std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
+				&electric_field);
 	double compute_total_length();
 	double compute_rect_width_fe();
 	void compute_and_set_fe_values();

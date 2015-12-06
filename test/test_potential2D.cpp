@@ -127,15 +127,16 @@ void test_weighting_potential() {
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-		srdd.compute();
-		srdd.draw_vtk_graph_potential(output_file);
-		srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
+		srdd.compute_weight();
+		srdd.draw_vtk_graph_weight_potential(output_file);
+		srdd.draw_vtk_graph_gradient_of_weight_potential(
+				output_dir + "gradient.vtk");
 	}
 }
 
 void test_various() {
 	ZeroRightHandSide<2> rhs;
-	double strip_potential = 1;
+	double strip_potential = 1000;
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
 	unsigned pitch = 100;

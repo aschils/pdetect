@@ -145,25 +145,31 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 
 void SerratedRect2DDetector::compute() {
 	rect_potential_solver->compute_solution();
-	solution_potential = rect_potential_solver->get_solution();
+	rect_potential_solver->get_solution(solution_potential);
 	solution_potential.sort_by_coord();
-	compute_electric_field();
-	rect_potential_solver_weight->compute_solution();
-	solution_weight_potential = rect_potential_solver_weight->get_solution();
-	solution_weight_potential.sort_by_coord();
+	compute_electric_field(solution_potential, electric_field);
 }
 
-void SerratedRect2DDetector::compute_electric_field() {
+void SerratedRect2DDetector::compute_weight(){
+	rect_potential_solver_weight->compute_solution();
+	rect_potential_solver_weight->get_solution(solution_weight_potential);
+	solution_weight_potential.sort_by_coord();
+	compute_electric_field(solution_weight_potential, electric_field_weight);
+}
 
-	std::vector<std::pair<std::vector<double>, SolutionData> > sorted_data =
+void SerratedRect2DDetector::compute_electric_field(Solution<2> &potential,
+		std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
+						&electric_field) {
+
+	std::vector<std::pair<std::vector<double>, SolutionData<2> > > sorted_data =
 			solution_potential.coord_and_data;
 	electric_field.resize(sorted_data.size());
 
 	for (unsigned i = 0; i < sorted_data.size(); i++) {
-		std::pair<std::vector<double>, std::vector<double> > EF_at_one_point;
+		std::pair<std::vector<double>, Tensor<1, 2> > EF_at_one_point;
 		EF_at_one_point.first = sorted_data[i].first;
-		EF_at_one_point.second = VectorUtils::opposite_vector(
-				sorted_data[i].second.gradient);
+		//Electric field is -grad V
+		EF_at_one_point.second = (-1.0)*sorted_data[i].second.gradient;
 		electric_field[i] = EF_at_one_point;
 	}
 	//std::cout << electric_field.size() << std::endl;
@@ -174,12 +180,24 @@ void SerratedRect2DDetector::compute_electric_field() {
 
 }*/
 
-void SerratedRect2DDetector::draw_vtk_graph_potential(std::string output_file) {
-	solution_potential.draw_vtk_graph_solution(output_file);
+void SerratedRect2DDetector::draw_vtk_graph_potential(
+		std::string output_file) {
+	solution_potential.draw_vtk_graph_fun(output_file);
 }
 
-void SerratedRect2DDetector::draw_vtk_graph_gradient_of_potential(std::string output_file) {
+void SerratedRect2DDetector::draw_vtk_graph_weight_potential(
+		std::string output_file){
+	solution_weight_potential.draw_vtk_graph_fun(output_file);
+}
+
+void SerratedRect2DDetector::draw_vtk_graph_gradient_of_potential(
+		std::string output_file) {
 	solution_potential.draw_vtk_graph_derivatives(output_file);
+}
+
+void SerratedRect2DDetector::draw_vtk_graph_gradient_of_weight_potential(
+		std::string output_file) {
+	solution_weight_potential.draw_vtk_graph_derivatives(output_file);
 }
 
 std::string SerratedRect2DDetector::params_to_string() {
