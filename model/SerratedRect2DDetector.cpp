@@ -148,6 +148,7 @@ void SerratedRect2DDetector::compute() {
 	rect_potential_solver->get_solution(solution_potential);
 	solution_potential.sort_by_coord();
 	compute_electric_field(solution_potential, electric_field);
+	//solution_potential.print();
 }
 
 void SerratedRect2DDetector::compute_weight(){

@@ -16,8 +16,8 @@
 #include "ZeroRightHandSide.hpp"
 #include "SerratedRect2DBoundaryValues.hpp"
 #include "SerratedRect2DBoundaryValuesWeight.hpp"
-#include "VectorUtils.hpp"
 #include <functional>
+#include "TensorUtils.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 

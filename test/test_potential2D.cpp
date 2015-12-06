@@ -140,7 +140,7 @@ void test_various() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
 	unsigned pitch = 100;
-	unsigned refine_level = 5;
+	unsigned refine_level = 1;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	unsigned nbr_of_strips = 4;
