@@ -72,6 +72,7 @@ private:
 	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;
 	FEValues <dim> *fe_values;
+	QGauss < dim > *quadrature_formula;
 	DoFHandler<dim> dof_handler;
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;

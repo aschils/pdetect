@@ -20,6 +20,11 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
+	quadrature_formula = new QGauss<dim>(2);;
+	fe_values = new FEValues<dim>(fe, *quadrature_formula,
+				update_values | update_gradients | update_quadrature_points
+						| update_JxW_values | update_second_derivatives);
+
 	if (constraints_are_periodic) {
 		for (typename Triangulation<dim>::active_cell_iterator cell =
 				triangulation->begin_active(); cell != triangulation->end();
@@ -116,13 +121,8 @@ void LaplaceSolver<dim>::setup_system() {
 template<int dim>
 void LaplaceSolver<dim>::assemble_system() {
 
-	QGauss < dim > quadrature_formula(2);
-
-	fe_values = new FEValues<dim>(fe, quadrature_formula,
-			update_values | update_gradients | update_quadrature_points
-					| update_JxW_values | update_second_derivatives);
 	const unsigned int dofs_per_cell = fe.dofs_per_cell;
-	const unsigned int n_q_points = quadrature_formula.size();
+	const unsigned int n_q_points = quadrature_formula->size();
 	FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
 	Vector<double> cell_rhs(dofs_per_cell);
 	std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -301,4 +301,5 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 template<int dim>
 LaplaceSolver<dim>::~LaplaceSolver() {
 	delete fe_values;
+	delete quadrature_formula;
 }
