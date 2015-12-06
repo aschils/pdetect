@@ -90,7 +90,7 @@ private:
 	double compute_total_length();
 	double compute_rect_width_fe();
 	void compute_and_set_fe_values();
-	void nbr_of_points_along_axes();
+	//void nbr_of_points_along_axes();
 };
 
 #endif

@@ -102,7 +102,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			rect_length_fe, rect_width_fe, refine_level, max_iter,
 			stop_accuracy, zero_right_hand_side, boundary_val_weight, true);
-	nbr_of_points_along_axes();
+	//nbr_of_points_along_axes();
 }
 
 /**
@@ -111,7 +111,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
  * (The bottom left corner of each cells plus de bottom right 
  * corner of the last cell)
  */
-void SerratedRect2DDetector::nbr_of_points_along_axes() {
+/*void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
 	Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
 			endc = triangulation->end();
@@ -130,7 +130,7 @@ void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
 	nbr_of_pts_along_x++;
 	nbr_of_pts_along_y++;
-}
+}*/
 
 SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete zero_right_hand_side;
