@@ -82,6 +82,48 @@ public:
 		}
 	}
 
+	/**
+	 * Sort cells in ascending order i.e. the bottom left point is used
+	 * for comparison with the following ordering:
+	 *
+	 *  coordx = (x_1,...,x_n), coordy = (y_1,...,y_n)
+	 *
+	 * coordx < coordy if x_n < y_n
+	 *  or x_n = y_n and x_(n-1) < y_(n-1)
+	 *  or x_n = y_n and x_(n-1) = y_(n-1) and x_(n-2) < y_(n-2)
+	 *  and so on.
+	 *
+	 */
+	template<unsigned dim, typename T>
+	static void sort_cells_by_coord(
+			std::vector<
+					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > v) {
+		auto cmp =
+				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						T> const & a,
+						std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						T> const & b) {
+
+					Point<dim> bottom_left_point_a = a.first->vertex(0);
+					Point<dim> bottom_left_point_b = b.first->vertex(0);
+
+					double epsilon = 0.00000000001;
+					for(int i=dim-1; i>=0; i--) {
+						if(!Utils::greater_than_or_equals_double(
+								bottom_left_point_a[i], bottom_left_point_b[i],
+								epsilon))
+						return true;
+						else if(!Utils::less_than_or_equals_double(
+								bottom_left_point_a[i], bottom_left_point_b[i],
+								epsilon))
+						return false;
+					}
+					return false;
+				};
+
+		std::sort(v.begin(), v.end(), cmp);
+	}
+
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
