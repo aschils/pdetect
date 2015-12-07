@@ -10,7 +10,7 @@
 
 #include "Utils.hpp"
 
-class VectorUtils {
+class TensorUtils {
 
 public:
 
@@ -102,8 +102,26 @@ public:
 		return res;
 	}
 
+	template<unsigned order, unsigned dim>
+	static std::vector<Tensor<order, dim> >
+	multiply_vector_of_tensors_by_scalar(
+			std::vector<Tensor<order, dim> > &v, double scalar) {
+		std::vector<Tensor<order, dim> > res(v.size());
+
+		for (unsigned i = 0; i < res.size(); i++)
+			res[i] = v[i] * scalar;
+		return res;
+	}
+
 	static std::vector<double> opposite_vector(std::vector<double> v) {
 		return multiply_vector_by_scalar(v, -1.0);
+	}
+
+	template<unsigned order, unsigned dim>
+	static std::vector<Tensor<order, dim> >
+	opposite_vector_of_tensors(
+			std::vector<Tensor<order, dim> > &v) {
+		return multiply_vector_of_tensors_by_scalar<order,dim>(v, -1.0);
 	}
 };
 #endif
