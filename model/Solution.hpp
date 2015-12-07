@@ -21,19 +21,21 @@
 using namespace dealii;
 
 template<unsigned dim>
-class SolutionData {
+class ValuesAtCell {
 public:
-	double fun;
-	Tensor<1, dim> gradient;
-	Tensor<2, dim> hessian;
+	std::vector<double> fun;
+	std::vector<Tensor<1, dim> >  gradient;
+	std::vector<Tensor<2, dim> > hessian;
 
-	SolutionData(double fun, Tensor<1, dim> gradient, Tensor<2, dim> hessian) {
+	ValuesAtCell(std::vector<double> fun,
+			std::vector<Tensor<1, dim> > gradient,
+			std::vector<Tensor<2, dim> > hessian) {
 		this->fun = fun;
 		this->gradient = gradient;
 		this->hessian = hessian;
 	}
 
-	SolutionData() {
+	ValuesAtCell() {
 	}
 };
 
@@ -42,17 +44,18 @@ class Solution {
 
 public:
 
-	std::vector<std::pair<std::vector<double>, SolutionData<dim> > > coord_and_data;
+	std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
+	ValuesAtCell<dim> > > values_at_cells;
 
 	Solution() {
 	}
 
 	void set_fun_drawer(DataOut<dim> fun_drawer){
-		this->fun_drawer = fun_drawer;
+		//this->fun_drawer = fun_drawer;
 	}
 
 	void set_derivatives_drawer(DataOut<dim> derivatives_drawer){
-		this->derivatives_drawer = derivatives_drawer;
+		//this->derivatives_drawer = derivatives_drawer;
 	}
 
 	void draw_vtk_graph_fun(std::string output_file) {
@@ -65,22 +68,22 @@ public:
 		//derivatives_drawer.write_vtk(output);
 	}
 
-	void sort_by_coord() {
-		VectorUtils::sort_by_coord<dim, SolutionData<dim> >(coord_and_data);
+	void sort_cells_by_coord() {
+		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(values_at_cells);
 	}
 
 	void print(){
 
-		for(unsigned i=0; i<coord_and_data.size(); i++){
+		for(unsigned i=0; i<values_at_cells.size(); i++){
 			std::cout << "[coord: (";
-			VectorUtils::print_vec_components(coord_and_data[i].first);
-			std::cout << "), function: " << coord_and_data[i].second.fun;
+			TensorUtils::print_vec_components(values_at_cells[i].first);
+			std::cout << "), function: " << values_at_cells[i].second.fun;
 			std::cout << " gradient: (";
-			VectorUtils::print_tensor_components<dim>(
-					coord_and_data[i].second.gradient);
+			TensorUtils::print_tensor_components<dim>(
+					values_at_cells[i].second.gradient);
 			std::cout << ") hessian: (";
-			VectorUtils::print_tensor_components<dim>(
-								coord_and_data[i].second.hessian);
+			TensorUtils::print_tensor_components<dim>(
+								values_at_cells[i].second.hessian);
 			std::cout << ")] ";
 		}
 		std::cout << std::endl;

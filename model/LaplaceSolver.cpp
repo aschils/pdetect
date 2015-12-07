@@ -195,41 +195,42 @@ public:
 
 }
 
-template<int dim>
-void LaplaceSolver<dim>::set_solution_at_that_point_as_already_known(
-		std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point) {
-	std::pair<Point<dim>, bool> pair;
-	pair.first = point;
-	pair.second = true;
-	already_known.insert(pair);
-}
-
-template<int dim>
-void LaplaceSolver<dim>::save_solution_at_that_point(Point<dim> &point,
-		double &fun_at_point,
-		Tensor<1, dim> &gradient_at_point,
-		Tensor<2, dim> &hessian_at_point,
-		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
-		&coord_and_data) {
-
-	std::pair<std::vector<double>, SolutionData<dim> > coord_and_sol_at_one_point;
-	std::vector<double> coord(dim);
-
-	for (unsigned i = 0; i < dim; i++)
-		coord[i] = point[i];
-
-	coord_and_sol_at_one_point.first = coord;
-	SolutionData<dim> sol(fun_at_point, gradient_at_point, hessian_at_point);
-	coord_and_sol_at_one_point.second = sol;
-	coord_and_data.push_back(coord_and_sol_at_one_point);
-}
+//template<int dim>
+//void LaplaceSolver<dim>::set_solution_at_that_point_as_already_known(
+//		std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point) {
+//	std::pair<Point<dim>, bool> pair;
+//	pair.first = point;
+//	pair.second = true;
+//	already_known.insert(pair);
+//}
+//
+//template<int dim>
+//void LaplaceSolver<dim>::save_solution_at_that_point(Point<dim> &point,
+//		double &fun_at_point,
+//		Tensor<1, dim> &gradient_at_point,
+//		Tensor<2, dim> &hessian_at_point,
+//		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+//		&coord_and_data) {
+//
+//	std::pair<std::vector<double>, SolutionData<dim> > coord_and_sol_at_one_point;
+//	std::vector<double> coord(dim);
+//
+//	for (unsigned i = 0; i < dim; i++)
+//		coord[i] = point[i];
+//
+//	coord_and_sol_at_one_point.first = coord;
+//	SolutionData<dim> sol(fun_at_point, gradient_at_point, hessian_at_point);
+//	coord_and_sol_at_one_point.second = sol;
+//	coord_and_data.push_back(coord_and_sol_at_one_point);
+//}
 
 template<int dim>
 void LaplaceSolver<dim>::build_solution(
-		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
-		&coord_and_data) {
+		std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
+		ValuesAtCell<dim> > >
+		&values_at_cells) {
 
-	std::unordered_map<Point<2>, bool> already_known;
+	//std::unordered_map<Point<2>, bool> already_known;
 	const unsigned int vertices_per_cell = GeometryInfo < dim
 			> ::vertices_per_cell;
 	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
@@ -247,7 +248,14 @@ void LaplaceSolver<dim>::build_solution(
 				gradient_at_pts_of_one_cell);
 		fe_values->get_function_hessians(solution_vec,
 				hessian_at_pts_of_one_cell);
-
+		ValuesAtCell<dim> values(fun_at_pts_of_one_cell,
+				gradient_at_pts_of_one_cell, hessian_at_pts_of_one_cell);
+		std::pair<typename DoFHandler<dim>::active_cell_iterator,
+			ValuesAtCell<dim> > values_at_cell;
+		values_at_cell.first = cell;
+		values_at_cell.second = values;
+		values_at_cells.push_back(values_at_cell);
+/*
 		for (unsigned int v = 0; v < GeometryInfo < 2 > ::vertices_per_cell;
 				v++) {
 
@@ -263,9 +271,7 @@ void LaplaceSolver<dim>::build_solution(
 				set_solution_at_that_point_as_already_known(already_known,
 						point);
 			}
-
-		}
-
+		}*/
 	}
 }
 
@@ -287,7 +293,7 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 //
 //	sol.set_fun_drawer(fun_drawer);
 //	sol.set_derivatives_drawer(derivatives_drawer);
-	build_solution(sol.coord_and_data);
+	build_solution(sol.values_at_cells);
 
 	/*
 	 std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
@@ -300,16 +306,17 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	//std::cout << gradient_at_all_points.size() << std::endl;
 }
 
+/*
 template<int dim>
-SolutionData<dim> LaplaceSolver<dim>::extrapolate_data_at_point(
-		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+ValuesAtCell<dim> LaplaceSolver<dim>::extrapolate_data_at_point(
+		std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > >
 		&coord_and_data, double pos) {
 
 
 }
 template<int dim>
-SolutionData<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
-		std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+ValuesAtCell<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
+		std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > >
 		&coord_and_data) {
 
 	//Here we are only checking if the point is in our finite elements domain.
@@ -333,10 +340,11 @@ SolutionData<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
 			notFound = false;
 		pos++;
 	}
-	SolutionData<dim> data_at_point = extrapolate_data_at_point(coord_and_data, pos-1);
+	ValuesAtCell<dim> data_at_point = extrapolate_data_at_point(coord_and_data, pos-1);
 
 	return data_at_point;
 }
+*/
 
 template<int dim>
 LaplaceSolver<dim>::~LaplaceSolver() {

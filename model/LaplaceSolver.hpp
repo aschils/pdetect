@@ -62,13 +62,13 @@ public:
 	void compute_solution();
 	void get_solution(Solution<dim> &sol);
 
-	SolutionData<dim> extrapolate_data_at_point(
+	ValuesAtCell<dim> extrapolate_data_at_point(
 					std::vector<std::pair
-					<std::vector<double>, SolutionData<dim> > >
+					<std::vector<double>, ValuesAtCell<dim> > >
 					&coord_and_data, double pos);
-	SolutionData<dim> get_solution_at_point(Point<dim> &point,
+	ValuesAtCell<dim> get_solution_at_point(Point<dim> &point,
 					std::vector<std::pair
-					<std::vector<double>, SolutionData<dim> > >
+					<std::vector<double>, ValuesAtCell<dim> > >
 					&coord_and_data);
 
 	~LaplaceSolver();
@@ -101,16 +101,18 @@ private:
 	void output_results(std::string result_file_path) const;
 	void make_periodicity_constraints();
 
-	void set_solution_at_that_point_as_already_known(
+	/*void set_solution_at_that_point_as_already_known(
 			std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
 	void save_solution_at_that_point(Point<dim> &point,
 	double &fun_at_point,
 	Tensor<1, dim> &gradient_at_point,
 	Tensor<2, dim> &hessian_at_point,
 	std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
-	&coord_and_data);
+	&coord_and_data);*/
 	void build_solution(
-			std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+			std::vector<std::pair<
+			typename DoFHandler<dim>::active_cell_iterator,
+			ValuesAtCell<dim> > >
 			&coord_and_data);
 };
 
