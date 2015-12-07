@@ -79,14 +79,14 @@ private:
 	LaplaceSolver<2> *rect_potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
-	std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
-	electric_field;
-	std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
-		electric_field_weight;
+	std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
+	std::vector<Tensor<1, 2> > > > electric_field;
+	std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
+	std::vector<Tensor<1, 2> > > > electric_field_weight;
 
 	void compute_electric_field(Solution<2> &potential,
-			std::vector<std::pair<std::vector<double>, Tensor<1, 2> > >
-				&electric_field);
+			std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
+			std::vector<Tensor<1, 2> > > > &electric_field);
 	double compute_total_length();
 	double compute_rect_width_fe();
 	void compute_and_set_fe_values();
