@@ -92,6 +92,10 @@ public:
 		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(values_at_cells);
 	}
 
+	/**
+	 * Take the coordinates of a point, find the cell in which the point lies
+	 * and extrapole the values of fun, gradient, and hessian at this point.
+	 */
 	ValuesAtPoint<dim> get_values(Point<dim> &point) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
@@ -102,16 +106,14 @@ public:
 					Point<dim> bottom_left = values_in_cell.first->vertex(0);
 					Point<dim> top_right = values_in_cell.first->vertex(vertices_per_cell-1);
 
-					double epsilon = 0.00000001;
+					double epsilon = 0.0001;
 					double in = 0;
 					for(int i = dim-1; i >= 0; i--) {
 						if(Utils::less_than_or_equals_double(bottom_left[i], point[i],
-								epsilon) && Utils::greater_than_or_equals_double(
-								top_right[i], point[i], epsilon))
-							in++;
-						else
-							return false;
-						if(in == dim)
+								epsilon))
+							return true;
+						if(Utils::less_than_or_equals_double(top_right[i], point[i], 
+								epsilon))
 							return true;
 					}
 					return false;
@@ -121,14 +123,16 @@ public:
 						ValuesAtCell<dim>>>::iterator low;
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
-		int pos = low - values_at_cells.begin();
-		std::cout << "Coordinates of the bottom left "
-				<< values_at_cells[pos].first->vertex(0)[0] << "," 
-				<< values_at_cells[pos].first->vertex(0)[1] << std::endl 
-				<< "Coordinates of the top right "
-				<< values_at_cells[pos].first->vertex(3)[0] << ","
-				<< values_at_cells[pos].first->vertex(3)[1] << std::endl
-				<< "Coordinates of the point " << point[0] << "," << point[1] << std::endl;
+		int pos = low - values_at_cells.begin() -1;
+		std::cout << pos << std::endl;
+
+		//for(int pos = 0; pos < 50; pos++) {
+		std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
+				<< values_at_cells[pos].first->vertex(3)[0] << "]" << std::endl 
+				<< "y in [" << values_at_cells[pos].first->vertex(0)[1] << ","
+				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;
+		//}
+		std::cout << point[0] << "," << point[1] << std::endl;
 	}
 
 	void print(){
