@@ -306,15 +306,7 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	//std::cout << gradient_at_all_points.size() << std::endl;
 }
 
-/*
-template<int dim>
-ValuesAtCell<dim> LaplaceSolver<dim>::extrapolate_data_at_point(
-		std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > >
-		&coord_and_data, double pos) {
-
-
-}
-template<int dim>
+/*template<int dim>
 ValuesAtCell<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
 		std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > >
 		&coord_and_data) {
@@ -343,8 +335,8 @@ ValuesAtCell<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
 	ValuesAtCell<dim> data_at_point = extrapolate_data_at_point(coord_and_data, pos-1);
 
 	return data_at_point;
-}
-*/
+}*/
+
 
 template<int dim>
 LaplaceSolver<dim>::~LaplaceSolver() {

@@ -7,8 +7,8 @@
 int main() {
 	test_serrated_2D_potential();
 	//test_serrated_rect_limit_cases();
-	test_electric_field();
-	test_weighting_potential();
-	test_various();
+	//test_electric_field();
+	//test_weighting_potential();
+	//test_various();
 	return 0;
 }

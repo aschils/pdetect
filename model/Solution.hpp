@@ -14,11 +14,31 @@
 #include <deal.II/lac/vector.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_dof_data.h>
+#include <algorithm>
 
 #include "TensorUtils.hpp"
 #include "Utils.hpp"
 
 using namespace dealii;
+
+template<int dim>
+class ValuesAtPoint {
+public:
+	double fun;
+	Tensor<1, dim> gradient;
+	Tensor<2, dim> hessian;
+
+	ValuesAtPoint(double fun, 
+			Tensor<1, dim> gradient,
+			Tensor<2, dim> hessian) {
+		this->fun = fun;
+		this->gradient = gradient;
+		this->hessian = hessian;
+	}
+
+	ValuesAtPoint() {
+	}
+};
 
 template<unsigned dim>
 class ValuesAtCell {
@@ -70,6 +90,45 @@ public:
 
 	void sort_cells_by_coord() {
 		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(values_at_cells);
+	}
+
+	ValuesAtPoint<dim> get_values(Point<dim> &point) {
+		auto cmp =
+				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						ValuesAtCell<dim>> const &values_in_cell,
+						Point<dim> const &point) {
+
+					int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+					Point<dim> bottom_left = values_in_cell.first->vertex(0);
+					Point<dim> top_right = values_in_cell.first->vertex(vertices_per_cell-1);
+
+					double epsilon = 0.00000001;
+					double in = 0;
+					for(int i = dim-1; i >= 0; i--) {
+						if(Utils::less_than_or_equals_double(bottom_left[i], point[i],
+								epsilon) && Utils::greater_than_or_equals_double(
+								top_right[i], point[i], epsilon))
+							in++;
+						else
+							return false;
+						if(in == dim)
+							return true;
+					}
+					return false;
+				};
+
+		typename std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						ValuesAtCell<dim>>>::iterator low;
+		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
+
+		int pos = low - values_at_cells.begin();
+		std::cout << "Coordinates of the bottom left "
+				<< values_at_cells[pos].first->vertex(0)[0] << "," 
+				<< values_at_cells[pos].first->vertex(0)[1] << std::endl 
+				<< "Coordinates of the top right "
+				<< values_at_cells[pos].first->vertex(3)[0] << ","
+				<< values_at_cells[pos].first->vertex(3)[1] << std::endl
+				<< "Coordinates of the point " << point[0] << "," << point[1] << std::endl;
 	}
 
 	void print(){
