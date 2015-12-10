@@ -109,8 +109,7 @@ public:
 					double epsilon = 0.0000001;
 					for(int i = dim-1; i >= 0; i--) {
 						if(Utils::less_than_or_equals_double(bottom_left[i], point[i],
-								epsilon) && Utils::less_than_or_equals_double(
-								top_right[i], point[i], epsilon))
+								epsilon))
 							return true;
 					}
 					return false;
@@ -125,12 +124,12 @@ public:
 			pos++;
 		std::cout << pos << std::endl;
 
-		for(int pos = 0; pos < 50; pos++) {
+		//for(int pos = 0; pos < 50; pos++) {
 		std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
 				<< values_at_cells[pos].first->vertex(3)[0] << "]" << std::endl 
 				<< "y in [" << values_at_cells[pos].first->vertex(0)[1] << ","
 				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;
-		}
+		//}
 		std::cout << point[0] << "," << point[1] << std::endl;
 	}
 
