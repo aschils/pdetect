@@ -21,7 +21,7 @@
 
 using namespace dealii;
 
-/*template<int dim>
+template<unsigned dim>
 class ValuesAtPoint {
 public:
 	double fun;
@@ -38,7 +38,7 @@ public:
 
 	ValuesAtPoint() {
 	}
-};*/
+};
 
 template<unsigned dim>
 class ValuesAtCell {
@@ -59,7 +59,7 @@ public:
 	}
 };
 
-template<int dim>
+template<unsigned dim>
 class Solution {
 
 public:
@@ -92,11 +92,70 @@ public:
 		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(&values_at_cells);
 	}
 
+	ValuesAtPoint<dim> extrapolate_values(std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						ValuesAtCell<dim>> const &values_in_cell,
+						Point<dim> const &point) {
+		double x_left = values_in_cell.first->vertex(0)[0];
+		double x_right = values_in_cell.first->vertex(3)[0];
+		double y_bottom = values_in_cell.first->vertex(0)[1];
+		double y_top = values_in_cell.first->vertex(3)[1];
+
+		double epsilon = 0.00001;
+
+		bool left = false, bottom = false;
+
+		if(Utils::less_than_or_equals_double(abs(x_left-point[0]), abs(x_right-point[0]),
+				epsilon))
+			left = true;
+		if(Utils::less_than_or_equals_double(abs(y_bottom-point[1]), abs(y_top-point[1]),
+				epsilon))
+			bottom = true;
+
+		ValuesAtPoint<dim> extrapol;
+		if(left) {
+			if(bottom) {
+				extrapol.fun = values_in_cell.second->fun[0] * (1 + (point[0]-x_left) 
+																+ (point[1]-y_bottom));
+				extrapol.gradient = values_in_cell.second->gradient[0](1 + (point[0]-x_left) 
+																+ (point[1]-y_bottom));
+				extrapol.hessian = values_in_cell.second->hessian[0](1 + (point[0]-x_left) 
+																+ (point[1]-y_bottom));
+			}
+			else {
+				extrapol.fun = values_in_cell.second->fun[2] * (1 + (point[0]-x_left) 
+																+ (point[1]-y_top));
+				extrapol.gradient = values_in_cell.second->gradient[2] * (1 + (point[0]-x_left) 
+																+ (point[1]-y_top));
+				extrapol.hessian = values_in_cell.second->hessian[2] * (1 + (point[0]-x_left) 
+																+ (point[1]-y_top));
+			}
+		}
+		else {
+			if(bottom) {
+				extrapol.fun = values_in_cell.second->fun[1] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_bottom));
+				extrapol.gradient = values_in_cell.second->gradient[1] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_bottom));
+				extrapol.hessian = values_in_cell.second->hessian[1] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_bottom));
+			}
+			else {
+				extrapol.fun = values_in_cell.second->fun[3] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_top));
+				extrapol.gradient = values_in_cell.second->gradient[3] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_top));
+				extrapol.hessian = values_in_cell.second->hessian[3] * (1 + (point[0]-x_right) 
+																+ (point[1]-y_top));
+			}
+		}
+		return extrapol;
+	}
+
 	/**
 	 * Take the coordinates of a point, find the cell in which the point lies
 	 * and extrapole the values of fun, gradient, and hessian at this point.
 	 */
-	void get_values(Point<dim> &point) {
+	ValuesAtPoint<dim> get_values(Point<dim> &point) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						ValuesAtCell<dim>> const &values_in_cell,
@@ -123,12 +182,12 @@ public:
 						ValuesAtCell<dim>>>::iterator low;
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
-		int pos = low - values_at_cells.begin();
+		unsigned pos = low - values_at_cells.begin();
 
-		/*std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
-				<< values_at_cells[pos].first->vertex(3)[0] << "]" << std::endl 
-				<< "y in [" << values_at_cells[pos].first->vertex(0)[1] << ","
-				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;*/
+		ValuesAtPoint<dim> extrapol;
+		extrapol = extrapolate_values(values_at_cells[pos], point);
+
+		return extrapol;
 	}
 
 	void print(){
