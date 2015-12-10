@@ -89,7 +89,7 @@ public:
 	}
 
 	void sort_cells_by_coord() {
-		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(values_at_cells);
+		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(&values_at_cells);
 	}
 
 	/**
@@ -107,30 +107,28 @@ public:
 					Point<dim> top_right = values_in_cell.first->vertex(vertices_per_cell-1);
 
 					double epsilon = 0.0000001;
-					for(int i = dim-1; i >= 0; i--) {
-						if(Utils::less_than_or_equals_double(bottom_left[i], point[i],
-								epsilon))
-							return true;
-					}
-					return false;
+
+					if(Utils::less_than_or_equals_double(top_right[dim-1], point[dim-1],
+							epsilon)) //Under the cell
+						return true;
+					else if(Utils::less_than_or_equals_double(top_right[dim-2], point[dim-2],
+							epsilon) && Utils::less_than_or_equals_double(bottom_left[dim-1], 
+							point[dim-1], epsilon)) //Before the cell
+						return true;
+					else
+						return false;
 				};
 
 		typename std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						ValuesAtCell<dim>>>::iterator low;
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
-		int pos = low - values_at_cells.begin() -1;
-		if(pos == -1)
-			pos++;
-		std::cout << pos << std::endl;
+		int pos = low - values_at_cells.begin();
 
-		//for(int pos = 0; pos < 50; pos++) {
-		std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
+		/*std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
 				<< values_at_cells[pos].first->vertex(3)[0] << "]" << std::endl 
 				<< "y in [" << values_at_cells[pos].first->vertex(0)[1] << ","
-				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;
-		//}
-		std::cout << point[0] << "," << point[1] << std::endl;
+				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;*/
 	}
 
 	void print(){
