@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <unordered_map>
 #include <functional>
+#include "Solution.hpp"
 
 using namespace dealii;
 
@@ -94,10 +95,10 @@ public:
 	 *  and so on.
 	 *
 	 */
+
 	template<unsigned dim, typename T>
-	static void sort_cells_by_coord(
-			std::vector<
-					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > v) {
+	static void sort_cells_by_coord(std::vector<
+					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > *v) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						T> const & a,
@@ -107,21 +108,16 @@ public:
 					Point<dim> bottom_left_point_a = a.first->vertex(0);
 					Point<dim> bottom_left_point_b = b.first->vertex(0);
 
-					double epsilon = 0.00000000001;
+					double epsilon = 0.00001;
 					for(int i=dim-1; i>=0; i--) {
-						if(!Utils::greater_than_or_equals_double(
-								bottom_left_point_a[i], bottom_left_point_b[i],
-								epsilon))
-						return true;
-						else if(!Utils::less_than_or_equals_double(
-								bottom_left_point_a[i], bottom_left_point_b[i],
-								epsilon))
-						return false;
+						if(bottom_left_point_a[i] - bottom_left_point_b[i] < -epsilon)
+							return true;
+						else if(bottom_left_point_a[i] - bottom_left_point_b[i] > epsilon)
+							return false;
 					}
 					return false;
 				};
-
-		std::sort(v.begin(), v.end(), cmp);
+		std::sort(v->begin(), v->end(), cmp);
 	}
 
 private:
