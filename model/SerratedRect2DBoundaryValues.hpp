@@ -17,7 +17,7 @@
 
 using namespace dealii;
 
-template<int dim>
+template<unsigned dim>
 class SerratedRect2DBoundaryValues: public Function<dim> {
 public:
 

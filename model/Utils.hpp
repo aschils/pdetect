@@ -21,9 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
-#include <unordered_map>
 #include <functional>
-#include "Solution.hpp"
 
 using namespace dealii;
 

@@ -7,7 +7,7 @@
 
 using namespace dealii;
 
-template<int dim>
+template<unsigned dim>
 class Derivatives: public DataPostprocessor<dim> {
 
 public:
@@ -31,16 +31,16 @@ public:
 
 };
 
-template<int dim>
+template<unsigned dim>
 Derivatives<dim>::Derivatives(){}
 
-template<int dim>
+template<unsigned dim>
 UpdateFlags Derivatives<dim>::get_needed_update_flags() const {
 	return update_values | update_gradients | update_q_points |
 			update_second_derivatives;
 }
 
-template<int dim>
+template<unsigned dim>
 void Derivatives<dim>::compute_derived_quantities_scalar(
 		const std::vector<double> &uh, const std::vector<Tensor<1, dim> > &duh,
 		const std::vector<Tensor<2, dim> > &dduh,
@@ -62,7 +62,7 @@ void Derivatives<dim>::compute_derived_quantities_scalar(
 	}
 }
 
-template<int dim>
+template<unsigned dim>
 std::vector<std::string> Derivatives<dim>::get_names() const {
 	std::vector<std::string> solution_names(dim, "gradient");
 	for(unsigned i=0; i<(dim*dim); i++)
@@ -70,7 +70,7 @@ std::vector<std::string> Derivatives<dim>::get_names() const {
 	return solution_names;
 }
 
-template<int dim>
+template<unsigned dim>
 std::vector<DataComponentInterpretation::DataComponentInterpretation> Derivatives<
 		dim>::get_data_component_interpretation() const {
     std::vector<DataComponentInterpretation::DataComponentInterpretation>

@@ -5,7 +5,7 @@
  *      Author: aschils
  */
 
-template <int dim>
+template <unsigned dim>
 double ZeroRightHandSide<dim>::value (const Point<dim> &p,
                                   const unsigned int /*component*/) const
 {

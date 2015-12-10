@@ -10,7 +10,7 @@
 #ifndef __SERRATED_BOUNDARY_VALUES_WEIGHT_HPP__
 #define __SERRATED_BOUNDARY_VALUES_WEIGHT_HPP__
 
-template<int dim>
+template<unsigned dim>
 class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
 		dim> {
 

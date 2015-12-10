@@ -13,7 +13,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <unsigned dim>
 class ZeroRightHandSide : public Function<dim>
 {
 

@@ -30,7 +30,7 @@ using namespace dealii;
 #include "errors.hpp"
 #include "Utils.hpp"
 
-template <int dim>
+template <unsigned dim>
 class MyGridGenerator {
 
 public:

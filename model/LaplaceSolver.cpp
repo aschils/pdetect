@@ -5,7 +5,7 @@
  *      Author: aschils
  */
 
-template<int dim>
+template<unsigned dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 		double rect_length_fe, double rect_width_fe, unsigned refine_level,
 		unsigned max_iter, double stop_accuracy,
@@ -49,7 +49,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->triangulation->refine_global(refine_level);
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::make_periodicity_constraints() {
 	std::map<unsigned int, double> dof_locations;
 
@@ -91,7 +91,7 @@ void LaplaceSolver<dim>::make_periodicity_constraints() {
 	}
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::setup_system() {
 
 	dof_handler.distribute_dofs(fe);
@@ -120,7 +120,7 @@ void LaplaceSolver<dim>::setup_system() {
 	system_rhs.reinit(dof_handler.n_dofs());
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::assemble_system() {
 
 	const unsigned int dofs_per_cell = fe.dofs_per_cell;
@@ -168,7 +168,7 @@ void LaplaceSolver<dim>::assemble_system() {
 			solution_vec, system_rhs);
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::solve() {
 	SolverControl solver_control(max_iter, stop_accuracy);
 	SolverCG<> solver(solver_control);
@@ -176,7 +176,7 @@ void LaplaceSolver<dim>::solve() {
 			PreconditionIdentity());
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::compute_solution() {
 	setup_system();
 	assemble_system();
@@ -224,7 +224,7 @@ public:
 //	coord_and_data.push_back(coord_and_sol_at_one_point);
 //}
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::build_solution(
 		std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
 		ValuesAtCell<dim> > >
@@ -275,7 +275,7 @@ void LaplaceSolver<dim>::build_solution(
 	}
 }
 
-template<int dim>
+template<unsigned dim>
 void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
 	//Used only to output vtk file
@@ -306,39 +306,7 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	//std::cout << gradient_at_all_points.size() << std::endl;
 }
 
-/*template<int dim>
-ValuesAtCell<dim> LaplaceSolver<dim>::get_solution_at_point(Point<dim> &point,
-		std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > >
-		&coord_and_data) {
-
-	//Here we are only checking if the point is in our finite elements domain.
-	for(int i = 0; i < dim; i++) {
-		if(point[i] > rect_width_fe || point[i] > rect_length_fe) {
-			std::cout << "Point is not in the detector" << std::endl;
-			return NULL;
-		}
-	}
-
-	int pos = 0;
-	bool notFound = true;
-	while(notFound) {
-		int coord = 0;
-		for(int j = 0; j < dim; j++) {
-			if(greater_than_or_equals_double(coord_and_data[pos+1].first[j],
-					point[j], 0.000001))
-				coord++;
-		}
-		if(coord == dim)
-			notFound = false;
-		pos++;
-	}
-	ValuesAtCell<dim> data_at_point = extrapolate_data_at_point(coord_and_data, pos-1);
-
-	return data_at_point;
-}*/
-
-
-template<int dim>
+template<unsigned dim>
 LaplaceSolver<dim>::~LaplaceSolver() {
 	delete fe_values;
 	delete quadrature_formula;

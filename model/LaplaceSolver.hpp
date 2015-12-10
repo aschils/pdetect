@@ -45,7 +45,7 @@
 
 using namespace dealii;
 
-template<int dim>
+template<unsigned dim>
 class LaplaceSolver {
 
 public:

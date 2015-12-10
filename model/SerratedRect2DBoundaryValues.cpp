@@ -5,7 +5,7 @@
  *      Author: aschils
  */
 
-template<int dim>
+template<unsigned dim>
 SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 		unsigned nbr_of_strips, double rect_length_fe, double rect_width_fe,
 		double strip_potential, double pitch_fe, double strip_length_fe,
@@ -32,7 +32,7 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
  * Detector with two periodic structures:
  * |  ---    ---  |
  */
-template<int dim>
+template<unsigned dim>
 bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 
 	double epsilon = 0.00001;
@@ -58,7 +58,7 @@ bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 					strip_border_right, epsilon);
 }
 
-template<int dim>
+template<unsigned dim>
 double SerratedRect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		const unsigned int /*component*/) const {
 	if (nbr_of_strips > 0 && is_strip(p))

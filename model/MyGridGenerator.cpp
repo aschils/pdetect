@@ -5,7 +5,7 @@
  *      Author: aschils
  */
 
-template<int dim>
+template<unsigned dim>
 void MyGridGenerator<dim>::hyper_rectangle(
 		dealii::Triangulation<dim> &triangulation, double length,
 		double width) {
@@ -15,7 +15,7 @@ void MyGridGenerator<dim>::hyper_rectangle(
 			point_top);
 }
 
-template<int dim>
+template<unsigned dim>
 void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 		double width, double hole_length, double hole_width,
 		double inter_hole_space, unsigned nbr_of_cells_fst_dim,
@@ -56,7 +56,7 @@ void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 	}
 }
 
-template<int dim>
+template<unsigned dim>
 void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
 		unsigned nbr_of_cells_fst_dim, unsigned nbr_of_cells_scd_dim,
 		std::vector<CellData<2> > &cells) {
@@ -100,7 +100,7 @@ void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
  * - 0 <= hole_width <= width
  * - 0 <= inter_hole_space
  */
-template<int dim>
+template<unsigned dim>
 bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
 		double hole_length, double hole_width, double inter_hole_space) {
 
@@ -138,7 +138,7 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
  * PRECONDITIONS_VIOLATED is throwned.
  *
  */
-template<int dim>
+template<unsigned dim>
 void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 		double width, unsigned holes_nbr, double hole_length, double hole_width,
 		double inter_hole_space) {
