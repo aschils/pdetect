@@ -21,7 +21,7 @@
 
 using namespace dealii;
 
-template<int dim>
+/*template<int dim>
 class ValuesAtPoint {
 public:
 	double fun;
@@ -38,7 +38,7 @@ public:
 
 	ValuesAtPoint() {
 	}
-};
+};*/
 
 template<unsigned dim>
 class ValuesAtCell {
@@ -96,7 +96,7 @@ public:
 	 * Take the coordinates of a point, find the cell in which the point lies
 	 * and extrapole the values of fun, gradient, and hessian at this point.
 	 */
-	ValuesAtPoint<dim> get_values(Point<dim> &point) {
+	void get_values(Point<dim> &point) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						ValuesAtCell<dim>> const &values_in_cell,
@@ -106,14 +106,11 @@ public:
 					Point<dim> bottom_left = values_in_cell.first->vertex(0);
 					Point<dim> top_right = values_in_cell.first->vertex(vertices_per_cell-1);
 
-					double epsilon = 0.0001;
-					double in = 0;
+					double epsilon = 0.0000001;
 					for(int i = dim-1; i >= 0; i--) {
 						if(Utils::less_than_or_equals_double(bottom_left[i], point[i],
-								epsilon))
-							return true;
-						if(Utils::less_than_or_equals_double(top_right[i], point[i], 
-								epsilon))
+								epsilon) && Utils::less_than_or_equals_double(
+								top_right[i], point[i], epsilon))
 							return true;
 					}
 					return false;
@@ -124,14 +121,16 @@ public:
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
 		int pos = low - values_at_cells.begin() -1;
+		if(pos == -1)
+			pos++;
 		std::cout << pos << std::endl;
 
-		//for(int pos = 0; pos < 50; pos++) {
+		for(int pos = 0; pos < 50; pos++) {
 		std::cout << "x in [" << values_at_cells[pos].first->vertex(0)[0] << "," 
 				<< values_at_cells[pos].first->vertex(3)[0] << "]" << std::endl 
 				<< "y in [" << values_at_cells[pos].first->vertex(0)[1] << ","
 				<< values_at_cells[pos].first->vertex(3)[1] << "]" << std::endl;
-		//}
+		}
 		std::cout << point[0] << "," << point[1] << std::endl;
 	}
 
