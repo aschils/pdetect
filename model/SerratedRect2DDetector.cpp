@@ -92,7 +92,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			rect_width_fe, refine_level, max_iter, stop_accuracy,
 			zero_right_hand_side, boundary_val, true);
 
-	boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
+	/*boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
 			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
 			pitch_length_fe, strip_length_fe, strip_width_fe);
 	triangulation_weight = new Triangulation<2>();
@@ -101,7 +101,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			pitch_length_fe);
 	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			rect_length_fe, rect_width_fe, refine_level, max_iter,
-			stop_accuracy, zero_right_hand_side, boundary_val_weight, true);
+			stop_accuracy, zero_right_hand_side, boundary_val_weight, true);*/
 	//nbr_of_points_along_axes();
 }
 
@@ -138,19 +138,15 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete rect_potential_solver;
 	delete triangulation;
 
-	delete boundary_val_weight;
+	/*delete boundary_val_weight;
 	delete rect_potential_solver_weight;
-	delete triangulation_weight;
+	delete triangulation_weight;*/
 }
 
 void SerratedRect2DDetector::compute() {
 	rect_potential_solver->compute_solution();
 	rect_potential_solver->get_solution(solution_potential);
 	solution_potential.sort_cells_by_coord();
-	Point<2> p;
-	p[0] = 50;
-	p[1] = 60;
-	solution_potential.get_values(p);
 	compute_electric_field(solution_potential, electric_field);
 	//solution_potential.print();
 }
@@ -168,7 +164,7 @@ void SerratedRect2DDetector::compute_electric_field(Solution<2> &potential,
 
 	std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
 		ValuesAtCell<2> > > values_at_cells =
-			solution_potential.values_at_cells;
+			potential.values_at_cells;
 	electric_field.resize(values_at_cells.size());
 
 	for (unsigned i = 0; i < values_at_cells.size(); i++) {
