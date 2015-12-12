@@ -114,74 +114,74 @@ public:
 		ValuesAtPoint<dim> extrapol;
 		if(left) {
 			if(bottom) {
-				extrapol.fun = values_in_cell.second->fun[0] 
-						+ (values_in_cell.second->fun[1]-values_in_cell.second->fun[0])
+				extrapol.fun = values_in_cell.second.fun[0] 
+						+ (values_in_cell.second.fun[1]-values_in_cell.second.fun[0])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->fun[2]-values_in_cell.second->fun[0])
+						+ (values_in_cell.second.fun[2]-values_in_cell.second.fun[0])
 						* (point[1]-y_bottom)/(y_top-y_bottom);
-				extrapol.gradient = values_in_cell.second->gradient[0] 
-						+ (values_in_cell.second->gradient[1]-values_in_cell.second->gradient[0])
+				extrapol.gradient = values_in_cell.second.gradient[0] 
+						+ (values_in_cell.second.gradient[1]-values_in_cell.second.gradient[0])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->gradient[2]-values_in_cell.second->gradient[0])
+						+ (values_in_cell.second.gradient[2]-values_in_cell.second.gradient[0])
 						* (point[1]-y_bottom)/(y_top-y_bottom);
-				extrapol.hessian = values_in_cell.second->hessian[0] 
-						+ (values_in_cell.second->hessian[1]-values_in_cell.second->hessian[0])
+				extrapol.hessian = values_in_cell.second.hessian[0] 
+						+ (values_in_cell.second.hessian[1]-values_in_cell.second.hessian[0])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->hessian[2]-values_in_cell.second->hessian[0])
+						+ (values_in_cell.second.hessian[2]-values_in_cell.second.hessian[0])
 						* (point[1]-y_bottom)/(y_top-y_bottom);
 			}
 			else {
-				extrapol.fun = values_in_cell.second->fun[2] 
-						+ (values_in_cell.second->fun[3]-values_in_cell.second->fun[2])
+				extrapol.fun = values_in_cell.second.fun[2] 
+						+ (values_in_cell.second.fun[3]-values_in_cell.second.fun[2])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->fun[0]-values_in_cell.second->fun[2])
-						* (point[1]-y_top)/(y_top-y_bottom);
-				extrapol.gradient = values_in_cell.second->gradient[2] 
-						+ (values_in_cell.second->gradient[3]-values_in_cell.second->gradient[2])
-						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->gradient[0]-values_in_cell.second->gradient[2])
+						+ (values_in_cell.second.fun[0]-values_in_cell.second.fun[2])
 						* (point[1]-y_bottom)/(y_top-y_bottom);
-				extrapol.hessian = values_in_cell.second->hessian[2] 
-						+ (values_in_cell.second->hessian[3]-values_in_cell.second->hessian[2])
+				extrapol.gradient = values_in_cell.second.gradient[2] 
+						+ (values_in_cell.second.gradient[3]-values_in_cell.second.gradient[2])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->hessian[0]-values_in_cell.second->hessian[2])
-						* (point[1]-y_top)/(y_top-y_bottom);
+						+ (values_in_cell.second.gradient[0]-values_in_cell.second.gradient[2])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
+				extrapol.hessian = values_in_cell.second.hessian[2] 
+						+ (values_in_cell.second.hessian[3]-values_in_cell.second.hessian[2])
+						* (point[0]-x_left)/(x_right-x_left)
+						+ (values_in_cell.second.hessian[0]-values_in_cell.second.hessian[2])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
 			}
 		}
 		else {
 			if(bottom) {
-				extrapol.fun = values_in_cell.second->fun[1] 
-						+ (values_in_cell.second->fun[0]-values_in_cell.second->fun[1])
+				extrapol.fun = values_in_cell.second.fun[1] 
+						+ (values_in_cell.second.fun[0]-values_in_cell.second.fun[1])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->fun[3]-values_in_cell.second->fun[1])
-						* (point[1]-y_top)/(y_top-y_bottom);
-				extrapol.gradient = values_in_cell.second->gradient[1] 
-						+ (values_in_cell.second->gradient[0]-values_in_cell.second->gradient[1])
+						+ (values_in_cell.second.fun[3]-values_in_cell.second.fun[1])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
+				extrapol.gradient = values_in_cell.second.gradient[1] 
+						+ (values_in_cell.second.gradient[0]-values_in_cell.second.gradient[1])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->gradient[3]-values_in_cell.second->gradient[1])
-						* (point[1]-y_top)/(y_top-y_bottom);
-				extrapol.hessian = values_in_cell.second->hessian[1] 
-						+ (values_in_cell.second->hessian[0]-values_in_cell.second->hessian[1])
+						+ (values_in_cell.second.gradient[3]-values_in_cell.second.gradient[1])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
+				extrapol.hessian = values_in_cell.second.hessian[1] 
+						+ (values_in_cell.second.hessian[0]-values_in_cell.second.hessian[1])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->hessian[3]-values_in_cell.second->hessian[1])
-						* (point[1]-y_top)/(y_top-y_bottom);
+						+ (values_in_cell.second.hessian[3]-values_in_cell.second.hessian[1])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
 			}
 			else {
-				extrapol.fun = values_in_cell.second->fun[3] 
-						+ (values_in_cell.second->fun[2]-values_in_cell.second->fun[3])
+				extrapol.fun = values_in_cell.second.fun[3] 
+						+ (values_in_cell.second.fun[2]-values_in_cell.second.fun[3])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->fun[1]-values_in_cell.second->fun[3])
-						* (point[1]-y_top)/(y_top-y_bottom);
-				extrapol.gradient = values_in_cell.second->gradient[3] 
-						+ (values_in_cell.second->gradient[2]-values_in_cell.second->gradient[3])
+						+ (values_in_cell.second.fun[1]-values_in_cell.second.fun[3])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
+				extrapol.gradient = values_in_cell.second.gradient[3] 
+						+ (values_in_cell.second.gradient[2]-values_in_cell.second.gradient[3])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->gradient[1]-values_in_cell.second->gradient[3])
-						* (point[1]-y_top)/(y_top-y_bottom);
-				extrapol.hessian = values_in_cell.second->hessian[3] 
-						+ (values_in_cell.second->hessian[2]-values_in_cell.second->hessian[3])
+						+ (values_in_cell.second.gradient[1]-values_in_cell.second.gradient[3])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
+				extrapol.hessian = values_in_cell.second.hessian[3] 
+						+ (values_in_cell.second.hessian[2]-values_in_cell.second.hessian[3])
 						* (point[0]-x_left)/(x_right-x_left)
-						+ (values_in_cell.second->hessian[1]-values_in_cell.second->hessian[3])
-						* (point[1]-y_top)/(y_top-y_bottom);
+						+ (values_in_cell.second.hessian[1]-values_in_cell.second.hessian[3])
+						* (point[1]-y_bottom)/(y_top-y_bottom);
 			}
 		}
 		return extrapol;
@@ -191,7 +191,7 @@ public:
 	 * Take the coordinates of a point, find the cell in which the point lies
 	 * and extrapole the values of fun, gradient, and hessian at this point.
 	 */
-	ValuesAtPoint<dim> get_values(Point<dim> &point) {
+	ValuesAtPoint<dim> get_values(Point<dim> const &point) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						ValuesAtCell<dim>> const &values_in_cell,
