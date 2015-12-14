@@ -219,6 +219,8 @@ public:
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
 		unsigned pos = low - values_at_cells.begin();
+		if(pos == values_at_cells.size())
+			pos--;
 
 		ValuesAtPoint<dim> extrapol;
 		extrapol = extrapolate_values(values_at_cells[pos], point);
