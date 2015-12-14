@@ -19,6 +19,8 @@
 #include <functional>
 #include "TensorUtils.hpp"
 
+#include "StraightLine.hpp"
+
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 
 using namespace std;
