@@ -138,6 +138,8 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete rect_potential_solver;
 	delete triangulation;
 
+	//delete line;
+
 	/*delete boundary_val_weight;
 	delete rect_potential_solver_weight;
 	delete triangulation_weight;*/
@@ -148,6 +150,12 @@ void SerratedRect2DDetector::compute() {
 	rect_potential_solver->get_solution(solution_potential);
 	solution_potential.sort_cells_by_coord();
 	compute_electric_field(solution_potential, electric_field);
+
+	Point<2> p;
+	p[0] = 0;
+	p[1] = rect_width_fe-0.9;
+	line = new StraightLine<2>(90, p, &solution_potential, 0.1);
+	//solution_potential.get_values(p);
 	//solution_potential.print();
 }
 

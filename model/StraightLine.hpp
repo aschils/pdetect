@@ -1,5 +1,5 @@
 /*
- * StraightLine.cpp
+ * StraightLine.hpp
  *
  *  Created on: 14 déc. 2015
  *      Author: slardinois
@@ -23,16 +23,33 @@ template<unsigned dim>
 class StraightLine {
 public:
 	/**
-	 * @param: alpha is the incline of the straight line
-	 *		   pass is a point where our line pass
-	 *		   sol is simply the object where lies the needed informations
+	 * @param: -alpha is the incline of the straight line
+	 *		   -pass is a crossing point of our line
+	 *		   -sol is simply the object where lies the needed informations
+	 *		   -precision is the space between two consecutives points on the
+	 *			line
 	 */
-	StraightLine(double alpha, Point<dim> pass, Solution<dim> sol);
-	void construct_line(double alpha, Point<dim>);
+	StraightLine(double alpha, Point<dim> const &pass, 
+				Solution<dim> *sol, double precision);
+
+	/**
+	 * This functiun simply gives us the two extremeties of our line for a given
+	 * incline and a given crossing point.
+	 *
+	 * /!\ For now it only works for alpha = 0 or alpha = 90°
+	 */
+	std::pair<Point<dim>, Point<dim>> get_extremeties(double alpha, 
+											Point<dim> const &pass);
+	void construct_line(double alpha, Point<dim> const &pass);
 
 private:
-	Solution<dim> sol;
+	double precision;
+	double rect_length_fe;
+	double rect_width_fe;
+	Solution<dim> *sol;
 	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> values_on_line;
 };
+
+#include "StraightLine.cpp"
 
 #endif
