@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __SOLUTION_HPP__
-#define __SOLUTION_HPP__
+#pragma once
 
 #include <fstream>
 #include <iostream>
@@ -253,4 +252,3 @@ private:
 	//DataOut<dim> derivatives_drawer;
 };
 
-#endif

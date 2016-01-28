@@ -4,8 +4,7 @@
  *      Author: aschils
  */
 
-#ifndef __SERRATED_BOUNDARY_VALUES_HPP__
-#define __SERRATED_BOUNDARY_VALUES_HPP__
+#pragma once
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/base/function.h>
@@ -102,5 +101,4 @@ double SerratedRect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		return 0.0;
 }
 
-#endif
 

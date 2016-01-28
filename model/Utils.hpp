@@ -6,8 +6,7 @@
  *      Author: aschils
  */
 
-#ifndef __UTILS_HPP__
-#define __UTILS_HPP__
+#pragma once
 
 #include <stdlib.h>
 #include <deal.II/grid/tria.h>
@@ -133,5 +132,3 @@ private:
 		return numbers;
 	}
 };
-
-#endif

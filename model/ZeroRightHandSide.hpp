@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __ZERO_RIGHT_HAND_SIDE_HPP__
-#define __ZERO_RIGHT_HAND_SIDE_HPP__
+#pragma once
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/base/function.h>
@@ -29,6 +28,3 @@ double ZeroRightHandSide<dim>::value (const Point<dim> &p,
 {
 	return 0.0;
 }
-
-
-#endif

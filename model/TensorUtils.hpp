@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __VECTOR_UTILS_HPP__
-#define __VECTOR_UTILS_HPP__
+#pragma once
 
 #include "Utils.hpp"
 
@@ -124,4 +123,3 @@ public:
 		return multiply_vector_of_tensors_by_scalar<order,dim>(v, -1.0);
 	}
 };
-#endif

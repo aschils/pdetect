@@ -5,10 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __ERRORS_HPP__
-#define __ERRORS_HPP__
+#pragma once
 
 #define ZERO_OR_NEGATIVE_DOMAIN_LENGTH_ERROR 1
 #define PRECONDITIONS_VIOLATED 2
-
-#endif

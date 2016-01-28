@@ -5,10 +5,9 @@
  *      Author: aschils
  */
 
-#include "SerratedRect2DBoundaryValues.hpp"
+#pragma once
 
-#ifndef __SERRATED_BOUNDARY_VALUES_WEIGHT_HPP__
-#define __SERRATED_BOUNDARY_VALUES_WEIGHT_HPP__
+#include "SerratedRect2DBoundaryValues.hpp"
 
 template<unsigned dim>
 class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
@@ -34,5 +33,3 @@ public:
 			return 0.0;
 	}
 };
-
-#endif

@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __GRID_GENERATOR_HPP__
-#define __GRID_GENERATOR_HPP__
+#pragma once
 
 #include <deal.II/grid/tria.h>
 
@@ -257,5 +256,3 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 	tria.create_triangulation(points, cells, SubCellData());
 }
-
-#endif

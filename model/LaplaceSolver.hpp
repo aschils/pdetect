@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __LAPLACE_SOLVER_HPP__
-#define __LAPLACE_SOLVER_HPP__
+#pragma once
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/grid_generator.h>
@@ -423,4 +422,3 @@ LaplaceSolver<dim>::~LaplaceSolver() {
 	delete quadrature_formula;
 }
 
-#endif

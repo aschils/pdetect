@@ -5,8 +5,7 @@
  *      Author: slardinois
  */
 
-#ifndef __STRAIGHT_LINE_HPP__
-#define __STRAIGHT_LINE_HPP__
+#pragma once
 
 #include "Solution.hpp"
 
@@ -125,4 +124,3 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 	}
 }
 
-#endif

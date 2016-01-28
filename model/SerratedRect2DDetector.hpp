@@ -5,8 +5,7 @@
  *      Author: aschils
  */
 
-#ifndef __SERRATED_RECT_2D_DETECTOR_HPP__
-#define __SERRATED_RECT_2D_DETECTOR_HPP__
+#pragma once
 
 #include <unordered_map>
 
@@ -97,4 +96,3 @@ private:
 	//void nbr_of_points_along_axes();
 };
 
-#endif

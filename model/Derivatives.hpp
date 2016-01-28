@@ -1,5 +1,4 @@
-#ifndef __GRADIENT_HPP__
-#define __GRADIENT_HPP__
+#pragma once
 
 #include <deal.II/lac/vector.h>
 #include <deal.II/base/point.h>
@@ -79,4 +78,3 @@ std::vector<DataComponentInterpretation::DataComponentInterpretation> Derivative
 	return interpretation;
 }
 
-#endif
