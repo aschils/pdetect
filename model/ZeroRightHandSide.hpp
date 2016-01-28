@@ -23,6 +23,12 @@ public:
                         const unsigned int  component = 0) const;
 };
 
-#include "ZeroRightHandSide.cpp"
+template <unsigned dim>
+double ZeroRightHandSide<dim>::value (const Point<dim> &p,
+                                  const unsigned int /*component*/) const
+{
+	return 0.0;
+}
+
 
 #endif
