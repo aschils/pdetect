@@ -10,15 +10,15 @@
 #include <unordered_map>
 
 #include "Detector2D.hpp"
-#include "LaplaceSolver.hpp"
-#include "MyGridGenerator.hpp"
-#include "ZeroRightHandSide.hpp"
-#include "SerratedRect2DBoundaryValues.hpp"
-#include "SerratedRect2DBoundaryValuesWeight.hpp"
+#include "../LaplaceSolver.hpp"
+#include "../MyGridGenerator.hpp"
+#include "../ZeroRightHandSide.hpp"
+#include "../SerratedRect2DBoundaryValues.hpp"
+#include "../SerratedRect2DBoundaryValuesWeight.hpp"
 #include <functional>
-#include "TensorUtils.hpp"
+#include "../TensorUtils.hpp"
 
-#include "StraightLine.hpp"
+#include "../StraightLine.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 

@@ -150,7 +150,6 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 									rect_length_fe, 0.000001)
 							|| Utils::equals_double(cell->face(f)->center()[1],
 									rect_width_fe, 0.000001))
-
 						cell->face(f)->set_boundary_id(1);
 				}
 			}
@@ -389,20 +388,20 @@ template<unsigned dim>
 void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
 	//Used only to output vtk file
-//	DataOut<2> fun_drawer;
-//	fun_drawer.attach_dof_handler(dof_handler);
-//	fun_drawer.add_data_vector(solution_vec, "solution");
-//	fun_drawer.build_patches();
-//
-//	//PostProcessor, used only to output vtk file
-//	Derivatives<dim> derivatives;
-//	DataOut<dim> derivatives_drawer;
-//	derivatives_drawer.attach_dof_handler(dof_handler);
-//	derivatives_drawer.add_data_vector(solution_vec, derivatives);
-//	derivatives_drawer.build_patches();
-//
-//	sol.set_fun_drawer(fun_drawer);
-//	sol.set_derivatives_drawer(derivatives_drawer);
+	DataOut<2> fun_drawer;
+	fun_drawer.attach_dof_handler(dof_handler);
+	fun_drawer.add_data_vector(solution_vec, "solution");
+	fun_drawer.build_patches();
+
+	//PostProcessor, used only to output vtk file
+	Derivatives<dim> derivatives;
+	DataOut<dim> derivatives_drawer;
+	derivatives_drawer.attach_dof_handler(dof_handler);
+	derivatives_drawer.add_data_vector(solution_vec, derivatives);
+	derivatives_drawer.build_patches();
+
+	sol.set_fun_drawer(fun_drawer);
+	sol.set_derivatives_drawer(derivatives_drawer);
 	build_solution(sol.values_at_cells);
 
 	/*

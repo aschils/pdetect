@@ -9,8 +9,8 @@
 
 #include <deal.II/numerics/data_out.h>
 
-#include "Derivatives.hpp"
-#include "Solution.hpp"
+#include "../Derivatives.hpp"
+#include "../Solution.hpp"
 
 class Detector2D {
 

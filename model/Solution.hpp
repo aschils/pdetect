@@ -70,21 +70,21 @@ public:
 	}
 
 	void set_fun_drawer(DataOut<dim> fun_drawer){
-		//this->fun_drawer = fun_drawer;
+		this->fun_drawer = fun_drawer;
 	}
 
 	void set_derivatives_drawer(DataOut<dim> derivatives_drawer){
-		//this->derivatives_drawer = derivatives_drawer;
+		this->derivatives_drawer = derivatives_drawer;
 	}
 
 	void draw_vtk_graph_fun(std::string output_file) {
 		std::ofstream output(output_file);
-		//fun_drawer.write_vtk(output);
+		fun_drawer.write_vtk(output);
 	}
 
 	void draw_vtk_graph_derivatives(std::string output_file) {
 		std::ofstream output(output_file);
-		//derivatives_drawer.write_vtk(output);
+		derivatives_drawer.write_vtk(output);
 	}
 
 	void sort_cells_by_coord() {
@@ -248,7 +248,7 @@ private:
 	//These two structures contain data already available in coord_and_data,
 	//but it is useful to keep them as such to easily output vtk graph file
 	//using deal.ii DataOut class.
-	//DataOut<dim> fun_drawer;
-	//DataOut<dim> derivatives_drawer;
+	DataOut<dim> fun_drawer;
+	DataOut<dim> derivatives_drawer;
 };
 

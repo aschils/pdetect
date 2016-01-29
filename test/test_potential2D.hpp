@@ -7,7 +7,7 @@
 
 #include <deal.II/lac/vector.h>
 
-#include "../model/SerratedRect2DDetector.hpp"
+#include "../model/detectors/SerratedRect2DDetector.hpp"
 #include "../model/ZeroRightHandSide.hpp"
 #include "../model/Utils.hpp"
 
