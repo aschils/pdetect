@@ -134,6 +134,7 @@ void test_weighting_potential() {
 
 void test_various() {
 
+	/*
 	double strip_potential = 1000;
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
@@ -156,6 +157,6 @@ void test_various() {
 	std::string output_file = output_dir + srdd.params_to_string() + ".vtk";
 	srdd.draw_vtk_graph_potential(output_file);
 	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
-	//}
+	//}*/
 }
 

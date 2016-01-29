@@ -29,7 +29,7 @@ using namespace dealii;
 #include "errors.hpp"
 #include "Utils.hpp"
 
-template <unsigned dim>
+template<unsigned dim>
 class MyGridGenerator {
 
 public:
@@ -69,13 +69,17 @@ public:
 	 */
 	//TODO generalize to 3D
 	static void serrated_hyper_rectangle(dealii::Triangulation<dim> &tria,
-				double width, unsigned holes_nbr, double hole_length,
-				double hole_width, double inter_hole_space);
+			double width, unsigned holes_nbr, double hole_length,
+			double hole_width, double inter_hole_space);
+
+	static void rectangle_with_circular_holes(dealii::Triangulation<dim> &tria,
+			unsigned width, unsigned holes_radius,
+			unsigned inter_holes_centers_dist, int nbr_of_holes);
 
 private:
 
 	static void gen_points_for_serrated_hrect(double length, double width,
-			double hole_length,	double hole_width, double inter_hole_space,
+			double hole_length, double hole_width, double inter_hole_space,
 			unsigned nbr_of_cells_fst_dim, unsigned nbr_of_cells_scd_dim,
 			std::vector<Point<2> > &points);
 
@@ -84,14 +88,17 @@ private:
 
 	static bool are_precond_fullfilled_serr_hrect(double width,
 			double hole_length, double hole_width, double inter_hole_space);
+
+	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
+				unsigned width, unsigned length, unsigned holes_radius);
 };
 
 template<unsigned dim>
 void MyGridGenerator<dim>::hyper_rectangle(
 		dealii::Triangulation<dim> &triangulation, double length,
 		double width) {
-	Point < dim > point_bottom(0, 0);
-	Point < dim > point_top(length, width);
+	Point<dim> point_bottom(0, 0);
+	Point<dim> point_top(length, width);
 	dealii::GridGenerator::hyper_rectangle(triangulation, point_bottom,
 			point_top);
 }
@@ -108,7 +115,7 @@ void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 	double y = 0.0;
 	for (unsigned j = 0; j <= nbr_of_cells_scd_dim; j++) {
 
-		Point < 2 > left_corner_point(0.0, y);
+		Point<2> left_corner_point(0.0, y);
 		points.push_back(left_corner_point);
 
 		bool is_hole_left_point = true;
@@ -116,7 +123,7 @@ void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 		double x = left_half_dent_end_x;
 		for (unsigned i = 0; i < nbr_of_cells_fst_dim - 1; i++) {
 
-			Point < 2 > new_point(x, y);
+			Point<2> new_point(x, y);
 			points.push_back(new_point);
 
 			if (is_hole_left_point)
@@ -127,11 +134,11 @@ void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
 			is_hole_left_point = !is_hole_left_point;
 		}
 
-		Point < 2 > end_point(length, y);
+		Point<2> end_point(length, y);
 		points.push_back(end_point);
 
-		if(j == 0)
-			y = width-(nbr_of_cells_scd_dim-1)*hole_width;
+		if (j == 0)
+			y = width - (nbr_of_cells_scd_dim - 1) * hole_width;
 		else
 			y += hole_width;
 	}
@@ -233,8 +240,8 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 					inter_hole_space :
 					holes_nbr * (hole_length + inter_hole_space);
 
-	if (length == 0.0 || width == 0.0 || hole_width == 0.0
-			|| hole_length == 0.0 || holes_nbr == 0)
+	if (length == 0.0 || width == 0.0 || hole_width == 0.0 || hole_length == 0.0
+			|| holes_nbr == 0)
 		return hyper_rectangle(tria, length, width);
 
 	if (inter_hole_space == 0.0)
@@ -242,7 +249,7 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
 
-	unsigned nbr_of_cells_scd_dim =	ceil(width / hole_width);
+	unsigned nbr_of_cells_scd_dim = ceil(width / hole_width);
 
 	std::vector<Point<2> > points;
 	gen_points_for_serrated_hrect(length, width, hole_length, hole_width,
@@ -255,4 +262,175 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 			cells);
 
 	tria.create_triangulation(points, cells, SubCellData());
+}
+
+template<unsigned dim>
+void MyGridGenerator<dim>::rectangle_with_circular_hole(
+		dealii::Triangulation<dim> &tria, unsigned width, unsigned length,
+		unsigned holes_radius) {
+
+	unsigned shorter_side = std::min<unsigned>(width, length);
+	double h_shell_outer_radius = ceil(shorter_side / 2.0);
+
+	Assert(inner_radius < h_shell_outer_radius,
+			ExcMessage("outer_radius has to be bigger than inner_radius."));
+
+	Point<dim> center;
+	unsigned h_shell_nbr_of_cells = 8;
+
+	// We create an hyper_shell in two dimensions, and then we modify it.
+	dealii::GridGenerator::hyper_shell(tria, center, holes_radius,
+			h_shell_outer_radius, h_shell_nbr_of_cells);
+
+	typename dealii::Triangulation<dim>::active_cell_iterator cell =
+			tria.begin_active();
+	typename dealii::Triangulation<dim>::active_cell_iterator endc = tria.end();
+
+	int half_length = ceil(length / 2.0);
+	int half_width = ceil(width / 2.0);
+
+	/*
+	 * What we obtain after transforming hypershell with the following code:
+	 *
+	 *  3         2        1
+	 *  ___________________
+	 *  |                  |
+	 * 4|   circle here    | 0
+	 *  |__________________|
+	 *  5         6        7
+	 *
+	 * The numbers are the vertices indices (helps to understand the code
+	 * in the switch below). Before transformation we had these vertices
+	 * organized to form an outer circle, thus we have transformed this
+	 * outer circle in a rectangle.
+	 *
+	 */
+
+	std::vector<bool> treated_vertices(tria.n_vertices(), false);
+	for (; cell != endc; ++cell) {
+		for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+			if (cell->face(f)->at_boundary()) {
+				for (unsigned int v = 0;
+						v < GeometryInfo<dim>::vertices_per_face; ++v) {
+					unsigned int vv = cell->face(f)->vertex_index(v);
+					if (treated_vertices[vv] == false) {
+						treated_vertices[vv] = true;
+
+						//TODO cleaner solution
+
+						switch (vv) {
+
+						case 0:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(half_length, 0);
+							break;
+						case 1:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(half_length, half_width);
+							break;
+						case 2:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(0, half_width);
+							break;
+						case 3:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(-half_length, half_width);
+							break;
+						case 4:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(-half_length, 0);
+							break;
+						case 5:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(-half_length, -half_width);
+							break;
+						case 6:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(0, -half_width);
+							break;
+						case 7:
+							cell->face(f)->vertex(v) = center
+									+ Point<dim>(half_length, -half_width);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+	}
+
+	double eps = 1e-3 * h_shell_outer_radius;
+	cell = tria.begin_active();
+
+	//Magic copied from deal.ii GridGenerator::hyper_cube_with_cylindrical_hole
+	//function
+	bool colorize = true;
+	for (; cell != endc; ++cell) {
+		for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+
+			if (cell->face(f)->at_boundary()) {
+
+				double dx = cell->face(f)->center()(0) - center(0);
+				double dy = cell->face(f)->center()(1) - center(1);
+
+				if (colorize) {
+					if (std::abs(dx + h_shell_outer_radius) < eps)
+						cell->face(f)->set_boundary_id(0);
+					else if (std::abs(dx - h_shell_outer_radius) < eps)
+						cell->face(f)->set_boundary_id(1);
+					else if (std::abs(dy + h_shell_outer_radius) < eps)
+						cell->face(f)->set_boundary_id(2);
+					else if (std::abs(dy - h_shell_outer_radius) < eps)
+						cell->face(f)->set_boundary_id(3);
+					else
+						cell->face(f)->set_boundary_id(4);
+				}
+
+				else {
+					double d = (cell->face(f)->center() - center).norm();
+					if (d - holes_radius < 0)
+						cell->face(f)->set_boundary_id(1);
+					else
+						cell->face(f)->set_boundary_id(0);
+				}
+			}
+	}
+}
+
+template<unsigned dim>
+void MyGridGenerator<dim>::rectangle_with_circular_holes(
+		dealii::Triangulation<dim> &tria, unsigned width, unsigned holes_radius,
+		unsigned inter_holes_centers_dist, int nbr_of_holes) {
+
+	if(nbr_of_holes < 1 || 2*holes_radius >= width || width == 0 ||
+			holes_radius == 0 || inter_holes_centers_dist == 0
+			|| inter_holes_centers_dist <= 2*holes_radius)
+		throw INVALID_INPUT_EXCEPTION;
+
+	if(nbr_of_holes == 1){
+		MyGridGenerator<dim>::rectangle_with_circular_hole(tria, width,
+					inter_holes_centers_dist, holes_radius);
+		return;
+	}
+
+	dealii::Triangulation<dim> periodic_struct;
+	/*
+	 * TODO optimize
+	 * Note: I tried to call the function copy_triangulation of
+	 * dealii::Triangulation class instead of creating two times the mesh,
+	 * but it segfaults...
+	 */
+	MyGridGenerator<dim>::rectangle_with_circular_hole(periodic_struct, width,
+			inter_holes_centers_dist, holes_radius);
+	MyGridGenerator<dim>::rectangle_with_circular_hole(tria, width,
+				inter_holes_centers_dist, holes_radius);
+
+	dealii::Tensor<1, dim> translation;
+	translation[0] = inter_holes_centers_dist;
+
+	for (unsigned i = 1; i < nbr_of_holes; i++) {
+		GridTools::shift(translation, periodic_struct);
+		GridGenerator::merge_triangulations(tria, periodic_struct, tria);
+	}
 }
