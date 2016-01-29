@@ -3,7 +3,7 @@
  */
 
 #include "test/test_potential2D.hpp"
-#include "cli/Cli.hpp"
+#include "view/cli/Cli.hpp"
 
 int main(int argc, char** argv) {
 //	test_serrated_2D_potential();
@@ -13,5 +13,6 @@ int main(int argc, char** argv) {
 //	test_various();
 
 	Cli cli(argc, argv);
+	cli.parse_cmd();
 	return 0;
 }
