@@ -5,7 +5,7 @@
  *      Author: aschils
  */
 
-#include "SerratedRect2DDetector.hpp"
+#include "SerratedRect2DDet.hpp"
 
 /**
  * Compute the length of the rectangle (detector) in the domain language unit
