@@ -153,7 +153,7 @@ void test_circle_potential() {
 			std::string output_dir = "tests_output_circle_holes_det/";
 			Utils::create_directory_if_not_exists(output_dir);
 			det.draw_vtk_graph_potential(output_dir +det.params_to_string()+ ".vtk");
-			det.draw_vtk_graph_gradient_of_potential(output_dir + "grad.vtk");
+			det.draw_vtk_graph_gradient_of_potential(output_dir + det.params_to_string()+"_grad.vtk");
 		}
 	}
 }
