@@ -12,8 +12,8 @@
 #include "Detector2D.hpp"
 #include <functional>
 #include "../TensorUtils.hpp"
-#include "../SerratedRect2DBoundaryCond.hpp"
-#include "../SerratedRect2DBoundaryCondWeight.hpp"
+#include "../boundary_conditions/SerratedRect2DBoundaryCond.hpp"
+#include "../boundary_conditions/SerratedRect2DBoundaryCondWeight.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 

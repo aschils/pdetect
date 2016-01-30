@@ -8,6 +8,7 @@
 #pragma once
 
 #include "SerratedRect2DBoundaryCond.hpp"
+#include "SerratedRect2DBoundaryValuesWeight.hpp"
 
 template <unsigned dim>
 class SerratedRect2DBoundaryCondWeight : public SerratedRect2DBoundaryCond<dim> {

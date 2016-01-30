@@ -12,10 +12,8 @@
 #include "../LaplaceSolver.hpp"
 #include "../MyGridGenerator.hpp"
 #include "../ZeroRightHandSide.hpp"
-#include "../SerratedRect2DBoundaryValues.hpp"
-#include "../SerratedRect2DBoundaryValuesWeight.hpp"
 #include "../StraightLine.hpp"
-#include "../BoundaryConditions.hpp"
+#include "../boundary_conditions/BoundaryConditions.hpp"
 
 class Detector2D {
 

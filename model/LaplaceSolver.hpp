@@ -41,7 +41,7 @@
 #include "Derivatives.hpp"
 #include "Solution.hpp"
 #include "Utils.hpp"
-#include "BoundaryConditions.hpp"
+#include "boundary_conditions/BoundaryConditions.hpp"
 
 using namespace dealii;
 

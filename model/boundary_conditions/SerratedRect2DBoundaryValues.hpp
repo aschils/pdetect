@@ -11,8 +11,8 @@
 
 #include <math.h>
 
-#include "errors.hpp"
-#include "Utils.hpp"
+#include "../errors.hpp"
+#include "../Utils.hpp"
 
 using namespace dealii;
 
