@@ -359,43 +359,6 @@ void MyGridGenerator<dim>::rectangle_with_circular_hole(
 				}
 			}
 	}
-
-	double eps = 1e-3 * h_shell_outer_radius;
-	cell = tria.begin_active();
-
-	//Magic copied from deal.ii GridGenerator::hyper_cube_with_cylindrical_hole
-	//function
-	bool colorize = true;
-	for (; cell != endc; ++cell) {
-		for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-
-			if (cell->face(f)->at_boundary()) {
-
-				double dx = cell->face(f)->center()(0) - center(0);
-				double dy = cell->face(f)->center()(1) - center(1);
-
-				if (colorize) {
-					if (std::abs(dx + h_shell_outer_radius) < eps)
-						cell->face(f)->set_boundary_id(0);
-					else if (std::abs(dx - h_shell_outer_radius) < eps)
-						cell->face(f)->set_boundary_id(1);
-					else if (std::abs(dy + h_shell_outer_radius) < eps)
-						cell->face(f)->set_boundary_id(2);
-					else if (std::abs(dy - h_shell_outer_radius) < eps)
-						cell->face(f)->set_boundary_id(3);
-					else
-						cell->face(f)->set_boundary_id(4);
-				}
-
-				else {
-					double d = (cell->face(f)->center() - center).norm();
-					if (d - holes_radius < 0)
-						cell->face(f)->set_boundary_id(1);
-					else
-						cell->face(f)->set_boundary_id(0);
-				}
-			}
-	}
 }
 
 template<unsigned dim>
