@@ -12,6 +12,8 @@
 #include "Detector2D.hpp"
 #include <functional>
 #include "../TensorUtils.hpp"
+#include "../SerratedRect2DBoundaryCond.hpp"
+#include "../SerratedRect2DBoundaryCondWeight.hpp"
 
 #define DEFAULT_RECT_WIDTH 300.0 //i.e. in domain language (microm,..)
 
@@ -30,7 +32,7 @@ public:
 				double strip_potential, unsigned refine_level, unsigned max_iter,
 				double stop_accuracy);
 
-	~SerratedRect2DDetector();
+	//~SerratedRect2DDetector();
 
 	//void compute();
 

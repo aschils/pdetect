@@ -85,14 +85,19 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width_fe,
 			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
 	zero_right_hand_side = new ZeroRightHandSide<2>();
-	boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
+	/*boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
+			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
+			strip_length_fe, strip_width_fe);*/
+	boundary_conditions = new SerratedRect2DBoundaryCond<2>(nbr_of_strips,
 			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
 			strip_length_fe, strip_width_fe);
-	rect_potential_solver = new LaplaceSolver<2>(triangulation, rect_length_fe,
-			rect_width_fe, refine_level, max_iter, stop_accuracy,
-			zero_right_hand_side, boundary_val, true);
 
-	boundary_val_weight = new SerratedRect2DBoundaryValuesWeight<2>(
+
+	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
+			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
+			true);
+
+	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
 			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
 			pitch_length_fe, strip_length_fe, strip_width_fe);
 	triangulation_weight = new Triangulation<2>();
@@ -100,8 +105,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
 			pitch_length_fe);
 	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			rect_length_fe, rect_width_fe, refine_level, max_iter,
-			stop_accuracy, zero_right_hand_side, boundary_val_weight, true);
+			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
+			boundary_conditions_weight, true);
 	//nbr_of_points_along_axes();
 }
 
@@ -132,7 +137,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	nbr_of_pts_along_y++;
 }*/
 
-SerratedRect2DDetector::~SerratedRect2DDetector() {
+/*SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete zero_right_hand_side;
 	delete boundary_val;
 	delete rect_potential_solver;
@@ -143,7 +148,7 @@ SerratedRect2DDetector::~SerratedRect2DDetector() {
 	delete boundary_val_weight;
 	delete rect_potential_solver_weight;
 	delete triangulation_weight;
-}
+}*/
 
 //void SerratedRect2DDetector::compute() {
 //	rect_potential_solver->compute_solution();

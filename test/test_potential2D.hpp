@@ -80,7 +80,7 @@ void test_electric_field() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
 	unsigned pitch = 100;
-	unsigned refine_level = 7;
+	unsigned refine_level = 3;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	unsigned nbr_of_strips = 4;

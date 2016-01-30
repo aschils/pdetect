@@ -41,6 +41,7 @@
 #include "Derivatives.hpp"
 #include "Solution.hpp"
 #include "Utils.hpp"
+#include "BoundaryConditions.hpp"
 
 using namespace dealii;
 
@@ -48,27 +49,20 @@ template<unsigned dim>
 class LaplaceSolver {
 
 public:
-	LaplaceSolver(Triangulation<dim> *triangulation,
-					double rect_length_fe,
-					double rect_width_fe,
-					unsigned refine_level,
-					unsigned max_iter,
-					double stop_accuracy,
-					const Function<dim> *right_hand_side,
-					Function<dim> *boundary_values,
-					bool constraints_are_periodic);
+	LaplaceSolver(Triangulation<dim> *triangulation, unsigned refine_level,
+			unsigned max_iter, double stop_accuracy,
+			const Function<dim> *right_hand_side,
+			BoundaryConditions<dim> *boundary_conditions,
+			bool constraints_are_periodic);
 
 	void compute_solution();
 	void get_solution(Solution<dim> &sol);
 
 	ValuesAtCell<dim> extrapolate_data_at_point(
-					std::vector<std::pair
-					<std::vector<double>, ValuesAtCell<dim> > >
-					&coord_and_data, double pos);
+			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data,
+			double pos);
 	ValuesAtCell<dim> get_solution_at_point(Point<dim> &point,
-					std::vector<std::pair
-					<std::vector<double>, ValuesAtCell<dim> > >
-					&coord_and_data);
+			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data);
 
 	~LaplaceSolver();
 
@@ -78,12 +72,10 @@ private:
 	unsigned max_iter;
 	double stop_accuracy;
 
-	double rect_length_fe, rect_width_fe;
-
 	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;
-	FEValues <dim> *fe_values;
-	QGauss < dim > *quadrature_formula;
+	FEValues<dim> *fe_values;
+	QGauss<dim> *quadrature_formula;
 	DoFHandler<dim> dof_handler;
 	SparsityPattern sparsity_pattern;
 	SparseMatrix<double> system_matrix;
@@ -92,7 +84,7 @@ private:
 
 	Vector<double> system_rhs;
 	const Function<dim> *right_hand_side;
-	Function<dim> *boundary_values_fun;
+	BoundaryConditions<dim> *boundary_conditions;
 
 	void setup_system();
 	void assemble_system();
@@ -101,58 +93,47 @@ private:
 	void make_periodicity_constraints();
 
 	/*void set_solution_at_that_point_as_already_known(
-			std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
-	void save_solution_at_that_point(Point<dim> &point,
-	double &fun_at_point,
-	Tensor<1, dim> &gradient_at_point,
-	Tensor<2, dim> &hessian_at_point,
-	std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
-	&coord_and_data);*/
+	 std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
+	 void save_solution_at_that_point(Point<dim> &point,
+	 double &fun_at_point,
+	 Tensor<1, dim> &gradient_at_point,
+	 Tensor<2, dim> &hessian_at_point,
+	 std::vector<std::pair<std::vector<double>, SolutionData<dim> > >
+	 &coord_and_data);*/
 	void build_solution(
-			std::vector<std::pair<
-			typename DoFHandler<dim>::active_cell_iterator,
-			ValuesAtCell<dim> > >
-			&coord_and_data);
+			std::vector<
+					std::pair<typename DoFHandler<dim>::active_cell_iterator,
+							ValuesAtCell<dim> > > &coord_and_data);
 };
 
 template<unsigned dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
-		double rect_length_fe, double rect_width_fe, unsigned refine_level,
-		unsigned max_iter, double stop_accuracy,
-		const Function<dim> *right_hand_side, Function<dim> *boundary_values,
+		unsigned refine_level, unsigned max_iter, double stop_accuracy,
+		const Function<dim> *right_hand_side,
+		BoundaryConditions<dim> *boundary_conditions,
 		bool constraints_are_periodic) :
 		fe(1), dof_handler(*triangulation) {
 
 	this->constraints_are_periodic = constraints_are_periodic;
 	this->triangulation = triangulation;
 	this->right_hand_side = right_hand_side;
-	this->boundary_values_fun = boundary_values;
+	this->boundary_conditions = boundary_conditions;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
-	this->rect_length_fe = rect_length_fe;
-	this->rect_width_fe = rect_width_fe;
 
-	quadrature_formula = new QGauss<dim>(2);;
+	quadrature_formula = new QGauss<dim>(2);
+	;
 	fe_values = new FEValues<dim>(fe, *quadrature_formula,
-				update_values | update_gradients | update_quadrature_points
-						| update_JxW_values | update_second_derivatives);
+			update_values | update_gradients | update_quadrature_points
+					| update_JxW_values | update_second_derivatives);
 
 	if (constraints_are_periodic) {
 		for (typename Triangulation<dim>::active_cell_iterator cell =
 				triangulation->begin_active(); cell != triangulation->end();
 				++cell) {
-			for (unsigned int f = 0; f < GeometryInfo < dim > ::faces_per_cell;
-					++f) {
-				if (cell->face(f)->at_boundary()) {
-					if (Utils::equals_double(cell->face(f)->center()[0], 0.0,
-							0.000001)
-							|| Utils::equals_double(cell->face(f)->center()[0],
-									rect_length_fe, 0.000001)
-							|| Utils::equals_double(cell->face(f)->center()[1],
-									rect_width_fe, 0.000001))
-						cell->face(f)->set_boundary_id(1);
-				}
-			}
+
+			boundary_conditions->set_periodicity_constraints(cell);
+
 		}
 	}
 	this->triangulation->refine_global(refine_level);
@@ -193,8 +174,7 @@ void LaplaceSolver<dim>::make_periodicity_constraints() {
 					}
 				}
 				Assert(p != dof_locations.end(),
-						ExcMessage(
-								"No corresponding degree of freedom was found!"));
+						ExcMessage( "No corresponding degree of freedom was found!"));
 			}
 		}
 	}
@@ -272,7 +252,7 @@ void LaplaceSolver<dim>::assemble_system() {
 
 	std::map<types::global_dof_index, double> boundary_values;
 	VectorTools::interpolate_boundary_values(dof_handler, 0,
-			*boundary_values_fun, boundary_values);
+			*(boundary_conditions->get_values()), boundary_values);
 	MatrixTools::apply_boundary_values(boundary_values, system_matrix,
 			solution_vec, system_rhs);
 }
@@ -335,13 +315,12 @@ public:
 
 template<unsigned dim>
 void LaplaceSolver<dim>::build_solution(
-		std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
-		ValuesAtCell<dim> > >
-		&values_at_cells) {
+		std::vector<
+				std::pair<typename DoFHandler<dim>::active_cell_iterator,
+						ValuesAtCell<dim> > > &values_at_cells) {
 
-	//std::unordered_map<Point<2>, bool> already_known;
-	const unsigned int vertices_per_cell = GeometryInfo < dim
-			> ::vertices_per_cell;
+//std::unordered_map<Point<2>, bool> already_known;
+	const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
 	std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
 	std::vector<Tensor<2, dim> > hessian_at_pts_of_one_cell(vertices_per_cell);
@@ -360,40 +339,40 @@ void LaplaceSolver<dim>::build_solution(
 		ValuesAtCell<dim> values(fun_at_pts_of_one_cell,
 				gradient_at_pts_of_one_cell, hessian_at_pts_of_one_cell);
 		std::pair<typename DoFHandler<dim>::active_cell_iterator,
-			ValuesAtCell<dim> > values_at_cell;
+				ValuesAtCell<dim> > values_at_cell;
 		values_at_cell.first = cell;
 		values_at_cell.second = values;
 		values_at_cells.push_back(values_at_cell);
-/*
-		for (unsigned int v = 0; v < GeometryInfo < 2 > ::vertices_per_cell;
-				v++) {
+		/*
+		 for (unsigned int v = 0; v < GeometryInfo < 2 > ::vertices_per_cell;
+		 v++) {
 
-			Point < dim > point = cell->vertex(v);
+		 Point < dim > point = cell->vertex(v);
 
-			bool sol_unknown_at_point = already_known.find(point)
-					== already_known.end();
-			if (sol_unknown_at_point) {
-				save_solution_at_that_point(point, fun_at_pts_of_one_cell[v],
-						gradient_at_pts_of_one_cell[v],
-						hessian_at_pts_of_one_cell[v],
-						coord_and_data);
-				set_solution_at_that_point_as_already_known(already_known,
-						point);
-			}
-		}*/
+		 bool sol_unknown_at_point = already_known.find(point)
+		 == already_known.end();
+		 if (sol_unknown_at_point) {
+		 save_solution_at_that_point(point, fun_at_pts_of_one_cell[v],
+		 gradient_at_pts_of_one_cell[v],
+		 hessian_at_pts_of_one_cell[v],
+		 coord_and_data);
+		 set_solution_at_that_point_as_already_known(already_known,
+		 point);
+		 }
+		 }*/
 	}
 }
 
 template<unsigned dim>
 void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
-	//Used only to output vtk file
+//Used only to output vtk file
 	DataOut<2> fun_drawer;
 	fun_drawer.attach_dof_handler(dof_handler);
 	fun_drawer.add_data_vector(solution_vec, "solution");
 	fun_drawer.build_patches();
 
-	//PostProcessor, used only to output vtk file
+//PostProcessor, used only to output vtk file
 	Derivatives<dim> derivatives;
 	DataOut<dim> derivatives_drawer;
 	derivatives_drawer.attach_dof_handler(dof_handler);
@@ -410,9 +389,9 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	 std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	 auto duration = std::chrono::duration_cast<std::chrono::seconds>( t2 - t1 ).count();
 	 std::cout << "temps: " << duration << std::endl;*/
-	//VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
-	//std::cout << solution_vec.size() << std::endl;
-	//std::cout << gradient_at_all_points.size() << std::endl;
+//VectorUtils::print_vec_of_pair_of_vec(gradient_at_all_points);
+//std::cout << solution_vec.size() << std::endl;
+//std::cout << gradient_at_all_points.size() << std::endl;
 }
 
 template<unsigned dim>

@@ -74,3 +74,16 @@ void Detector2D::draw_vtk_graph_gradient_of_weight_potential(
 	solution_weight_potential.draw_vtk_graph_derivatives(output_file);
 }
 
+Detector2D::~Detector2D(){
+	delete zero_right_hand_side;
+	delete boundary_conditions;
+	delete rect_potential_solver;
+	delete triangulation;
+
+	//delete line;
+
+	delete boundary_conditions_weight;
+	delete rect_potential_solver_weight;
+	delete triangulation_weight;
+}
+

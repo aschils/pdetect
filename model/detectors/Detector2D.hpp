@@ -15,6 +15,7 @@
 #include "../SerratedRect2DBoundaryValues.hpp"
 #include "../SerratedRect2DBoundaryValuesWeight.hpp"
 #include "../StraightLine.hpp"
+#include "../BoundaryConditions.hpp"
 
 class Detector2D {
 
@@ -35,8 +36,7 @@ public:
 
 	virtual std::string params_to_string() = 0;
 
-	virtual ~Detector2D() {
-	}
+	virtual ~Detector2D();
 
 protected:
 	unsigned refine_level, max_iter = 1;
@@ -45,11 +45,13 @@ protected:
 
 	Triangulation<2> *triangulation;
 	ZeroRightHandSide<2> *zero_right_hand_side;
-	Function<2> *boundary_val;
+	//Function<2> *boundary_val;
+	BoundaryConditions<2> *boundary_conditions;
 	LaplaceSolver<2> *rect_potential_solver;
 
 	Triangulation<2> *triangulation_weight;
-	Function<2> *boundary_val_weight;
+	//Function<2> *boundary_val_weight;
+	BoundaryConditions<2> *boundary_conditions_weight;
 	LaplaceSolver<2> *rect_potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
