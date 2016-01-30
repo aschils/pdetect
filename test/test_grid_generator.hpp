@@ -15,8 +15,6 @@ void test_rectangle_with_circular_holes() {
 	std::string output_dir = "tests_output_grid_generator/";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	//unsigned holes_radius, unsigned inter_holes_centers_dist, int nbr_of_holes
-
 	for (unsigned nbr_of_holes = 1; nbr_of_holes <= 3; nbr_of_holes++) {
 		for (unsigned width = 100; width <= 300; width += 100) {
 			for (unsigned holes_radius = 10; holes_radius <= 30; holes_radius +=
