@@ -80,31 +80,22 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	total_length = compute_total_length();
 	compute_and_set_fe_values();
 
-	triangulation = new Triangulation<2>();
-
 	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width_fe,
 			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
-	zero_right_hand_side = new ZeroRightHandSide<2>();
-	/*boundary_val = new SerratedRect2DBoundaryValues<2>(nbr_of_strips,
-			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
-			strip_length_fe, strip_width_fe);*/
 	boundary_conditions = new SerratedRect2DBoundaryCond<2>(nbr_of_strips,
 			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
 			strip_length_fe, strip_width_fe);
-
-
-	rect_potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
+	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
 			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
 			pitch_length_fe, strip_length_fe, strip_width_fe);
-	triangulation_weight = new Triangulation<2>();
 	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation_weight,
 			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
 			pitch_length_fe);
-	rect_potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
+	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 	//nbr_of_points_along_axes();

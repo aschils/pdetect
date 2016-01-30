@@ -9,8 +9,8 @@
 #include "Detector2D.hpp"
 
 void Detector2D::compute() {
-	rect_potential_solver->compute_solution();
-	rect_potential_solver->get_solution(solution_potential);
+	potential_solver->compute_solution();
+	potential_solver->get_solution(solution_potential);
 	solution_potential.sort_cells_by_coord();
 	compute_electric_field(solution_potential, electric_field);
 
@@ -24,8 +24,8 @@ void Detector2D::compute() {
 }
 
 void Detector2D::compute_weight(){
-	rect_potential_solver_weight->compute_solution();
-	rect_potential_solver_weight->get_solution(solution_weight_potential);
+	potential_solver_weight->compute_solution();
+	potential_solver_weight->get_solution(solution_weight_potential);
 	solution_weight_potential.sort_cells_by_coord();
 	compute_electric_field(solution_weight_potential, electric_field_weight);
 }
@@ -77,13 +77,13 @@ void Detector2D::draw_vtk_graph_gradient_of_weight_potential(
 Detector2D::~Detector2D(){
 	delete zero_right_hand_side;
 	delete boundary_conditions;
-	delete rect_potential_solver;
+	delete potential_solver;
 	delete triangulation;
 
 	//delete line;
 
 	delete boundary_conditions_weight;
-	delete rect_potential_solver_weight;
+	delete potential_solver_weight;
 	delete triangulation_weight;
 }
 

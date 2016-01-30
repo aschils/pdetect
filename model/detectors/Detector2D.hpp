@@ -41,16 +41,16 @@ protected:
 	double strip_potential = 1.0;
 	double stop_accuracy = 1.0;
 
-	Triangulation<2> *triangulation;
-	ZeroRightHandSide<2> *zero_right_hand_side;
+	Triangulation<2> *triangulation = new Triangulation<2>();
+	ZeroRightHandSide<2> *zero_right_hand_side = new ZeroRightHandSide<2>();
 	//Function<2> *boundary_val;
 	BoundaryConditions<2> *boundary_conditions;
-	LaplaceSolver<2> *rect_potential_solver;
+	LaplaceSolver<2> *potential_solver;
 
-	Triangulation<2> *triangulation_weight;
+	Triangulation<2> *triangulation_weight = new Triangulation<2>();
 	//Function<2> *boundary_val_weight;
 	BoundaryConditions<2> *boundary_conditions_weight;
-	LaplaceSolver<2> *rect_potential_solver_weight;
+	LaplaceSolver<2> *potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
 	std::vector<
