@@ -103,7 +103,7 @@ private:
 		}
 		catch (out_of_range &ofr)  {
 			std::cout << "unknown detector type" << std::endl;
-		    throw INVALID_INPUT_EXCEPTION;
+		    throw INVALID_INPUT;
 		}
 
 		//Check if accuracy is a positive number
@@ -111,7 +111,7 @@ private:
 
 		if(accuracy < 0){
 			std::cout << "error is not allowed to be negative" << std::endl;
-			throw INVALID_INPUT_EXCEPTION;
+			throw INVALID_INPUT;
 		}
 	}
 };
