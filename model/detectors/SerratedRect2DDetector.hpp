@@ -32,20 +32,6 @@ public:
 				double strip_potential, unsigned refine_level, unsigned max_iter,
 				double stop_accuracy);
 
-	//~SerratedRect2DDetector();
-
-	//void compute();
-
-	//void compute_weight();
-
-//	void draw_vtk_graph_potential(std::string output_file);
-//
-//	void draw_vtk_graph_weight_potential(std::string output_file);
-//
-//	void draw_vtk_graph_gradient_of_potential(std::string output_file);
-//
-//	void draw_vtk_graph_gradient_of_weight_potential(std::string output_file);
-
 	std::vector<double> get_electric_field(Point<2> p);
 
 	std::string params_to_string();
@@ -54,21 +40,10 @@ private:
 
 	unsigned nbr_of_strips, strip_length, strip_width, pitch, total_length = 1;
 	double rect_width = 1.0;
-	const double DEFAULT_RECT_LENGTH_FE = 10000.0;
-	double rect_length_fe = 1.0;
-	double rect_width_fe = 1.0;
-
-	double strip_length_fe, strip_width_fe, pitch_length_fe = 1.0;
 
 	unsigned nbr_of_pts_along_x = 0, nbr_of_pts_along_y = 0;
 
-	double compute_total_length();
-	double compute_rect_width_fe();
-	void compute_and_set_fe_values();
+	unsigned compute_total_length();
 	//void nbr_of_points_along_axes();
-
-	//void compute_electric_field(Solution<2> &potential,
-	//				std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-	//				std::vector<Tensor<1, 2> > > > &electric_field);
 };
 

@@ -68,9 +68,9 @@ public:
 	 *
 	 */
 	//TODO generalize to 3D
-	static void serrated_hyper_rectangle(dealii::Triangulation<dim> &tria,
-			double width, unsigned holes_nbr, double hole_length,
-			double hole_width, double inter_hole_space);
+	static void serrated_hyper_rectangle(Triangulation<dim> &tria,
+			unsigned width, unsigned holes_nbr, unsigned hole_length, unsigned hole_width,
+			unsigned inter_hole_space);
 
 	static void rectangle_with_circular_holes(dealii::Triangulation<dim> &tria,
 			unsigned width, unsigned holes_radius,
@@ -78,19 +78,11 @@ public:
 
 private:
 
-	static void gen_points_for_serrated_hrect(double length, double width,
-			double hole_length, double hole_width, double inter_hole_space,
-			unsigned nbr_of_cells_fst_dim, unsigned nbr_of_cells_scd_dim,
-			std::vector<Point<2> > &points);
-
-	static void gen_cells_for_serrated_hrect(unsigned nbr_of_cells_fst_dim,
-			unsigned nbr_of_cells_scd_dim, std::vector<CellData<2> > &cells);
-
-	static bool are_precond_fullfilled_serr_hrect(double width,
-			double hole_length, double hole_width, double inter_hole_space);
+	static bool are_precond_fullfilled_serr_hrect(unsigned width,
+			unsigned hole_length, unsigned hole_width, unsigned inter_hole_space);
 
 	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
-				unsigned width, unsigned length, unsigned holes_radius);
+			unsigned width, unsigned length, unsigned holes_radius);
 };
 
 template<unsigned dim>
@@ -103,97 +95,17 @@ void MyGridGenerator<dim>::hyper_rectangle(
 			point_top);
 }
 
-template<unsigned dim>
-void MyGridGenerator<dim>::gen_points_for_serrated_hrect(double length,
-		double width, double hole_length, double hole_width,
-		double inter_hole_space, unsigned nbr_of_cells_fst_dim,
-		unsigned nbr_of_cells_scd_dim, std::vector<Point<2> > &points) {
-
-	//End of half dent on left detector side
-	double left_half_dent_end_x = inter_hole_space / 2.0;
-
-	double y = 0.0;
-	for (unsigned j = 0; j <= nbr_of_cells_scd_dim; j++) {
-
-		Point<2> left_corner_point(0.0, y);
-		points.push_back(left_corner_point);
-
-		bool is_hole_left_point = true;
-
-		double x = left_half_dent_end_x;
-		for (unsigned i = 0; i < nbr_of_cells_fst_dim - 1; i++) {
-
-			Point<2> new_point(x, y);
-			points.push_back(new_point);
-
-			if (is_hole_left_point)
-				x += hole_length;
-			else
-				x += inter_hole_space;
-
-			is_hole_left_point = !is_hole_left_point;
-		}
-
-		Point<2> end_point(length, y);
-		points.push_back(end_point);
-
-		if (j == 0)
-			y = width - (nbr_of_cells_scd_dim - 1) * hole_width;
-		else
-			y += hole_width;
-	}
-}
-
-template<unsigned dim>
-void MyGridGenerator<dim>::gen_cells_for_serrated_hrect(
-		unsigned nbr_of_cells_fst_dim, unsigned nbr_of_cells_scd_dim,
-		std::vector<CellData<2> > &cells) {
-
-	unsigned cell_idx = 0;
-	for (unsigned y = 0; y < nbr_of_cells_scd_dim; ++y) {
-		for (unsigned x = 0; x < nbr_of_cells_fst_dim; ++x) {
-
-			bool is_top_width_cell = (y == nbr_of_cells_scd_dim - 1);
-			bool is_hole_cell = (x % 2 == 1);
-
-			if (is_top_width_cell && is_hole_cell)
-				continue;
-
-			Assert(cell_idx < cells.size(), ExcInternalError());
-
-			unsigned top_vertices_row = y * (nbr_of_cells_fst_dim + 1);
-			unsigned top_left_vertice_idx = top_vertices_row + x;
-			unsigned top_right_vertice_idx = top_left_vertice_idx + 1;
-
-			unsigned bottom_vertices_row = top_vertices_row
-					+ nbr_of_cells_fst_dim + 1;
-			unsigned bottom_left_vertice_idx = bottom_vertices_row + x;
-			unsigned bottom_right_vertice_idx = bottom_left_vertice_idx + 1;
-
-			cells[cell_idx].vertices[0] = top_left_vertice_idx;
-			cells[cell_idx].vertices[1] = top_right_vertice_idx;
-			cells[cell_idx].vertices[2] = bottom_left_vertice_idx;
-			cells[cell_idx].vertices[3] = bottom_right_vertice_idx;
-			cells[cell_idx].material_id = 0;
-
-			cell_idx++;
-		}
-	}
-}
-
 /**
  * Verify the following conditions on parameters:
- * - 0 <= width
- * - 0 <= hole_length
- * - 0 <= hole_width <= width
- * - 0 <= inter_hole_space
+ * - hole_width <= width
  */
 template<unsigned dim>
-bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
-		double hole_length, double hole_width, double inter_hole_space) {
+bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(unsigned width,
+		unsigned hole_length, unsigned hole_width, unsigned inter_hole_space) {
 
-	return width >= 0.0 && hole_length >= 0 && hole_width >= 0
-			&& hole_width <= width && inter_hole_space >= 0.0;
+	//return width >= 0.0 && hole_length >= 0 && hole_width >= 0
+	//		&& hole_width <= width && inter_hole_space >= 0.0;
+	return hole_width <= width;
 }
 
 /**
@@ -219,7 +131,7 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
  * - tria is an instantiated object.
  * - 0 <= width
  * - 0 <= hole_length
- * - 0 <= hole_width <= width
+ * - hole_width <= width
  * - 0 <= inter_hole_space
  *
  * if pre not respected (except for the tria one), the exception
@@ -228,40 +140,102 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(double width,
  */
 template<unsigned dim>
 void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
-		double width, unsigned holes_nbr, double hole_length, double hole_width,
-		double inter_hole_space) {
+		unsigned width, unsigned holes_nbr, unsigned hole_length, unsigned hole_width,
+		unsigned inter_hole_space) {
 
 	if (!are_precond_fullfilled_serr_hrect(width, hole_length, hole_width,
 			inter_hole_space))
 		throw PRECONDITIONS_VIOLATED;
 
-	double length =
+	unsigned length =
 			(holes_nbr == 0) ?
 					inter_hole_space :
 					holes_nbr * (hole_length + inter_hole_space);
 
-	if (length == 0.0 || width == 0.0 || hole_width == 0.0 || hole_length == 0.0
+	if (length == 0 || width == 0 || hole_width == 0 || hole_length == 0
 			|| holes_nbr == 0)
 		return hyper_rectangle(tria, length, width);
 
-	if (inter_hole_space == 0.0)
+	if (inter_hole_space == 0)
 		return hyper_rectangle(tria, length, width - hole_width);
 
-	unsigned nbr_of_cells_fst_dim = holes_nbr * 2 + 1;
+	unsigned half_inter_hole_space = ceil(inter_hole_space / 2.0);
 
-	unsigned nbr_of_cells_scd_dim = ceil(width / hole_width);
+	Triangulation<dim> half_inter_hole, inter_hole, half_rect, hole_width_rect,
+	inter_hole_space_width_rect;
 
-	std::vector<Point<2> > points;
-	gen_points_for_serrated_hrect(length, width, hole_length, hole_width,
-			inter_hole_space, nbr_of_cells_fst_dim, nbr_of_cells_scd_dim,
-			points);
+	//Build half_rect
+	Point<dim> bottom_left_half_rect_pt(0.0, 0.0);
+	Point<dim> top_right_half_rect_pt(half_inter_hole_space, width - hole_width);
+	GridGenerator::hyper_rectangle(half_rect, bottom_left_half_rect_pt,
+			top_right_half_rect_pt);
 
-	std::vector<CellData<2> > cells;
-	cells.resize(nbr_of_cells_fst_dim * nbr_of_cells_scd_dim - holes_nbr);
-	gen_cells_for_serrated_hrect(nbr_of_cells_fst_dim, nbr_of_cells_scd_dim,
-			cells);
+	//Build half inter hole for rectangle extremities
+	Point<dim> bottom_left_half_hole_pt(0, width - hole_width);
+	Point<dim> top_right_half_hole_pt(half_inter_hole_space, width);
+	GridGenerator::hyper_rectangle(half_inter_hole, bottom_left_half_hole_pt,
+			top_right_half_hole_pt);
 
-	tria.create_triangulation(points, cells, SubCellData());
+	//Build rects
+	Point<dim> bottom_left_rect_pt(0.0, 0.0);
+	Point<dim> top_right_rect_pt(hole_length, width - hole_width);
+	GridGenerator::hyper_rectangle(hole_width_rect, bottom_left_rect_pt,
+			top_right_rect_pt);
+
+	Point<dim> bottom_left_rect_pt2(0.0, 0.0);
+	Point<dim> top_right_rect_pt2(inter_hole_space, width - hole_width);
+	GridGenerator::hyper_rectangle(inter_hole_space_width_rect,
+			bottom_left_rect_pt2, top_right_rect_pt2);
+
+	//Build inter hole
+	Point<dim> bottom_left_hole_pt(0, width - hole_width);
+	Point<dim> top_right_hole_pt(inter_hole_space, width);
+	GridGenerator::hyper_rectangle(inter_hole, bottom_left_hole_pt,
+			top_right_hole_pt);
+
+	//Init tria to half_rect + half non hole left
+	GridGenerator::hyper_rectangle(tria, bottom_left_half_rect_pt,
+			top_right_half_rect_pt);
+	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
+
+	dealii::Tensor<1, dim> half_inter_hole_space_translation;
+	half_inter_hole_space_translation[0] = half_inter_hole_space;
+	GridTools::shift(half_inter_hole_space_translation, hole_width_rect);
+	GridTools::shift(half_inter_hole_space_translation, inter_hole);
+	GridTools::shift(half_inter_hole_space_translation, inter_hole_space_width_rect);
+
+	dealii::Tensor<1, dim> hole_translation;
+	hole_translation[0] = hole_length;
+	hole_translation[1] = 0;
+	dealii::Tensor<1, dim> inter_hole_translation;
+	inter_hole_translation[0] = inter_hole_space;
+	inter_hole_translation[1] = 0;
+
+	//Add "middle" rectangles and holes to tria
+	for(unsigned i=0; i< 2*holes_nbr-1; i++){
+
+		if(i%2 == 0){
+			GridGenerator::merge_triangulations(tria, hole_width_rect, tria);
+			GridTools::shift(hole_translation, hole_width_rect);
+			GridTools::shift(hole_translation, inter_hole);
+			GridTools::shift(hole_translation, inter_hole_space_width_rect);
+		}
+		else{
+			GridGenerator::merge_triangulations(tria, inter_hole_space_width_rect, tria);
+			GridGenerator::merge_triangulations(tria, inter_hole, tria);
+			GridTools::shift(inter_hole_translation, hole_width_rect);
+			GridTools::shift(inter_hole_translation, inter_hole);
+			GridTools::shift(inter_hole_translation, inter_hole_space_width_rect);
+		}
+	}
+
+	//Add Half-hole right extremity half rect and half hole
+	hole_translation[0] = half_inter_hole_space + hole_length *holes_nbr+
+			(holes_nbr-1)*inter_hole_space;
+	GridTools::shift(hole_translation, half_inter_hole);
+	GridTools::shift(hole_translation, half_rect);
+	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
+	GridGenerator::merge_triangulations(tria, half_rect, tria);
 }
 
 template<unsigned dim>
@@ -366,14 +340,14 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 		dealii::Triangulation<dim> &tria, unsigned width, unsigned holes_radius,
 		unsigned inter_holes_centers_dist, int nbr_of_holes) {
 
-	if(nbr_of_holes < 1 || 2*holes_radius >= width || width == 0 ||
-			holes_radius == 0 || inter_holes_centers_dist == 0
-			|| inter_holes_centers_dist <= 2*holes_radius)
-		throw INVALID_INPUT_EXCEPTION;
+	if (nbr_of_holes < 1 || 2 * holes_radius >= width || width == 0
+			|| holes_radius == 0 || inter_holes_centers_dist == 0
+			|| inter_holes_centers_dist <= 2 * holes_radius)
+		throw INVALID_INPUT;
 
-	if(nbr_of_holes == 1){
+	if (nbr_of_holes == 1) {
 		MyGridGenerator<dim>::rectangle_with_circular_hole(tria, width,
-					inter_holes_centers_dist, holes_radius);
+				inter_holes_centers_dist, holes_radius);
 		return;
 	}
 
@@ -387,7 +361,7 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 	MyGridGenerator<dim>::rectangle_with_circular_hole(periodic_struct, width,
 			inter_holes_centers_dist, holes_radius);
 	MyGridGenerator<dim>::rectangle_with_circular_hole(tria, width,
-				inter_holes_centers_dist, holes_radius);
+			inter_holes_centers_dist, holes_radius);
 
 	dealii::Tensor<1, dim> translation;
 	translation[0] = inter_holes_centers_dist;

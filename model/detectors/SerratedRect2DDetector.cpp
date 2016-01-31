@@ -11,47 +11,11 @@
  * Compute the length of the rectangle (detector) in the domain language unit
  * (microm) depending on the number of strips, the strip length and the pitch.
  */
-double SerratedRect2DDetector::compute_total_length() {
+unsigned SerratedRect2DDetector::compute_total_length() {
 	if (nbr_of_strips == 0)
 		return pitch;
 	else
 		return nbr_of_strips * (strip_length + pitch);
-}
-
-/**
- * Rectangle width should always be 300microm. Thus finite element rectangle
- * width should be adapted depending on the length of the rectangle in microm.
- */
-double SerratedRect2DDetector::compute_rect_width_fe() {
-	double one_micron_fe =
-			(total_length == 0) ? 1 : rect_length_fe / total_length;
-	return rect_width * one_micron_fe;
-}
-
-/**
- * Translate lengths expressed in the domain langage (i.e. microm,...) in
- * length in the finite elements domain.
- */
-void SerratedRect2DDetector::compute_and_set_fe_values() {
-
-	rect_length_fe = (total_length == 0) ? 0 : DEFAULT_RECT_LENGTH_FE;
-	unsigned total_strips_length = nbr_of_strips * strip_length;
-	double total_strips_length_fe =
-			(total_length == 0) ?
-					0 :
-					total_strips_length / (double) total_length
-							* rect_length_fe;
-	double total_pitches_length_fe = rect_length_fe - total_strips_length_fe;
-
-	strip_length_fe =
-			(nbr_of_strips == 0) ? 0 : total_strips_length_fe / nbr_of_strips;
-	strip_width_fe =
-			(strip_length == 0) ?
-					0 : strip_width / (double) strip_length * strip_length_fe;
-	pitch_length_fe =
-			(nbr_of_strips == 0) ?
-					rect_length_fe : total_pitches_length_fe / nbr_of_strips;
-	rect_width_fe = compute_rect_width_fe();
 }
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
@@ -78,26 +42,26 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 	total_length = compute_total_length();
-	compute_and_set_fe_values();
 
-	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width_fe,
-			nbr_of_strips, strip_length_fe, strip_width_fe, pitch_length_fe);
+	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width,
+			nbr_of_strips, strip_length, strip_width, pitch);
 	boundary_conditions = new SerratedRect2DBoundaryCond<2>(nbr_of_strips,
-			rect_length_fe, rect_width_fe, strip_potential, pitch_length_fe,
-			strip_length_fe, strip_width_fe);
+			total_length, rect_width, strip_potential, pitch,
+			strip_length, strip_width);
 	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
-			nbr_of_strips, rect_length_fe, rect_width_fe, strip_potential,
-			pitch_length_fe, strip_length_fe, strip_width_fe);
+			nbr_of_strips, total_length, rect_width, strip_potential,
+			pitch, strip_length, strip_width);
 	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation_weight,
-			rect_width_fe, nbr_of_strips, strip_length_fe, strip_width_fe,
-			pitch_length_fe);
+			rect_width, nbr_of_strips, strip_length, strip_width,
+			pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
+
 	//nbr_of_points_along_axes();
 }
 
@@ -109,107 +73,25 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
  */
 /*void SerratedRect2DDetector::nbr_of_points_along_axes() {
 
-	Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
-			endc = triangulation->end();
-	for(; cell != endc; ++cell) {
-		for(unsigned int v = 0; v < GeometryInfo<2>::faces_per_cell; ++v) {
-			if(cell->face(v)->at_boundary()){
-				Point<2> p = cell->face(v)->center();
+ Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
+ endc = triangulation->end();
+ for(; cell != endc; ++cell) {
+ for(unsigned int v = 0; v < GeometryInfo<2>::faces_per_cell; ++v) {
+ if(cell->face(v)->at_boundary()){
+ Point<2> p = cell->face(v)->center();
 
-				if(Utils::equals_double(p[1], 0, 0.000001))
-					nbr_of_pts_along_x++;
-				else if(Utils::equals_double(p[0], 0, 0.000001))
-					nbr_of_pts_along_y++;
-			}
-		}
-	}
+ if(Utils::equals_double(p[1], 0, 0.000001))
+ nbr_of_pts_along_x++;
+ else if(Utils::equals_double(p[0], 0, 0.000001))
+ nbr_of_pts_along_y++;
+ }
+ }
+ }
 
-	nbr_of_pts_along_x++;
-	nbr_of_pts_along_y++;
-}*/
+ nbr_of_pts_along_x++;
+ nbr_of_pts_along_y++;
+ }*/
 
-/*SerratedRect2DDetector::~SerratedRect2DDetector() {
-	delete zero_right_hand_side;
-	delete boundary_val;
-	delete rect_potential_solver;
-	delete triangulation;
-
-	//delete line;
-
-	delete boundary_val_weight;
-	delete rect_potential_solver_weight;
-	delete triangulation_weight;
-}*/
-
-//void SerratedRect2DDetector::compute() {
-//	rect_potential_solver->compute_solution();
-//	rect_potential_solver->get_solution(solution_potential);
-//	solution_potential.sort_cells_by_coord();
-//	compute_electric_field(solution_potential, electric_field);
-//
-//	/*
-//	Point<2> p;
-//	p[0] = 0;
-//	p[1] = rect_width_fe-0.9;
-//	line = new StraightLine<2>(90, p, &solution_potential, 0.1);*/
-//	//solution_potential.get_values(p);
-//	//solution_potential.print();
-//}
-
-//void SerratedRect2DDetector::compute_weight(){
-//	rect_potential_solver_weight->compute_solution();
-//	rect_potential_solver_weight->get_solution(solution_weight_potential);
-//	solution_weight_potential.sort_cells_by_coord();
-//	compute_electric_field(solution_weight_potential, electric_field_weight);
-//}
-
-//void SerratedRect2DDetector::compute_electric_field(Solution<2> &potential,
-//		std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-//		std::vector<Tensor<1, 2> > > > &electric_field) {
-//
-//	std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-//		ValuesAtCell<2> > > values_at_cells =
-//			potential.values_at_cells;
-//	electric_field.resize(values_at_cells.size());
-//
-//	for (unsigned i = 0; i < values_at_cells.size(); i++) {
-//		std::pair<
-//			typename DoFHandler<2>::active_cell_iterator,
-//			std::vector<Tensor<1, 2> >
-//		> EF_at_one_cell;
-//		EF_at_one_cell.first = values_at_cells[i].first;
-//		//Electric field is -grad V
-//		EF_at_one_cell.second = TensorUtils::opposite_vector_of_tensors<1,2>(
-//				values_at_cells[i].second.gradient);
-//		electric_field[i] = EF_at_one_cell;
-//	}
-//	//std::cout << electric_field.size() << std::endl;
-//	//VectorUtils::print_vec_of_pair_of_vec(electric_field);
-//}
-
-/*std::vector<double> SerratedRect2DDetector::get_electric_field(Point<2> p) {
-
-}*/
-
-//void SerratedRect2DDetector::draw_vtk_graph_potential(
-//		std::string output_file) {
-//	solution_potential.draw_vtk_graph_fun(output_file);
-//}
-//
-//void SerratedRect2DDetector::draw_vtk_graph_weight_potential(
-//		std::string output_file){
-//	solution_weight_potential.draw_vtk_graph_fun(output_file);
-//}
-//
-//void SerratedRect2DDetector::draw_vtk_graph_gradient_of_potential(
-//		std::string output_file) {
-//	solution_potential.draw_vtk_graph_derivatives(output_file);
-//}
-//
-//void SerratedRect2DDetector::draw_vtk_graph_gradient_of_weight_potential(
-//		std::string output_file) {
-//	solution_weight_potential.draw_vtk_graph_derivatives(output_file);
-//}
 
 std::string SerratedRect2DDetector::params_to_string() {
 

@@ -43,12 +43,10 @@ protected:
 
 	Triangulation<2> *triangulation = new Triangulation<2>();
 	ZeroRightHandSide<2> *zero_right_hand_side = new ZeroRightHandSide<2>();
-	//Function<2> *boundary_val;
 	BoundaryConditions<2> *boundary_conditions;
 	LaplaceSolver<2> *potential_solver;
 
 	Triangulation<2> *triangulation_weight = new Triangulation<2>();
-	//Function<2> *boundary_val_weight;
 	BoundaryConditions<2> *boundary_conditions_weight;
 	LaplaceSolver<2> *potential_solver_weight;
 
