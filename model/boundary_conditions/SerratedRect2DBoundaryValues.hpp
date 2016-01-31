@@ -20,38 +20,38 @@ template<unsigned dim>
 class SerratedRect2DBoundaryValues: public Function<dim> {
 public:
 
-	SerratedRect2DBoundaryValues(unsigned nbr_of_strips, double rect_length_fe,
-			double rect_width_fe, double strip_potential, double pitch_fe,
-			double strip_length_fe, double strip_width_fe);
+	SerratedRect2DBoundaryValues(unsigned nbr_of_strips, unsigned rect_length,
+			unsigned rect_width, double strip_potential, unsigned pitch,
+			unsigned strip_length, unsigned strip_width);
 
 	virtual double value(const Point<dim> &p,
 			const unsigned int component = 0) const;
 
 protected:
 	unsigned nbr_of_strips = 1;
-	double rect_length_fe = 1.0;
-	double rect_width_fe = 1.0;
-	double strip_potential = 1.0;
+	unsigned rect_length = 1;
+	unsigned rect_width = 1;
+	double strip_potential = 1;
 
-	double strip_width_fe, strip_length_fe = 1.0;
-	double periodic_str_length_fe, half_pitch_fe = 1.0;
+	unsigned strip_width, strip_length = 1;
+	unsigned periodic_str_length, half_pitch = 1;
 
 	bool is_strip(const Point<dim> &p) const;
 };
 
 template<unsigned dim>
 SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
-		unsigned nbr_of_strips, double rect_length_fe, double rect_width_fe,
-		double strip_potential, double pitch_fe, double strip_length_fe,
-		double strip_width_fe) {
-	this->rect_width_fe = rect_width_fe;
-	this->rect_length_fe = rect_length_fe;
+		unsigned nbr_of_strips, unsigned rect_length, unsigned rect_width,
+		double strip_potential, unsigned pitch, unsigned strip_length,
+		unsigned strip_width) {
+	this->rect_width = rect_width;
+	this->rect_length = rect_length;
 	this->strip_potential = strip_potential;
-	this->strip_length_fe = strip_length_fe;
-	this->strip_width_fe = strip_width_fe;
+	this->strip_length = strip_length;
+	this->strip_width = strip_width;
 	this->nbr_of_strips = nbr_of_strips;
-	this->periodic_str_length_fe = pitch_fe + strip_length_fe;
-	this->half_pitch_fe = pitch_fe / 2;
+	this->periodic_str_length = pitch + strip_length;
+	this->half_pitch = ceil(pitch / 2);
 }
 
 /**
@@ -74,20 +74,20 @@ bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p) const {
 	double x = p[0];
 	double y = p[1];
 
-	double bottom_of_strip = rect_width_fe - strip_width_fe;
+	double bottom_of_strip = rect_width - strip_width;
 
 	if (!Utils::greater_than_or_equals_double(y, bottom_of_strip, epsilon)
-			|| periodic_str_length_fe == 0.0 || strip_length_fe == 0.0)
+			|| periodic_str_length == 0.0 || strip_length == 0.0)
 		return false;
 
-	unsigned nbr_of_prev_periodic_str = x / periodic_str_length_fe;
+	unsigned nbr_of_prev_periodic_str = x / periodic_str_length;
 	double delta_from_prev_periodic_str = x
-			- nbr_of_prev_periodic_str * periodic_str_length_fe;
+			- nbr_of_prev_periodic_str * periodic_str_length;
 
-	double strip_border_right = half_pitch_fe + strip_length_fe;
+	double strip_border_right = half_pitch + strip_length;
 
 	return Utils::greater_than_or_equals_double(delta_from_prev_periodic_str,
-			half_pitch_fe, epsilon)
+			half_pitch, epsilon)
 			&& Utils::less_than_or_equals_double(delta_from_prev_periodic_str,
 					strip_border_right, epsilon);
 }

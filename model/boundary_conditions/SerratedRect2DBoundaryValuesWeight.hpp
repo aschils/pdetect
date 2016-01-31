@@ -15,16 +15,16 @@ class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
 
 public:
 	SerratedRect2DBoundaryValuesWeight(unsigned nbr_of_strips,
-			double rect_length_fe, double rect_width_fe, double strip_potential,
-			double pitch_fe, double strip_length_fe, double strip_width_fe) :
-			SerratedRect2DBoundaryValues<dim>(nbr_of_strips, rect_length_fe,
-					rect_width_fe, strip_potential, pitch_fe, strip_length_fe,
-					strip_width_fe) {
+			unsigned rect_length, unsigned rect_width, double strip_potential,
+			unsigned pitch, unsigned strip_length, unsigned strip_width) :
+			SerratedRect2DBoundaryValues<dim>(nbr_of_strips, rect_length,
+					rect_width, strip_potential, pitch, strip_length,
+					strip_width) {
 	}
 
 	double value(const Point<dim> &p, const unsigned int /*component*/) const {
 
-		unsigned nbr_of_prev_periodic_str = p[0] / this->periodic_str_length_fe;
+		unsigned nbr_of_prev_periodic_str = p[0] / this->periodic_str_length;
 
 		if (this->nbr_of_strips > 0 && this->is_strip(p)
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2) {
