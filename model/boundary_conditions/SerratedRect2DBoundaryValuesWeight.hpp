@@ -26,7 +26,8 @@ public:
 
 		unsigned nbr_of_prev_periodic_str = p[0] / this->periodic_str_length;
 
-		if (this->nbr_of_strips > 0 && this->is_strip(p)
+		if (this->nbr_of_strips > 0 && SerratedRect2DBoundaryValues<dim>::is_strip(
+				p, this->rect_width, this->strip_width,	this->strip_length, this->pitch)
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2) {
 			return this->strip_potential;
 		} else
