@@ -9,10 +9,11 @@
 
 #include "Detector2D.hpp"
 #include "../MyGridGenerator.hpp"
+#include "../boundary_conditions/MidRectRect2DBoundaryCond.hpp"
 
 class MidRectRect2DDetector: public Detector2D {
 
-
+public:
 	MidRectRect2DDetector(unsigned width, unsigned strip_length,
 			unsigned strip_width, unsigned inter_strip_dist,
 			unsigned nbr_of_strips, double potential, unsigned refine_level,

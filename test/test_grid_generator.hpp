@@ -61,7 +61,7 @@ void test_rectangle_width_rectangular_holes() {
 	unsigned nbr_of_holes = 3;
 
 	Triangulation<2> tria;
-	MyGridGenerator<2>::rectangle_width_rectangular_holes(tria, width,
+	MyGridGenerator<2>::rectangle_with_rectangular_holes(tria, width,
 			hole_length, hole_width, inter_holes_dist, nbr_of_holes);
 	GridOut grid_out;
 

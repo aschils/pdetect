@@ -21,22 +21,23 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned width,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
-	MyGridGenerator<2>::rectangle_with_circular_holes(*triangulation, width,
-			potential, inter_strip_dist, nbr_of_strips);
-//	boundary_conditions = new MidCircleRect2DBoundaryCond<2>(width, potential,
-//			nbr_of_potential_src, inter_potential_srcs_dist);
-//	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
-//			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
-//			true);
-//
-//	boundary_conditions_weight = new MidCircleRect2DBoundaryCond<2>(width,
-//			potential, nbr_of_potential_src, inter_potential_srcs_dist);
-//	MyGridGenerator<2>::rectangle_with_circular_holes(*triangulation_weight,
-//			width, potential_src_radius, inter_potential_srcs_dist,
-//			nbr_of_potential_src);
-//	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-//			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
-//			boundary_conditions_weight, true);
+	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation, width,
+			strip_length, strip_width, inter_strip_dist, nbr_of_strips);
+
+	boundary_conditions = new MidRectRect2DBoundaryCond<2>(width, potential,
+			nbr_of_strips, inter_strip_dist, strip_length, strip_width);
+	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
+			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
+			true);
+
+	//TODO CHANGE TO WEIGHT CONF BELOW
+	boundary_conditions_weight = new MidRectRect2DBoundaryCond<2>(width, potential,
+			nbr_of_strips, inter_strip_dist, strip_length, strip_width);
+	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation_weight, width,
+				strip_length, strip_width, inter_strip_dist, nbr_of_strips);
+	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
+			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
+			boundary_conditions_weight, true);
 }
 
 std::string MidRectRect2DDetector::params_to_string() {

@@ -9,6 +9,7 @@
 
 #include "../model/detectors/MidCircleRect2DDetector.hpp"
 #include "../model/detectors/SerratedRect2DDetector.hpp"
+#include "../model/detectors/MidRectRect2DDetector.hpp"
 #include "../model/ZeroRightHandSide.hpp"
 #include "../model/Utils.hpp"
 
@@ -153,11 +154,12 @@ void test_mid_circle_rect2D_det() {
 			det.compute_weight();
 			std::string output_dir = "tests_mid_circle_rect2D_det/";
 			Utils::create_directory_if_not_exists(output_dir);
-			det.draw_vtk_graph_potential(output_dir +det.params_to_string()+ ".vtk");
-			det.draw_vtk_graph_gradient_of_potential(output_dir +
-					det.params_to_string()+"_grad.vtk");
-			det.draw_vtk_graph_weight_potential(output_dir +
-					det.params_to_string()+ "_weight.vtk");
+			det.draw_vtk_graph_potential(
+					output_dir + det.params_to_string() + ".vtk");
+			det.draw_vtk_graph_gradient_of_potential(
+					output_dir + det.params_to_string() + "_grad.vtk");
+			det.draw_vtk_graph_weight_potential(
+					output_dir + det.params_to_string() + "_weight.vtk");
 
 		}
 	}
@@ -165,29 +167,22 @@ void test_mid_circle_rect2D_det() {
 
 void test_various() {
 
-	/*
-	 double strip_potential = 1000;
-	 unsigned strip_length = 100;
-	 unsigned strip_width = 30;
-	 unsigned pitch = 100;
-	 unsigned refine_level = 1;
-	 unsigned max_iter = 10000;
-	 double stop_accuracy = 10e-12;
-	 unsigned nbr_of_strips = 4;
-	 unsigned width = 60;
+	unsigned width = 200;
+	unsigned strip_length = 30;
+	unsigned strip_width = 10;
+	unsigned inter_potential_srcs_dist = 20;
+	unsigned nbr_of_strips = 3;
+	unsigned potential = 10;
+	unsigned refine_level = 5;
+	unsigned max_iter = 10000;
+	double max_error = 10e-12;
 
-	 std::string output_dir = "tests_various/";
+	MidRectRect2DDetector det(width, strip_length,
+				strip_width, inter_potential_srcs_dist,
+				nbr_of_strips, potential, refine_level,
+				max_iter, max_error);
 
-	 Utils::create_directory_if_not_exists(output_dir);
-
-	 //for (unsigned width = 60; width <= 300; width += 60) {
-
-	 SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
-	 pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-	 srdd.compute();
-	 std::string output_file = output_dir + srdd.params_to_string() + ".vtk";
-	 srdd.draw_vtk_graph_potential(output_file);
-	 srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
-	 //}*/
+	det.compute();
+	det.draw_vtk_graph_potential("out.vtk");
 }
 
