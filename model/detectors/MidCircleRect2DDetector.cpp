@@ -9,13 +9,13 @@
 
 MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned width,
 		unsigned nbr_of_potential_src, unsigned potential_src_radius,
-		unsigned inter_potential_srcs_dist, unsigned potential) :
+		unsigned inter_potential_srcs_dist, double potential) :
 		MidCircleRect2DDetector(width, nbr_of_potential_src, potential_src_radius,
 				inter_potential_srcs_dist, potential, 2, 10000, 10e-12){}
 
 MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned width,
 		unsigned nbr_of_potential_src, unsigned potential_src_radius,
-		unsigned inter_potential_srcs_dist, unsigned potential,
+		unsigned inter_potential_srcs_dist, double potential,
 		unsigned refine_level, unsigned max_iter,
 		double stop_accuracy) {
 
@@ -23,7 +23,7 @@ MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned width,
 	this->nbr_of_potential_src = nbr_of_potential_src;
 	this->potential_src_radius = potential_src_radius;
 	this->inter_potential_srcs_dist = inter_potential_srcs_dist;
-	this->potential = potential;
+	this->strip_potential = potential;
 	this->refine_level = refine_level;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
@@ -54,7 +54,7 @@ std::string MidCircleRect2DDetector::params_to_string() {
 			+ std::to_string(nbr_of_potential_src) +"_potential_src_radius_"
 			+ std::to_string(potential_src_radius) + "_inter_potential_srcs_dist_"
 			+ std::to_string(inter_potential_srcs_dist) + "_potential_" +
-			std::to_string(potential)
+			std::to_string(strip_potential)
 			+ "_refine_level_" + std::to_string(refine_level) + "_max_iter_"
 			+ std::to_string(max_iter) + "_stop_accuracy_"
 			+ std::to_string(stop_accuracy);
