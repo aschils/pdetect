@@ -7,8 +7,9 @@
 
 #pragma once
 
+#include "../boundary_conditions/MidCircleRect2DBoundaryCond.hpp"
+#include "../boundary_conditions/MidCircleRect2DBoundaryCondWeight.hpp"
 #include "Detector2D.hpp"
-#include "../boundary_conditions/CirclePotential2DBoundaryCond.hpp"
 
 class MidCircleRect2DDetector: public Detector2D {
 
