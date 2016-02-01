@@ -31,8 +31,8 @@ public:
 
 	double value(const Point<dim> &p, const unsigned int /*component*/) const {
 
-		double y = p[1];
-		double epsilon = 0.000001;
+		//double y = p[1];
+		//double epsilon = 0.000001;
 
 		/*if (Utils::equals_double(y, -half_width, epsilon)
 				|| Utils::equals_double(y, half_width, epsilon)) {
