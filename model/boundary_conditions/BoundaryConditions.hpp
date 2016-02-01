@@ -8,6 +8,7 @@
 #pragma once
 
 #include <deal.II/base/function.h>
+#include <deal.II/grid/tria.h>
 
 using namespace dealii;
 
