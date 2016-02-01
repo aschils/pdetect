@@ -7,8 +7,8 @@
 
 #include <deal.II/lac/vector.h>
 
+#include "../model/detectors/MidCircleRect2DDetector.hpp"
 #include "../model/detectors/SerratedRect2DDetector.hpp"
-#include "../model/detectors/CirclePotential2DDetector.hpp"
 #include "../model/ZeroRightHandSide.hpp"
 #include "../model/Utils.hpp"
 
@@ -146,7 +146,7 @@ void test_circle_potential() {
 			nbr_of_potential_src++) {
 		for (unsigned potential_src_radius = 1; potential_src_radius < 40;
 				potential_src_radius += 10) {
-			CirclePotential2DDet det(width, nbr_of_potential_src,
+			MidCircleRect2DDetector det(width, nbr_of_potential_src,
 					potential_src_radius, inter_potential_srcs_dist, potential,
 					refine_level, max_iter, max_error);
 			det.compute();

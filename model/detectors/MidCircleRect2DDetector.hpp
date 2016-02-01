@@ -10,17 +10,17 @@
 #include "Detector2D.hpp"
 #include "../boundary_conditions/CirclePotential2DBoundaryCond.hpp"
 
-class CirclePotential2DDet: public Detector2D {
+class MidCircleRect2DDetector: public Detector2D {
 
 public:
 
-	CirclePotential2DDet(unsigned width,
+	MidCircleRect2DDetector(unsigned width,
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
 			unsigned inter_potential_srcs_dist, unsigned potential,
 			unsigned refine_level, unsigned max_iter,
 			double stop_accuracy);
 
-	CirclePotential2DDet(unsigned width,
+	MidCircleRect2DDetector(unsigned width,
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
 			unsigned inter_potential_srcs_dist, unsigned potential);
 

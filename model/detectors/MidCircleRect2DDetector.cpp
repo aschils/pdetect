@@ -5,15 +5,15 @@
  *      Author: aschils
  */
 
-#include "CirclePotential2DDetector.hpp"
+#include "MidCircleRect2DDetector.hpp"
 
-CirclePotential2DDet::CirclePotential2DDet(unsigned width,
+MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned width,
 		unsigned nbr_of_potential_src, unsigned potential_src_radius,
 		unsigned inter_potential_srcs_dist, unsigned potential) :
-		CirclePotential2DDet(width, nbr_of_potential_src, potential_src_radius,
+		MidCircleRect2DDetector(width, nbr_of_potential_src, potential_src_radius,
 				inter_potential_srcs_dist, potential, 2, 10000, 10e-12){}
 
-CirclePotential2DDet::CirclePotential2DDet(unsigned width,
+MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned width,
 		unsigned nbr_of_potential_src, unsigned potential_src_radius,
 		unsigned inter_potential_srcs_dist, unsigned potential,
 		unsigned refine_level, unsigned max_iter,
@@ -48,7 +48,7 @@ CirclePotential2DDet::CirclePotential2DDet(unsigned width,
 
 }
 
-std::string CirclePotential2DDet::params_to_string() {
+std::string MidCircleRect2DDetector::params_to_string() {
 
 	std::string str = "width" + std::to_string(width) + "_nbr_of_potential_src_"
 			+ std::to_string(nbr_of_potential_src) +"_potential_src_radius_"
