@@ -76,7 +76,7 @@ public:
 			unsigned width, unsigned holes_radius,
 			unsigned inter_holes_centers_dist, int nbr_of_holes);
 
-	static void rectangle_width_rectangular_holes(
+	static void rectangle_with_rectangular_holes(
 			dealii::Triangulation<dim> &tria, unsigned width,
 			unsigned hole_length, unsigned hole_width,
 			unsigned inter_holes_dist, unsigned nbr_of_holes);
@@ -406,7 +406,7 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
  *
  */
 template<unsigned dim>
-void MyGridGenerator<dim>::rectangle_width_rectangular_holes(
+void MyGridGenerator<dim>::rectangle_with_rectangular_holes(
 		dealii::Triangulation<dim> &tria, unsigned width, unsigned hole_length,
 		unsigned hole_width, unsigned inter_holes_dist, unsigned nbr_of_holes) {
 
