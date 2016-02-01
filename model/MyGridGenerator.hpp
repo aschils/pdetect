@@ -69,17 +69,23 @@ public:
 	 */
 	//TODO generalize to 3D
 	static void serrated_hyper_rectangle(Triangulation<dim> &tria,
-			unsigned width, unsigned holes_nbr, unsigned hole_length, unsigned hole_width,
-			unsigned inter_hole_space);
+			unsigned width, unsigned holes_nbr, unsigned hole_length,
+			unsigned hole_width, unsigned inter_hole_space);
 
 	static void rectangle_with_circular_holes(dealii::Triangulation<dim> &tria,
 			unsigned width, unsigned holes_radius,
 			unsigned inter_holes_centers_dist, int nbr_of_holes);
 
+	static void rectangle_width_rectangular_holes(
+			dealii::Triangulation<dim> &tria, unsigned width,
+			unsigned hole_length, unsigned hole_width,
+			unsigned inter_holes_dist, unsigned nbr_of_holes);
+
 private:
 
 	static bool are_precond_fullfilled_serr_hrect(unsigned width,
-			unsigned hole_length, unsigned hole_width, unsigned inter_hole_space);
+			unsigned hole_length, unsigned hole_width,
+			unsigned inter_hole_space);
 
 	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
 			unsigned width, unsigned length, unsigned holes_radius);
@@ -140,8 +146,8 @@ bool MyGridGenerator<dim>::are_precond_fullfilled_serr_hrect(unsigned width,
  */
 template<unsigned dim>
 void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
-		unsigned width, unsigned holes_nbr, unsigned hole_length, unsigned hole_width,
-		unsigned inter_hole_space) {
+		unsigned width, unsigned holes_nbr, unsigned hole_length,
+		unsigned hole_width, unsigned inter_hole_space) {
 
 	if (!are_precond_fullfilled_serr_hrect(width, hole_length, hole_width,
 			inter_hole_space))
@@ -162,11 +168,12 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 	unsigned half_inter_hole_space = ceil(inter_hole_space / 2.0);
 
 	Triangulation<dim> half_inter_hole, inter_hole, half_rect, hole_width_rect,
-	inter_hole_space_width_rect;
+			inter_hole_space_width_rect;
 
 	//Build half_rect
 	Point<dim> bottom_left_half_rect_pt(0.0, 0.0);
-	Point<dim> top_right_half_rect_pt(half_inter_hole_space, width - hole_width);
+	Point<dim> top_right_half_rect_pt(half_inter_hole_space,
+			width - hole_width);
 	GridGenerator::hyper_rectangle(half_rect, bottom_left_half_rect_pt,
 			top_right_half_rect_pt);
 
@@ -202,7 +209,8 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 	half_inter_hole_space_translation[0] = half_inter_hole_space;
 	GridTools::shift(half_inter_hole_space_translation, hole_width_rect);
 	GridTools::shift(half_inter_hole_space_translation, inter_hole);
-	GridTools::shift(half_inter_hole_space_translation, inter_hole_space_width_rect);
+	GridTools::shift(half_inter_hole_space_translation,
+			inter_hole_space_width_rect);
 
 	dealii::Tensor<1, dim> hole_translation;
 	hole_translation[0] = hole_length;
@@ -212,26 +220,27 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 	inter_hole_translation[1] = 0;
 
 	//Add "middle" rectangles and holes to tria
-	for(unsigned i=0; i< 2*holes_nbr-1; i++){
+	for (unsigned i = 0; i < 2 * holes_nbr - 1; i++) {
 
-		if(i%2 == 0){
+		if (i % 2 == 0) {
 			GridGenerator::merge_triangulations(tria, hole_width_rect, tria);
 			GridTools::shift(hole_translation, hole_width_rect);
 			GridTools::shift(hole_translation, inter_hole);
 			GridTools::shift(hole_translation, inter_hole_space_width_rect);
-		}
-		else{
-			GridGenerator::merge_triangulations(tria, inter_hole_space_width_rect, tria);
+		} else {
+			GridGenerator::merge_triangulations(tria,
+					inter_hole_space_width_rect, tria);
 			GridGenerator::merge_triangulations(tria, inter_hole, tria);
 			GridTools::shift(inter_hole_translation, hole_width_rect);
 			GridTools::shift(inter_hole_translation, inter_hole);
-			GridTools::shift(inter_hole_translation, inter_hole_space_width_rect);
+			GridTools::shift(inter_hole_translation,
+					inter_hole_space_width_rect);
 		}
 	}
 
 	//Add Half-hole right extremity half rect and half hole
-	hole_translation[0] = half_inter_hole_space + hole_length *holes_nbr+
-			(holes_nbr-1)*inter_hole_space;
+	hole_translation[0] = half_inter_hole_space + hole_length * holes_nbr
+			+ (holes_nbr - 1) * inter_hole_space;
 	GridTools::shift(hole_translation, half_inter_hole);
 	GridTools::shift(hole_translation, half_rect);
 	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
@@ -345,9 +354,13 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 			|| inter_holes_centers_dist <= 2 * holes_radius)
 		throw INVALID_INPUT;
 
+	dealii::Tensor<1, dim> half_length_translation;
+	half_length_translation[0] = ceil(inter_holes_centers_dist/2.0);
+
 	if (nbr_of_holes == 1) {
 		MyGridGenerator<dim>::rectangle_with_circular_hole(tria, width,
 				inter_holes_centers_dist, holes_radius);
+		GridTools::shift(half_length_translation, tria);
 		return;
 	}
 
@@ -356,7 +369,7 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 	 * TODO optimize
 	 * Note: I tried to call the function copy_triangulation of
 	 * dealii::Triangulation class instead of creating two times the mesh,
-	 * but it segfaults...
+	 * but it segfaulted...
 	 */
 	MyGridGenerator<dim>::rectangle_with_circular_hole(periodic_struct, width,
 			inter_holes_centers_dist, holes_radius);
@@ -370,4 +383,167 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 		GridTools::shift(translation, periodic_struct);
 		GridGenerator::merge_triangulations(tria, periodic_struct, tria);
 	}
+
+	GridTools::shift(half_length_translation, tria);
+}
+
+/**
+ * Build a grid of the form:
+ *       _                     _  ________________________________________________________
+ *       | half_wo_hole_width  |  |  top_left  | top_around_hole  |  top_between_holes    | ....
+ *       |                     -  |--------------------------------------------------------
+ * width | hole_width          |  | middle_left|   HOLE           |  middle_between_holes | HOLE
+ *       |                     -  |-------------------------------------------------------
+ *       | half_wo_hole_width  |  | bottom_left|bottom_around_hole| bottom_between_holes  | ...
+ *       _                     _  |________________________________________________________
+ *
+ *                                |------------|------------------|-----------------------|
+ *
+ *                       half_inter_holes_dist     hole_length         inter_holes_dist
+ *
+ * note that {top,middle,bottom}_{left,right} rectangles have
+ * length = ceil(inter_holes_dist/2.0)
+ *
+ */
+template<unsigned dim>
+void MyGridGenerator<dim>::rectangle_width_rectangular_holes(
+		dealii::Triangulation<dim> &tria, unsigned width, unsigned hole_length,
+		unsigned hole_width, unsigned inter_holes_dist, unsigned nbr_of_holes) {
+
+	if (!(hole_width > 0 && width > hole_width) || nbr_of_holes == 0
+			|| hole_length == 0)
+		throw INVALID_INPUT;
+
+	bool no_inter_holes_dist = inter_holes_dist == 0;
+
+	//Build the various rectangles needed before assembling them
+	Triangulation<dim> bottom_left, middle_left, top_left, bottom_around_hole,
+	top_around_hole, bottom_between_holes, middle_between_holes,
+	top_between_holes;
+
+	unsigned half_wo_hole_width = ceil((width - hole_width) / 2.0);
+	unsigned half_inter_holes_dist = ceil(inter_holes_dist / 2.0);
+
+	//Build bottom left
+	Point<dim> p1(0.0, 0.0);
+	Point<dim> p2(half_inter_holes_dist, half_wo_hole_width);
+	GridGenerator::hyper_rectangle(bottom_left, p1, p2);
+
+	//Define useful vertical translation vectors
+	dealii::Tensor<1, dim> half_wo_hole_width_translation;
+	half_wo_hole_width_translation[0] = 0;
+	half_wo_hole_width_translation[1] = half_wo_hole_width;
+	dealii::Tensor<1, dim> hole_width_translation;
+	hole_width_translation[0] = 0;
+	hole_width_translation[1] = hole_width;
+	dealii::Tensor<1, dim> bottom_to_top_translation = half_wo_hole_width_translation
+			+hole_width_translation;
+
+	//Build top left
+	GridGenerator::hyper_rectangle(top_left, p1, p2);
+	GridTools::shift(bottom_to_top_translation, top_left);
+
+	//Build middle_left
+	Point<dim> p3(0.0, half_wo_hole_width);
+	Point<dim> p4(half_inter_holes_dist, hole_width + half_wo_hole_width);
+	GridGenerator::hyper_rectangle(middle_left, p3, p4);
+
+	//Build bottom_around_hole
+	Point<dim> p5(half_inter_holes_dist, 0.0);
+	Point<dim> p6(half_inter_holes_dist + hole_length, half_wo_hole_width);
+	GridGenerator::hyper_rectangle(bottom_around_hole, p5, p6);
+
+	//Build top_around_hole
+	GridGenerator::hyper_rectangle(top_around_hole, p5, p6);
+	GridTools::shift(bottom_to_top_translation ,top_around_hole);
+
+	std::cout << "A" << std::endl;
+
+	if (!no_inter_holes_dist) {
+		//Build bottom_between_holes
+		Point<dim> p7(half_inter_holes_dist + hole_length, 0.0);
+		Point<dim> p8(half_inter_holes_dist + hole_length + inter_holes_dist,
+				half_wo_hole_width);
+		GridGenerator::hyper_rectangle(bottom_between_holes, p7, p8);
+
+		//Build top_between_holes
+		GridGenerator::hyper_rectangle(top_between_holes, p7, p8);
+		GridTools::shift(bottom_to_top_translation, top_between_holes);
+
+		//Build middle_between_holes
+		Point<dim> p9(half_inter_holes_dist + hole_length, half_wo_hole_width);
+		Point<dim> p10(half_inter_holes_dist + hole_length + inter_holes_dist,
+				half_wo_hole_width + hole_width);
+		GridGenerator::hyper_rectangle(middle_between_holes, p9, p10);
+	}
+
+	std::cout << "B" << std::endl;
+
+	//Put left rectangles in tria
+	GridGenerator::hyper_rectangle(tria, p1, p2); //init tria to bottom_left
+	GridGenerator::merge_triangulations(tria, middle_left, tria);
+	GridGenerator::merge_triangulations(tria, top_left, tria);
+
+	//Define useful horizontal translation vectors
+	dealii::Tensor<1, dim> hole_length_translation;
+	hole_length_translation[0] = hole_length;
+	dealii::Tensor<1, dim> inter_holes_dist_translation;
+	inter_holes_dist_translation[0] = inter_holes_dist;
+	dealii::Tensor<1, dim> periodic_struct_translation =
+			hole_length_translation+
+			inter_holes_dist_translation;
+
+	std::cout << "C" << std::endl;
+
+	//Now put the "middle rectangles" in tria
+	unsigned nbr_of_rect_to_put_middle = nbr_of_holes*2-1;
+	for(unsigned i=0; i<nbr_of_rect_to_put_middle; i++){
+
+		if(i%2==0){
+			std::cout << "if1" << std::endl;
+			GridGenerator::merge_triangulations(tria, bottom_around_hole, tria);
+			std::cout << "if2" << std::endl;
+			GridGenerator::merge_triangulations(tria, top_around_hole, tria);
+			std::cout << "if3" << std::endl;
+			GridTools::shift(periodic_struct_translation, bottom_around_hole);
+			std::cout << "if4" << std::endl;
+			GridTools::shift(periodic_struct_translation, top_around_hole);
+			std::cout << "if5" << std::endl;
+		}
+
+		else if(!no_inter_holes_dist){
+			std::cout << "else1" << std::endl;
+			GridGenerator::merge_triangulations(tria, bottom_between_holes, tria);
+			std::cout << "else2" << std::endl;
+			GridGenerator::merge_triangulations(tria, middle_between_holes, tria);
+			std::cout << "else3" << std::endl;
+			GridGenerator::merge_triangulations(tria, top_between_holes, tria);
+			std::cout << "else4" << std::endl;
+			GridTools::shift(periodic_struct_translation, bottom_between_holes);
+			std::cout << "else5" << std::endl;
+			GridTools::shift(periodic_struct_translation, middle_between_holes);
+			std::cout << "else6" << std::endl;
+			GridTools::shift(periodic_struct_translation, top_between_holes);
+			std::cout << "else7" << std::endl;
+		}
+	}
+
+	std::cout << "D" << std::endl;
+
+	//Build right rectangles by shifting left rectangles
+	Triangulation<dim> bottom_right, middle_right, top_right;
+	unsigned to_shift = half_inter_holes_dist+nbr_of_holes*hole_length+
+			(nbr_of_holes-1)*inter_holes_dist;
+	dealii::Tensor<1, dim> left_rect_translation;
+	left_rect_translation[0] = to_shift;
+	GridTools::shift(left_rect_translation, top_left);
+	GridTools::shift(left_rect_translation, middle_left);
+	GridTools::shift(left_rect_translation, bottom_left);
+
+	std::cout << "E" << std::endl;
+
+	//Put right rectangles in tria
+	GridGenerator::merge_triangulations(tria, bottom_left, tria);
+	GridGenerator::merge_triangulations(tria, middle_left, tria);
+	GridGenerator::merge_triangulations(tria, top_left, tria);
 }
