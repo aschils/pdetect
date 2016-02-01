@@ -133,7 +133,7 @@ void test_weighting_potential() {
 	}
 }
 
-void test_circle_potential() {
+void test_mid_circle_rect2D_det() {
 
 	unsigned width = 200;
 	unsigned inter_potential_srcs_dist = 100;
@@ -150,10 +150,15 @@ void test_circle_potential() {
 					potential_src_radius, inter_potential_srcs_dist, potential,
 					refine_level, max_iter, max_error);
 			det.compute();
-			std::string output_dir = "tests_output_circle_holes_det/";
+			det.compute_weight();
+			std::string output_dir = "tests_mid_circle_rect2D_det/";
 			Utils::create_directory_if_not_exists(output_dir);
 			det.draw_vtk_graph_potential(output_dir +det.params_to_string()+ ".vtk");
-			det.draw_vtk_graph_gradient_of_potential(output_dir + det.params_to_string()+"_grad.vtk");
+			det.draw_vtk_graph_gradient_of_potential(output_dir +
+					det.params_to_string()+"_grad.vtk");
+			det.draw_vtk_graph_weight_potential(output_dir +
+					det.params_to_string()+ "_weight.vtk");
+
 		}
 	}
 }
