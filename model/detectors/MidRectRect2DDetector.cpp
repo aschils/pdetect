@@ -32,9 +32,9 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
-	//TODO CHANGE TO WEIGHT CONF BELOW
-	boundary_conditions_weight = new MidRectRect2DBoundaryCond<2>(half_width, potential,
-			nbr_of_strips, half_inter_strip_dist, strip_length, half_strip_width);
+	boundary_conditions_weight = new MidRectRect2DBoundaryCondWeight<2>(half_width,
+			half_strip_width, strip_length, half_inter_strip_dist, nbr_of_strips,
+			potential);
 	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation_weight, half_width,
 				strip_length, half_strip_width, half_inter_strip_dist, nbr_of_strips);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,

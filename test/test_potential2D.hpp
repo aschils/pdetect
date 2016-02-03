@@ -165,7 +165,7 @@ void test_mid_circle_rect2D_det() {
 	}
 }
 
-void test_various() {
+void test_mid_rect_rect_2D_det() {
 
 	unsigned half_width = 100;
 	unsigned strip_length = 30;
@@ -177,12 +177,18 @@ void test_various() {
 	unsigned max_iter = 10000;
 	double max_error = 10e-12;
 
-	MidRectRect2DDetector det(half_width, strip_length,
-				half_strip_width, half_inter_potential_srcs_dist,
-				nbr_of_strips, potential, refine_level,
-				max_iter, max_error);
+	MidRectRect2DDetector det(half_width, strip_length, half_strip_width,
+			half_inter_potential_srcs_dist, nbr_of_strips, potential,
+			refine_level, max_iter, max_error);
 
 	det.compute();
+	det.compute_weight();
 	det.draw_vtk_graph_potential("out.vtk");
+	det.draw_vtk_graph_weight_potential("out_weight.vtk");
+}
+
+void test_various() {
+
+
 }
 
