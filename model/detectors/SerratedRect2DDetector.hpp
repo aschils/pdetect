@@ -23,12 +23,12 @@ class SerratedRect2DDetector : public Detector2D {
 
 public:
 	SerratedRect2DDetector(unsigned nbr_of_strips,
-			unsigned strip_length, unsigned strip_width, unsigned pitch,
+			unsigned strip_length, unsigned strip_width, unsigned half_pitch,
 			double strip_potential, unsigned refine_level, unsigned max_iter,
 			double stop_accuracy);
 
 	SerratedRect2DDetector(unsigned nbr_of_strips, unsigned width,
-				unsigned strip_length, unsigned strip_width, unsigned pitch,
+				unsigned strip_length, unsigned strip_width, unsigned half_pitch,
 				double strip_potential, unsigned refine_level, unsigned max_iter,
 				double stop_accuracy);
 
@@ -38,7 +38,8 @@ public:
 
 private:
 
-	unsigned nbr_of_strips, strip_length, strip_width, pitch, total_length = 1;
+	unsigned nbr_of_strips, strip_length, strip_width, half_pitch = 1;
+	unsigned total_length = 1;
 	double rect_width = 1.0;
 
 	unsigned nbr_of_pts_along_x = 0, nbr_of_pts_along_y = 0;
