@@ -14,14 +14,15 @@ class MidCircleRect2DBoundaryCond: public BoundaryConditions<dim> {
 
 public:
 
-	MidCircleRect2DBoundaryCond(double width, double potential,
-			unsigned nbr_of_potential_src, unsigned inter_potential_srcs_dist) {
-		this->values = new MidCircleRect2DBoundaryValues<dim>(width,
+	MidCircleRect2DBoundaryCond(unsigned half_width, double potential,
+			unsigned nbr_of_potential_src,
+			unsigned half_inter_potential_srcs_dist) {
+
+		this->values = new MidCircleRect2DBoundaryValues<dim>(half_width,
 				potential);
-		unsigned half_periodic_struct_length = ceil(inter_potential_srcs_dist / 2.0);
+		unsigned periodic_struct_length = 2*half_inter_potential_srcs_dist;
 		left_boundary_x = 0.0;
-		right_boundary_x = (nbr_of_potential_src == 1)? half_periodic_struct_length*2:
-				half_periodic_struct_length*2*nbr_of_potential_src;
+		right_boundary_x = periodic_struct_length*nbr_of_potential_src;
 	}
 
 	void set_periodicity_constraints(

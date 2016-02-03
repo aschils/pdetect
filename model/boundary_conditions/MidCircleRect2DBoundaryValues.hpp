@@ -17,8 +17,8 @@ template<unsigned dim>
 class MidCircleRect2DBoundaryValues: public Function<dim> {
 
 public:
-	MidCircleRect2DBoundaryValues(unsigned width, double potential){
-		this->half_width = ceil(width / 2.0);
+	MidCircleRect2DBoundaryValues(unsigned half_width, double potential){
+		this->half_width = half_width;
 		this->potential = potential;
 	}
 
@@ -29,9 +29,8 @@ public:
 		double epsilon = 0.000001;
 
 		if(Utils::equals_double(y, -half_width, epsilon) ||
-				Utils::equals_double(y, half_width, epsilon)){
+				Utils::equals_double(y, half_width, epsilon))
 			return 0.0;
-		}
 		else
 			return potential;
 	}

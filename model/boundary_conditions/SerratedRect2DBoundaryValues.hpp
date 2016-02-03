@@ -21,14 +21,14 @@ class SerratedRect2DBoundaryValues: public Function<dim> {
 public:
 
 	SerratedRect2DBoundaryValues(unsigned nbr_of_strips, unsigned rect_length,
-			unsigned rect_width, double strip_potential, unsigned pitch,
+			unsigned rect_width, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width);
 
 	virtual double value(const Point<dim> &p,
 			const unsigned int component = 0) const;
 
 	static bool is_strip(const Point<dim> &p, unsigned rect_width,
-			unsigned strip_width, unsigned strip_length, unsigned pitch);
+			unsigned strip_width, unsigned strip_length, unsigned half_pitch);
 protected:
 	unsigned nbr_of_strips = 1;
 	unsigned rect_length = 1;
@@ -36,13 +36,13 @@ protected:
 	double strip_potential = 1;
 
 	unsigned strip_width, strip_length = 1;
-	unsigned periodic_str_length, pitch, half_pitch = 1;
+	unsigned periodic_str_length, half_pitch = 1;
 };
 
 template<unsigned dim>
 SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 		unsigned nbr_of_strips, unsigned rect_length, unsigned rect_width,
-		double strip_potential, unsigned pitch, unsigned strip_length,
+		double strip_potential, unsigned half_pitch, unsigned strip_length,
 		unsigned strip_width) {
 	this->rect_width = rect_width;
 	this->rect_length = rect_length;
@@ -50,9 +50,8 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 	this->strip_length = strip_length;
 	this->strip_width = strip_width;
 	this->nbr_of_strips = nbr_of_strips;
-	this->periodic_str_length = pitch + strip_length;
-	this->half_pitch = ceil(pitch / 2);
-	this->pitch = pitch;
+	this->periodic_str_length = 2*half_pitch + strip_length;
+	this->half_pitch = half_pitch;
 }
 
 /**
@@ -70,9 +69,9 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 template<unsigned dim>
 bool SerratedRect2DBoundaryValues<dim>::is_strip(const Point<dim> &p,
 		unsigned rect_width, unsigned strip_width, unsigned strip_length,
-		unsigned pitch) {
+		unsigned half_pitch) {
 
-	unsigned half_pitch = ceil(pitch / 2.0);
+	unsigned pitch = 2*half_pitch;
 	unsigned periodic_str_length = pitch + strip_length;
 
 	double epsilon = 0.00000001;
@@ -102,7 +101,7 @@ template<unsigned dim>
 double SerratedRect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		const unsigned int /*component*/) const {
 	if (nbr_of_strips > 0
-			&& is_strip(p, rect_width, strip_width, strip_length, pitch))
+			&& is_strip(p, rect_width, strip_width, strip_length, half_pitch))
 		return strip_potential;
 	else
 		return 0.0;

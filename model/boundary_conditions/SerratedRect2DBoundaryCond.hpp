@@ -22,17 +22,16 @@ public:
 	}
 
 	SerratedRect2DBoundaryCond(unsigned nbr_of_strips, unsigned rect_length,
-			unsigned rect_width, double strip_potential, unsigned pitch,
+			unsigned rect_width, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width) {
 		this->rect_length = rect_length;
 		this->rect_width = rect_width;
 		this->strip_width = strip_width;
 		this->strip_length = strip_length;
-		this->periodic_str_length = strip_length + pitch;
-		this->half_pitch = ceil(pitch / 2.0);
-		this->pitch = pitch;
+		this->periodic_str_length = strip_length + 2*half_pitch;
+		this->half_pitch = half_pitch;
 		this->values = new SerratedRect2DBoundaryValues<dim>(nbr_of_strips,
-				rect_length, rect_width, strip_potential, pitch, strip_length,
+				rect_length, rect_width, strip_potential, half_pitch, strip_length,
 				strip_width);
 	}
 
@@ -52,7 +51,7 @@ public:
 					if (!(strip_width == 0
 							&& SerratedRect2DBoundaryValues<dim>::is_strip(
 									cell->face(f)->center(), rect_width,
-									strip_width, strip_length, pitch)))
+									strip_width, strip_length, half_pitch)))
 						cell->face(f)->set_boundary_id(1);
 				}
 			}
@@ -61,6 +60,6 @@ public:
 
 protected:
 	unsigned rect_length, rect_width;
-	unsigned strip_length, strip_width, periodic_str_length, half_pitch, pitch;
+	unsigned strip_length, strip_width, periodic_str_length, half_pitch;
 }
 ;

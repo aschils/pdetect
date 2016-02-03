@@ -13,15 +13,14 @@ template<unsigned dim>
 class MidCircleRect2DBoundaryValuesWeight: public Function<dim> {
 
 public:
-	MidCircleRect2DBoundaryValuesWeight(unsigned width,
+	MidCircleRect2DBoundaryValuesWeight(unsigned half_width,
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
-			unsigned inter_potential_srcs_dist, double potential) {
-		this->half_width = ceil(width / 2.0);
+			unsigned half_inter_potential_srcs_dist, double potential) {
+		this->half_width = half_width;
 		this->potential = potential;
 		this->potential_src_radius = potential_src_radius;
 
-		unsigned half_inter_potential_srcs_dist = ceil(
-				inter_potential_srcs_dist/2.0);
+		unsigned inter_potential_srcs_dist = 2*half_inter_potential_srcs_dist;
 		unsigned nbr_of_src_before = nbr_of_potential_src / 2;
 		middle_potential_src_left_x = half_inter_potential_srcs_dist-potential_src_radius
 				+ nbr_of_src_before * inter_potential_srcs_dist;

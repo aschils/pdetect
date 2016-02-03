@@ -80,10 +80,10 @@ public:
 			unsigned hole_length, unsigned half_hole_width,
 			unsigned half_inter_holes_dist, unsigned nbr_of_holes);
 
-private:
-
 	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
-			unsigned half_width, unsigned half_length, unsigned holes_radius);
+				unsigned half_width, unsigned half_length, unsigned holes_radius);
+//private:
+
 };
 
 template<unsigned dim>
@@ -230,16 +230,17 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 template<unsigned dim>
 void MyGridGenerator<dim>::rectangle_with_circular_hole(
-		dealii::Triangulation<dim> &tria, unsigned half_width,
-		unsigned half_length, unsigned holes_radius) {
+		dealii::Triangulation<dim> &tria, unsigned half_width_p,
+		unsigned half_length_p, unsigned holes_radius) {
 
-	unsigned half_shorter_side = std::min<unsigned>(half_width, half_length);
-	double h_shell_outer_radius = half_shorter_side;
+	int half_width = half_width_p;
+	int half_length = half_length_p;
+	double h_shell_outer_radius = std::min<int>(half_width, half_length);
 
-	Assert(inner_radius < h_shell_outer_radius,
+	Assert(holes_radius < h_shell_outer_radius,
 			ExcMessage("outer_radius has to be bigger than inner_radius."));
 
-	Point<dim> center;
+	Point<dim> center(0.0,0.0);
 	unsigned h_shell_nbr_of_cells = 8;
 
 	// We create an hyper_shell in two dimensions, and then we modify it.
@@ -274,7 +275,7 @@ void MyGridGenerator<dim>::rectangle_with_circular_hole(
 				for (unsigned int v = 0;
 						v < GeometryInfo<dim>::vertices_per_face; ++v) {
 					unsigned int vv = cell->face(f)->vertex_index(v);
-					if (treated_vertices[vv] == false) {
+					if (!treated_vertices[vv]) {
 						treated_vertices[vv] = true;
 
 						//TODO cleaner solution?

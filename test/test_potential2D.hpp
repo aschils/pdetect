@@ -18,7 +18,7 @@ void test_serrated_2D_potential() {
 	double strip_potential = 1;
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
-	unsigned pitch = 100;
+	unsigned half_pitch = 50;
 	unsigned refine_level = 4;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
@@ -31,11 +31,11 @@ void test_serrated_2D_potential() {
 		std::cout << "Computing potential for " << nbr_of_strips << " strips"
 				<< std::endl;
 
-		std::string output_file = output_dir + "/" + "pitch_"
-				+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
+		std::string output_file = output_dir + "/" + "half-pitch_"
+				+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 		srdd.compute();
 		srdd.draw_vtk_graph_potential(output_file);
 	}
@@ -61,10 +61,10 @@ void test_serrated_rect_limit_cases() {
 				50) {
 			for (unsigned strip_width = 0; strip_width <= 30; strip_width +=
 					30) {
-				for (unsigned pitch = 0; pitch <= 50; pitch += 50) {
+				for (unsigned half_pitch = 0; half_pitch <= 25; half_pitch += 25) {
 
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
-							strip_length, strip_width, pitch, strip_potential,
+							strip_length, strip_width, half_pitch, strip_potential,
 							refine_level, max_iter, stop_accuracy);
 					srdd.compute();
 					std::string output_file = output_dir
@@ -81,7 +81,7 @@ void test_electric_field() {
 	double strip_potential = 1;
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
-	unsigned pitch = 100;
+	unsigned half_pitch = 50;
 	unsigned refine_level = 3;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
@@ -95,10 +95,10 @@ void test_electric_field() {
 
 	Utils::create_directory_if_not_exists(output_dir);
 
-	std::string output_file = output_dir + "pitch_" + std::to_string(pitch)
+	std::string output_file = output_dir + "half-pitch_" + std::to_string(half_pitch)
 			+ "_" + std::to_string(nbr_of_strips) + ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
-			pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+			half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 	srdd.compute();
 	srdd.draw_vtk_graph_potential(output_file);
 	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
@@ -109,7 +109,7 @@ void test_weighting_potential() {
 	double strip_potential = 100;
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
-	unsigned pitch = 100;
+	unsigned half_pitch = 50;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
@@ -122,11 +122,11 @@ void test_weighting_potential() {
 		std::cout << "Computing weighting potential for " << nbr_of_strips
 				<< " strips" << std::endl;
 
-		std::string output_file = output_dir + "/" + "pitch_"
-				+ std::to_string(pitch) + "_" + std::to_string(nbr_of_strips)
+		std::string output_file = output_dir + "/" + "half-pitch_"
+				+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
 				+ ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 		srdd.compute_weight();
 		srdd.draw_vtk_graph_weight_potential(output_file);
 		srdd.draw_vtk_graph_gradient_of_weight_potential(
@@ -136,8 +136,8 @@ void test_weighting_potential() {
 
 void test_mid_circle_rect2D_det() {
 
-	unsigned width = 200;
-	unsigned inter_potential_srcs_dist = 100;
+	unsigned half_width = 100;
+	unsigned half_inter_potential_srcs_dist = 50;
 	unsigned potential = 10;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
@@ -147,9 +147,9 @@ void test_mid_circle_rect2D_det() {
 			nbr_of_potential_src++) {
 		for (unsigned potential_src_radius = 1; potential_src_radius < 40;
 				potential_src_radius += 10) {
-			MidCircleRect2DDetector det(width, nbr_of_potential_src,
-					potential_src_radius, inter_potential_srcs_dist, potential,
-					refine_level, max_iter, max_error);
+			MidCircleRect2DDetector det(half_width, nbr_of_potential_src,
+					potential_src_radius, half_inter_potential_srcs_dist,
+					potential, refine_level, max_iter, max_error);
 			det.compute();
 			det.compute_weight();
 			std::string output_dir = "tests_mid_circle_rect2D_det/";
@@ -170,7 +170,7 @@ void test_various() {
 	unsigned width = 200;
 	unsigned strip_length = 30;
 	unsigned strip_width = 10;
-	unsigned inter_potential_srcs_dist = 20;
+	unsigned inter_potential_srcs_dist = 100;
 	unsigned nbr_of_strips = 3;
 	unsigned potential = 10;
 	unsigned refine_level = 5;

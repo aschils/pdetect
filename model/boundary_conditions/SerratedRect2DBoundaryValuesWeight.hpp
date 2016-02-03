@@ -16,9 +16,9 @@ class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
 public:
 	SerratedRect2DBoundaryValuesWeight(unsigned nbr_of_strips,
 			unsigned rect_length, unsigned rect_width, double strip_potential,
-			unsigned pitch, unsigned strip_length, unsigned strip_width) :
+			unsigned half_pitch, unsigned strip_length, unsigned strip_width) :
 			SerratedRect2DBoundaryValues<dim>(nbr_of_strips, rect_length,
-					rect_width, strip_potential, pitch, strip_length,
+					rect_width, strip_potential, half_pitch, strip_length,
 					strip_width) {
 	}
 
@@ -26,8 +26,11 @@ public:
 
 		unsigned nbr_of_prev_periodic_str = p[0] / this->periodic_str_length;
 
-		if (this->nbr_of_strips > 0 && SerratedRect2DBoundaryValues<dim>::is_strip(
-				p, this->rect_width, this->strip_width,	this->strip_length, this->pitch)
+		if (
+				this->nbr_of_strips > 0
+				&& SerratedRect2DBoundaryValues<dim>::is_strip(
+				p, this->rect_width, this->strip_width,	this->strip_length,
+				this->half_pitch)
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2) {
 			return this->strip_potential;
 		} else

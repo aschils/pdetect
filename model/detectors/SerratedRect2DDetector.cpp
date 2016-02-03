@@ -99,7 +99,7 @@ std::string SerratedRect2DDetector::params_to_string() {
 	std::string str = "width" + std::to_string(rect_width) + "_nbr_of_strips_"
 			+ std::to_string(nbr_of_strips) + +"_strip_length_"
 			+ std::to_string(strip_length) + "_strip_width_"
-			+ std::to_string(strip_width) + "_pitch_" + std::to_string(half_pitch)
+			+ std::to_string(strip_width) + "_half-pitch_" + std::to_string(half_pitch)
 			+ "_strip_potential_" + std::to_string(strip_potential)
 			+ "_refine_level_" + std::to_string(refine_level) + "_max_iter_"
 			+ std::to_string(max_iter) + "_stop_accuracy_"
