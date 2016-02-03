@@ -14,17 +14,19 @@ template<unsigned dim>
 class MidRectRect2DBoundaryCond: public BoundaryConditions<dim> {
 
 public:
-	MidRectRect2DBoundaryCond(unsigned width, double potential,
-			unsigned nbr_of_strips, unsigned inter_potential_srcs_dist,
-			unsigned strip_length, unsigned strip_width) {
+	MidRectRect2DBoundaryCond(unsigned half_width, double potential,
+			unsigned nbr_of_strips, unsigned half_inter_potential_srcs_dist,
+			unsigned strip_length, unsigned half_strip_width) {
 
-		this->values = new MidRectRect2DBoundaryValues<dim>(potential, strip_width,
-				width);
+		this->values = new MidRectRect2DBoundaryValues<dim>(potential,
+				half_strip_width, half_width);
 		left_boundary_x = 0.0;
-		unsigned half_inter_potential_srcs_dist = ceil(inter_potential_srcs_dist/2.0);
-		right_boundary_x = 2*half_inter_potential_srcs_dist+
+		right_boundary_x = nbr_of_strips*(strip_length+
+				2*half_inter_potential_srcs_dist);
+
+				/*2*half_inter_potential_srcs_dist+
 				(nbr_of_strips-1)*inter_potential_srcs_dist+
-				nbr_of_strips*strip_length;
+				nbr_of_strips*strip_length;*/
 	}
 
 	void set_periodicity_constraints(

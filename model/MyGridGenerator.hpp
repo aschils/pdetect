@@ -82,7 +82,6 @@ public:
 
 	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
 				unsigned half_width, unsigned half_length, unsigned holes_radius);
-//private:
 
 };
 

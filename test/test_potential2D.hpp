@@ -167,18 +167,18 @@ void test_mid_circle_rect2D_det() {
 
 void test_various() {
 
-	unsigned width = 200;
+	unsigned half_width = 100;
 	unsigned strip_length = 30;
-	unsigned strip_width = 10;
-	unsigned inter_potential_srcs_dist = 100;
+	unsigned half_strip_width = 5;
+	unsigned half_inter_potential_srcs_dist = 50;
 	unsigned nbr_of_strips = 3;
 	unsigned potential = 10;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double max_error = 10e-12;
 
-	MidRectRect2DDetector det(width, strip_length,
-				strip_width, inter_potential_srcs_dist,
+	MidRectRect2DDetector det(half_width, strip_length,
+				half_strip_width, half_inter_potential_srcs_dist,
 				nbr_of_strips, potential, refine_level,
 				max_iter, max_error);
 
