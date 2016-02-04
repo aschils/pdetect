@@ -443,8 +443,6 @@ void MyGridGenerator<dim>::rectangle_with_rectangular_holes(
 	GridGenerator::hyper_rectangle(top_around_hole, p5, p6);
 	GridTools::shift(bottom_to_top_translation, top_around_hole);
 
-	std::cout << "A" << std::endl;
-
 	if (!no_inter_holes_dist) {
 		//Build bottom_between_holes
 		Point<dim> p7(half_inter_holes_dist + hole_length, 0.0);
@@ -463,8 +461,6 @@ void MyGridGenerator<dim>::rectangle_with_rectangular_holes(
 		GridGenerator::hyper_rectangle(middle_between_holes, p9, p10);
 	}
 
-	std::cout << "B" << std::endl;
-
 	//Put left rectangles in tria
 	GridGenerator::hyper_rectangle(tria, p1, p2); //init tria to bottom_left
 	GridGenerator::merge_triangulations(tria, middle_left, tria);
@@ -478,44 +474,28 @@ void MyGridGenerator<dim>::rectangle_with_rectangular_holes(
 	dealii::Tensor<1, dim> periodic_struct_translation = hole_length_translation
 			+ inter_holes_dist_translation;
 
-	std::cout << "C" << std::endl;
-
 	//Now put the "middle rectangles" in tria
 	unsigned nbr_of_rect_to_put_middle = nbr_of_holes * 2 - 1;
 	for (unsigned i = 0; i < nbr_of_rect_to_put_middle; i++) {
 
 		if (i % 2 == 0) {
-			std::cout << "if1" << std::endl;
 			GridGenerator::merge_triangulations(tria, bottom_around_hole, tria);
-			std::cout << "if2" << std::endl;
 			GridGenerator::merge_triangulations(tria, top_around_hole, tria);
-			std::cout << "if3" << std::endl;
 			GridTools::shift(periodic_struct_translation, bottom_around_hole);
-			std::cout << "if4" << std::endl;
 			GridTools::shift(periodic_struct_translation, top_around_hole);
-			std::cout << "if5" << std::endl;
 		}
 
 		else if (!no_inter_holes_dist) {
-			std::cout << "else1" << std::endl;
 			GridGenerator::merge_triangulations(tria, bottom_between_holes,
 					tria);
-			std::cout << "else2" << std::endl;
 			GridGenerator::merge_triangulations(tria, middle_between_holes,
 					tria);
-			std::cout << "else3" << std::endl;
 			GridGenerator::merge_triangulations(tria, top_between_holes, tria);
-			std::cout << "else4" << std::endl;
 			GridTools::shift(periodic_struct_translation, bottom_between_holes);
-			std::cout << "else5" << std::endl;
 			GridTools::shift(periodic_struct_translation, middle_between_holes);
-			std::cout << "else6" << std::endl;
 			GridTools::shift(periodic_struct_translation, top_between_holes);
-			std::cout << "else7" << std::endl;
 		}
 	}
-
-	std::cout << "D" << std::endl;
 
 	//Build right rectangles by shifting left rectangles
 	Triangulation<dim> bottom_right, middle_right, top_right;
@@ -526,8 +506,6 @@ void MyGridGenerator<dim>::rectangle_with_rectangular_holes(
 	GridTools::shift(left_rect_translation, top_left);
 	GridTools::shift(left_rect_translation, middle_left);
 	GridTools::shift(left_rect_translation, bottom_left);
-
-	std::cout << "E" << std::endl;
 
 	//Put right rectangles in tria
 	GridGenerator::merge_triangulations(tria, bottom_left, tria);
