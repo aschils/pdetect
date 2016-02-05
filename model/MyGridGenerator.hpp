@@ -34,7 +34,7 @@ class MyGridGenerator {
 
 public:
 
-	static void hyper_rectangle(dealii::Triangulation<dim> &triangulation,
+	static void rectangle(dealii::Triangulation<dim> &triangulation,
 			double length, double width);
 
 	/**
@@ -67,9 +67,13 @@ public:
 	 * PRECONDITIONS_VIOLATED is throwned.
 	 *
 	 */
-	static void serrated_hyper_rectangle(Triangulation<dim> &tria,
+	static void serrated_rectangle(Triangulation<dim> &tria,
 			unsigned width, unsigned holes_nbr, unsigned hole_length,
 			unsigned hole_width, unsigned half_inter_hole_space);
+
+	static void serrated_rectangle_gaussian(Triangulation<dim> &tria,
+			unsigned width, unsigned holes_nbr,
+			unsigned inter_gauss_borders_lgth, unsigned gaussian_peak);
 
 	static void rectangle_with_circular_holes(dealii::Triangulation<dim> &tria,
 			unsigned half_width, unsigned holes_radius,
@@ -86,7 +90,7 @@ public:
 };
 
 template<unsigned dim>
-void MyGridGenerator<dim>::hyper_rectangle(
+void MyGridGenerator<dim>::rectangle(
 		dealii::Triangulation<dim> &triangulation, double length,
 		double width) {
 	Point<dim> point_bottom(0, 0);
@@ -126,7 +130,7 @@ void MyGridGenerator<dim>::hyper_rectangle(
  *
  */
 template<unsigned dim>
-void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
+void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 		unsigned width, unsigned holes_nbr, unsigned hole_length,
 		unsigned hole_width, unsigned half_inter_hole_space) {
 
@@ -142,10 +146,10 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 
 	if (length == 0 || width == 0 || hole_width == 0 || hole_length == 0
 			|| holes_nbr == 0)
-		return hyper_rectangle(tria, length, width);
+		return rectangle(tria, length, width);
 
 	if (inter_hole_space == 0)
-		return hyper_rectangle(tria, length, width - hole_width);
+		return rectangle(tria, length, width - hole_width);
 
 	Triangulation<dim> half_inter_hole, inter_hole, half_rect, hole_width_rect,
 			inter_hole_space_width_rect;
@@ -225,6 +229,35 @@ void MyGridGenerator<dim>::serrated_hyper_rectangle(Triangulation<dim> &tria,
 	GridTools::shift(hole_translation, half_rect);
 	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
 	GridGenerator::merge_triangulations(tria, half_rect, tria);
+}
+
+template <unsigned dim>
+void MyGridGenerator<dim>::serrated_rectangle_gaussian(
+		Triangulation<dim> &tria,
+		unsigned width, unsigned holes_nbr,
+		unsigned inter_gauss_borders_lgth, unsigned gaussian_peak){
+
+	std::vector< Point< dim > > vertices;
+	std::vector<CellData<dim> > cells;
+
+	Point<dim> p1(0,0);
+	Point<dim> p2(0.2,1);
+	Point<dim> p3(2,0);
+	Point<dim> p4(2.2,1);
+
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+
+	CellData<dim> cell;
+	for(unsigned i=0; i<4;i++)
+		cell.vertices[i] = i;
+	cell.material_id = 0;
+
+	cells.push_back(cell);
+
+	tria.create_triangulation(vertices, cells, SubCellData());
 }
 
 template<unsigned dim>

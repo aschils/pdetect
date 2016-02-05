@@ -44,7 +44,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	this->stop_accuracy = stop_accuracy;
 	total_length = compute_total_length();
 
-	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation, rect_width,
+	MyGridGenerator<2>::serrated_rectangle(*triangulation, rect_width,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
 	boundary_conditions = new SerratedRect2DBoundaryCond<2>(nbr_of_strips,
 			total_length, rect_width, strip_potential, half_pitch,
@@ -56,7 +56,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
 			nbr_of_strips, total_length, rect_width, strip_potential,
 			half_pitch, strip_length, strip_width);
-	MyGridGenerator<2>::serrated_hyper_rectangle(*triangulation_weight,
+	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight,
 			rect_width, nbr_of_strips, strip_length, strip_width,
 			half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
