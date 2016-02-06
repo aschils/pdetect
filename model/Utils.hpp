@@ -22,6 +22,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <functional>
+#include <math.h>
 
 using namespace dealii;
 
@@ -116,6 +117,26 @@ public:
 					return false;
 				};
 		std::sort(v->begin(), v->end(), cmp);
+	}
+
+	static double gaussian(double peak, double standard_deviation,
+			double center, double x){
+		double exp_arg = -std::pow((x-center),2)/(2*std::pow(standard_deviation,2));
+		return peak*std::exp(exp_arg);
+	}
+
+	static double gaussian_near_zero_x(double peak, double standard_deviation,
+			double center, double max_error){
+
+		//Init x to value for which f(x) = max/2 (half width at half maximum)
+		double x = standard_deviation*sqrt(2*log(2));
+		double y = peak/2;
+
+		while(!equals_double(y, 0.0, max_error)){
+			x = x+x/2.0;
+			y = gaussian(peak, standard_deviation, 0.0, x);
+		}
+		return x+center;
 	}
 
 private:

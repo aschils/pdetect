@@ -75,18 +75,24 @@ public:
 			unsigned width, unsigned holes_nbr,
 			unsigned inter_gauss_borders_lgth, unsigned gaussian_peak);
 
-	static void rectangle_with_circular_holes(dealii::Triangulation<dim> &tria,
+	static void rectangle_with_circular_holes(Triangulation<dim> &tria,
 			unsigned half_width, unsigned holes_radius,
 			unsigned half_inter_holes_centers_dist, int nbr_of_holes);
 
 	static void rectangle_with_rectangular_holes(
-			dealii::Triangulation<dim> &tria, unsigned half_width,
+			Triangulation<dim> &tria, unsigned half_width,
 			unsigned hole_length, unsigned half_hole_width,
 			unsigned half_inter_holes_dist, unsigned nbr_of_holes);
 
-	static void rectangle_with_circular_hole(dealii::Triangulation<dim> &tria,
+	static void rectangle_with_circular_hole(Triangulation<dim> &tria,
 				unsigned half_width, unsigned half_length, unsigned holes_radius);
 
+private:
+
+	static void gaussian_hole(Triangulation<dim> &tria,
+			unsigned width,	unsigned inter_gauss_borders_lgth,
+			unsigned gaussian_peak, double standard_deviation,
+			unsigned gaussian_sampling_lvl);
 };
 
 template<unsigned dim>
@@ -229,6 +235,64 @@ void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 	GridTools::shift(hole_translation, half_rect);
 	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
 	GridGenerator::merge_triangulations(tria, half_rect, tria);
+}
+
+template <unsigned dim>
+void MyGridGenerator<dim>::gaussian_hole(Triangulation<dim> &tria,
+		unsigned width,	unsigned inter_gauss_borders_lgth,
+		unsigned gaussian_peak, double standard_deviation,
+		unsigned gaussian_sampling_lvl){
+
+	double max_error = gaussian_peak/((double)gaussian_sampling_lvl);
+	double start_sampling = 0.0;
+	double end_sampling = Utils::gaussian_near_zero_x(gaussian_peak,
+			standard_deviation, 0, max_error);
+	double interval = end_sampling - start_sampling;
+
+	unsigned nbr_of_gauss_pts = gaussian_sampling_lvl+2;
+	std::vector<double> gaussian_x(nbr_of_gauss_pts);
+	std::vector<double> gaussian_y(nbr_of_gauss_pts);
+
+	double x = 0.0;
+	double step = interval/(nbr_of_gauss_pts - 1);
+
+	for(unsigned i=0; i<nbr_of_gauss_pts; i++){
+		gaussian_x[i] = x;
+		gaussian_y[i] = Utils::gaussian(gaussian_peak, standard_deviation,
+				0.0, x);
+		x += step;
+	}
+
+	//Now we have the right part of a gaussian. We want to inverse it regarding
+	// the vertical axis (thus inverse x coord of each point, x -> -x) to get
+	// the left part. Then inverse it regarding horizontal axis (thus invers
+	// y coord) to get left border of the gaussian hole.
+	TensorUtils::opposite_vector(gaussian_x);
+	TensorUtils::opposite_vector(gaussian_y);
+
+	std::vector< Point< dim > > vertices;
+	std::vector<CellData<dim> > cells;
+
+		Point<dim> p1(0,0);
+		Point<dim> p2(0.2,1);
+		Point<dim> p3(2,0);
+		Point<dim> p4(2.2,1);
+
+		vertices.push_back(p1);
+		vertices.push_back(p2);
+		vertices.push_back(p3);
+		vertices.push_back(p4);
+
+		CellData<dim> cell;
+		for(unsigned i=0; i<4;i++)
+			cell.vertices[i] = i;
+		cell.material_id = 0;
+
+		cells.push_back(cell);
+
+		tria.create_triangulation(vertices, cells, SubCellData());
+
+	Utils::gaussian(gaussian_peak, standard_deviation, 0, 0);
 }
 
 template <unsigned dim>
