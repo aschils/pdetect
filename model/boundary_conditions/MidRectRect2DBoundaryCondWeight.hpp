@@ -21,11 +21,9 @@ public:
 			unsigned strip_length,
 			unsigned half_inter_strip_dist,
 			unsigned nbr_of_strips,
-			double potential)
-	: MidRectRect2DBoundaryCond<dim>(half_width, potential,
-			nbr_of_strips, half_inter_strip_dist,
-			strip_length, half_strip_width){
-		delete this->values;
+			double potential){
+		this->set_class_var(nbr_of_strips, half_inter_strip_dist,
+				strip_length);
 		this->values = new MidRectRect2DBoundaryValuesWeight<dim>(half_width,
 				half_strip_width,
 				strip_length,

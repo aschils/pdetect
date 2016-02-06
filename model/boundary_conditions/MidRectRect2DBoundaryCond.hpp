@@ -17,16 +17,10 @@ public:
 	MidRectRect2DBoundaryCond(unsigned half_width, double potential,
 			unsigned nbr_of_strips, unsigned half_inter_potential_srcs_dist,
 			unsigned strip_length, unsigned half_strip_width) {
-
+		set_class_var(nbr_of_strips, half_inter_potential_srcs_dist,
+				strip_length);
 		this->values = new MidRectRect2DBoundaryValues<dim>(potential,
-				half_strip_width, half_width);
-		left_boundary_x = 0.0;
-		right_boundary_x = nbr_of_strips*(strip_length+
-				2*half_inter_potential_srcs_dist);
-
-				/*2*half_inter_potential_srcs_dist+
-				(nbr_of_strips-1)*inter_potential_srcs_dist+
-				nbr_of_strips*strip_length;*/
+						half_strip_width, half_width);
 	}
 
 	void set_periodicity_constraints(
@@ -44,6 +38,17 @@ public:
 				}
 			}
 		}
+	}
+
+protected:
+
+	MidRectRect2DBoundaryCond(){}
+
+	void set_class_var(unsigned nbr_of_strips,
+			unsigned half_inter_potential_srcs_dist, unsigned strip_length) {
+		left_boundary_x = 0.0;
+		right_boundary_x = nbr_of_strips
+				* (strip_length + 2 * half_inter_potential_srcs_dist);
 	}
 
 private:

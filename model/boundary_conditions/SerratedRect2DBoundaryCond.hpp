@@ -25,15 +25,11 @@ public:
 			unsigned rect_width, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width) {
 
-		this->rect_length = rect_length;
-		this->rect_width = rect_width;
-		this->strip_width = strip_width;
-		this->strip_length = strip_length;
-		this->periodic_str_length = strip_length + 2*half_pitch;
-		this->half_pitch = half_pitch;
-		this->values = new SerratedRect2DBoundaryValues<dim>(nbr_of_strips,
-				rect_length, rect_width, strip_potential, half_pitch, strip_length,
+		set_class_var(rect_length, rect_width, half_pitch, strip_length,
 				strip_width);
+		this->values = new SerratedRect2DBoundaryValues<dim>(nbr_of_strips,
+				rect_length, rect_width, strip_potential, half_pitch,
+				strip_length, strip_width);
 	}
 
 	void set_periodicity_constraints(
@@ -60,7 +56,18 @@ public:
 	}
 
 protected:
+
+	void set_class_var(unsigned rect_length, unsigned rect_width,
+			unsigned half_pitch, unsigned strip_length, unsigned strip_width) {
+		this->rect_length = rect_length;
+		this->rect_width = rect_width;
+		this->strip_width = strip_width;
+		this->strip_length = strip_length;
+		this->half_pitch = half_pitch;
+	}
+
+private:
 	unsigned rect_length, rect_width;
-	unsigned strip_length, strip_width, periodic_str_length, half_pitch;
+	unsigned strip_length, strip_width, half_pitch;
 }
 ;
