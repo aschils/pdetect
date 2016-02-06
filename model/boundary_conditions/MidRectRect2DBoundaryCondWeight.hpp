@@ -25,7 +25,7 @@ public:
 	: MidRectRect2DBoundaryCond<dim>(half_width, potential,
 			nbr_of_strips, half_inter_strip_dist,
 			strip_length, half_strip_width){
-
+		delete this->values;
 		this->values = new MidRectRect2DBoundaryValuesWeight<dim>(half_width,
 				half_strip_width,
 				strip_length,

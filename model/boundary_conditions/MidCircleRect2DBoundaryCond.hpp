@@ -19,7 +19,9 @@ public:
 			unsigned half_inter_potential_srcs_dist) {
 
 		this->values = new MidCircleRect2DBoundaryValues<dim>(half_width,
-				potential);
+						potential);
+
+		//Compute domain left and right boundaries x coordinate
 		unsigned periodic_struct_length = 2*half_inter_potential_srcs_dist;
 		left_boundary_x = 0.0;
 		right_boundary_x = periodic_struct_length*nbr_of_potential_src;
@@ -43,6 +45,6 @@ public:
 	}
 
 private:
-	int left_boundary_x, right_boundary_x;
 
+	int left_boundary_x, right_boundary_x;
 };

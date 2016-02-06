@@ -19,8 +19,9 @@ public:
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
 			unsigned half_inter_potential_srcs_dist, double potential):
 				MidCircleRect2DBoundaryCond<dim>(half_width, potential,
-							nbr_of_potential_src, half_inter_potential_srcs_dist){
-
+							nbr_of_potential_src,
+							half_inter_potential_srcs_dist){
+		delete this->values;
 		this->values = new MidCircleRect2DBoundaryValuesWeight<dim>(half_width,
 				nbr_of_potential_src, potential_src_radius,
 				half_inter_potential_srcs_dist, potential);

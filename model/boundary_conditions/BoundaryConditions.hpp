@@ -29,5 +29,7 @@ public:
 	}
 
 protected:
+
+	//deal.ii Function specifying boundary values
 	Function<dim> *values;
 };

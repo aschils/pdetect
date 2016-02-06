@@ -24,6 +24,7 @@ public:
 	SerratedRect2DBoundaryCond(unsigned nbr_of_strips, unsigned rect_length,
 			unsigned rect_width, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width) {
+
 		this->rect_length = rect_length;
 		this->rect_width = rect_width;
 		this->strip_width = strip_width;
