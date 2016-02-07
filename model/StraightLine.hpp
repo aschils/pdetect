@@ -22,7 +22,7 @@ template<unsigned dim>
 class StraightLine {
 public:
 	/**
-	 * @param: -alpha is the incline of the straight line
+	 * @param: -alpha is the tilt of the straight line
 	 *		   -pass is a crossing point of our line
 	 *		   -sol is simply the object where lies the needed informations
 	 *		   -precision is the space between two consecutives points on the
@@ -34,10 +34,8 @@ public:
 	/**
 	 * This functiun simply gives us the two extremeties of our line for a given
 	 * incline and a given crossing point.
-	 *
-	 * /!\ For now it only works for alpha = 0 or alpha = 90°
 	 */
-	std::pair<Point<dim>, Point<dim>> get_extremeties(double alpha, 
+	std::pair<Point<dim>, Point<dim>> get_beginning(double alpha, 
 											Point<dim> const &pass);
 	void construct_line(double alpha, Point<dim> const &pass);
 
@@ -49,14 +47,7 @@ private:
 	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> values_on_line;
 };
 
-//#include "StraightLine.cpp"
 
-/*
- * StraightLine.cpp
- *
- *  Created on: 14 déc. 2015
- *      Author: slardinois
- */
 
 template<unsigned dim>
 StraightLine<dim>::StraightLine(double alpha, Point<dim> const &pass,
@@ -65,6 +56,9 @@ StraightLine<dim>::StraightLine(double alpha, Point<dim> const &pass,
 
 	this->precision = precision;
 	this->sol = sol;
+
+	//Here we get the the size of the detector by looking the coordinates of the 
+	//last point in our finite element domain
 	int l = sol->values_at_cells.size() - 1;
 	rect_length_fe = sol->values_at_cells[l].first->vertex(3)[0];
 	rect_width_fe = sol->values_at_cells[l].first->vertex(3)[1];
@@ -73,43 +67,27 @@ StraightLine<dim>::StraightLine(double alpha, Point<dim> const &pass,
 }
 
 template<unsigned dim>
-std::pair<Point<dim>, Point<dim>> StraightLine<dim>::get_extremeties(double alpha,
+std::pair<Point<dim>, Point<dim>> StraightLine<dim>::get_beginning(double alpha,
 														Point<dim> const &pass) {
-	Point<dim> begin = pass;
-	Point<dim> end = pass;
-	if(alpha == 0) { //Horizontal line
+	Point<dim> begin;
+
+	begin[1] = 0;
+
+	//We check the extrem points by simple trigonometry
+	begin[0] = pass[0] - pass[1] / tan(alpha);
+	if(begin[0] < 0){
 		begin[0] = 0;
-		end[0] = rect_length_fe;
-	}
-	else if(alpha == 90) { //Vertical line
-		begin[1] = 0;
-		end[1] = rect_width_fe;
+		begin[1] = pass[1] - pass[0]*tan(alpha);
 	}
 
-	std::pair<Point<dim>, Point<dim>> extrem;
-	extrem.first = begin;
-	extrem.second = end;
-
-	return extrem;
+	return begin;
 }
 
 template <unsigned dim>
 void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
-	std::pair<Point<dim>, Point<dim>> extrem = get_extremeties(alpha, pass);
-
-	Point<dim> point = extrem.first;
-	while(point != extrem.second) {
-		if(alpha == 0) {
-			point[0] = point[0] + precision;
-			if(point[0] >= extrem.second[0])
-				point = extrem.second;
-		}
-		else if(alpha == 90) {
-			point[1] = point[1] + precision;
-			if(point[1] >= extrem.second[1])
-				point = extrem.second;
-		}
+	Point<dim> point = get_beginning(alpha, pass);
+	while(point[0] <= rect_length_fe && point[1] <= rect_width_fe) {
 
 		std::cout << point[0] << std::endl
 				<< point[1] << std::endl;
@@ -121,6 +99,9 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 		values_at_point.second = point;
 
 		values_on_line.push_back(values_at_point);
+
+		point[0] = point[0] + precision*cos(alpha);
+		point[1] = point[1] + precision*sin(alpha);
 	}
 }
 
