@@ -458,7 +458,7 @@ void MyGridGenerator<dim>::rectangle_with_circular_holes(
 	dealii::Tensor<1, dim> translation;
 	translation[0] = inter_holes_centers_dist;
 
-	for (unsigned i = 1; i < nbr_of_holes; i++) {
+	for (int i = 1; i < nbr_of_holes; i++) {
 		GridTools::shift(translation, periodic_struct);
 		GridGenerator::merge_triangulations(tria, periodic_struct, tria);
 	}
