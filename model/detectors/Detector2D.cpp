@@ -8,6 +8,8 @@
 
 #include "Detector2D.hpp"
 
+#define PI 3.14159265
+
 void Detector2D::compute() {
 	potential_solver->compute_solution();
 
@@ -15,6 +17,11 @@ void Detector2D::compute() {
 
 	solution_potential.sort_cells_by_coord();
 	compute_electric_field(solution_potential, electric_field);
+
+	Point<2> pass;
+	pass[0] = 100;
+	pass[1] = 0;
+	line = new StraightLine<2>(PI/2, pass, &solution_potential, 0.0001);
 }
 
 void Detector2D::compute_weight(){

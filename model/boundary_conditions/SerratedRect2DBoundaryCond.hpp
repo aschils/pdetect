@@ -69,5 +69,4 @@ protected:
 private:
 	unsigned rect_length, rect_width;
 	unsigned strip_length, strip_width, half_pitch;
-}
-;
+};
