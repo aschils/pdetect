@@ -11,27 +11,17 @@
 void Detector2D::compute() {
 	potential_solver->compute_solution();
 
-	if(0)
-		potential_solver->get_solution(solution_potential);
+	potential_solver->get_solution(solution_potential);
 
 	solution_potential.sort_cells_by_coord();
 	compute_electric_field(solution_potential, electric_field);
-
-	/*
-	Point<2> p;
-	p[0] = 0;
-	p[1] = rect_width_fe-0.9;
-	line = new StraightLine<2>(90, p, &solution_potential, 0.1);*/
-	//solution_potential.get_values(p);
-	//solution_potential.print();
 }
 
 void Detector2D::compute_weight(){
 	potential_solver_weight->compute_solution();
 
-	if(0)
-		potential_solver_weight->get_solution(solution_weight_potential);
-	
+	potential_solver_weight->get_solution(solution_weight_potential);
+
 	solution_weight_potential.sort_cells_by_coord();
 	compute_electric_field(solution_weight_potential, electric_field_weight);
 }
