@@ -11,6 +11,8 @@
 #include <fstream>
 #include <iostream>
 
+ #define PI 3.14159265
+
 using namespace dealii;
 
 /**
@@ -40,6 +42,7 @@ public:
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
 	bool is_strip(const Point<dim> &p, unsigned strip_width, 
 				unsigned strip_length, unsigned half_pitch);
+	ValuesAtPoint<dim> exact_solution(Point<dim> const &point);
 	void construct_line(double alpha, Point<dim> const &pass);
 	void write_data_file();
 
@@ -49,6 +52,7 @@ private:
 	double rect_width;
 	Solution<dim> *sol;
 	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> values_on_line;
+	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> exact_values_on_line;
 };
 
 
@@ -127,6 +131,21 @@ bool StraightLine<dim>::is_strip(const Point<dim> &p, unsigned strip_width,
 					strip_border_right, epsilon);
 }
 
+template<unsigned dim>
+ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
+	ValuesAtPoint<dim> exact_value;
+	double x = point[0]+rect_length_fe/2;
+	double y = -point[1]*300 - 1;
+	double pot;
+	pot = sin(PI*y)*sinh(PI*50);
+	pot = pot/ (cosh(PI*x)-cos(PI*y)*cosh(PI*50));
+	pot = atan(pot)/PI;
+
+	exact_value.fun = pot;
+
+	return exact_value;
+}
+
 template <unsigned dim>
 void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
@@ -134,7 +153,7 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 
-		bool strip = is_strip(point, 50, 100, 50);
+		bool strip = is_strip(point, 0, 100, 50);
 
 		if(!strip){
 			ValuesAtPoint<dim> value = sol->get_values(point);
@@ -145,6 +164,15 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 			values_at_point.second = point;
 
 			values_on_line.push_back(values_at_point);
+
+			ValuesAtPoint<dim> exact_value = exact_solution(point);
+
+			std::pair<ValuesAtPoint<dim>, Point<dim>> exact_values_at_point;
+
+			exact_values_at_point.first = exact_value;
+			exact_values_at_point.second = point;
+
+			exact_values_on_line.push_back(exact_values_at_point);
 		}
 
 		point[0] = point[0] + precision*cos(alpha);
@@ -167,6 +195,20 @@ void StraightLine<dim>::write_data_file() {
 			
 			gnu_graph << values_on_line[i].second[1] << "\t"
 					  << values_on_line[i].first.fun << std::endl;;
+
+		}
+	}
+	gnu_graph.close();
+
+	gnu_graph.open("exact_sol_on_line", std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+	if(gnu_graph.is_open()){
+
+		gnu_graph << "# X\tY" << std::endl;
+		for(unsigned i = 0; i < exact_values_on_line.size(); i++){
+			
+			gnu_graph << exact_values_on_line[i].second[1] << "\t"
+					  << exact_values_on_line[i].first.fun << std::endl;;
 
 		}
 	}
