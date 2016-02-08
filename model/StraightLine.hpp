@@ -134,12 +134,17 @@ bool StraightLine<dim>::is_strip(const Point<dim> &p, unsigned strip_width,
 template<unsigned dim>
 ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
 	ValuesAtPoint<dim> exact_value;
-	double x = point[0]+rect_length_fe/2;
-	double y = -point[1]*300 - 1;
+
+	double epsilon = 0.000000001;
+	double x = point[0]-rect_length_fe/2;
+	double y = -point[1]/rect_width + 1;
 	double pot;
 	pot = sin(PI*y)*sinh(PI*50);
 	pot = pot/ (cosh(PI*x)-cos(PI*y)*cosh(PI*50));
-	pot = atan(pot)/PI;
+	if(point[1] >= rect_width/2 - epsilon)
+		pot = (atan(pot)+PI)/PI;
+	else
+		pot = (atan(pot))/PI;
 
 	exact_value.fun = pot;
 
@@ -150,10 +155,11 @@ template <unsigned dim>
 void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
+	point[1] = 149;
 
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 
-		bool strip = is_strip(point, 0, 100, 50);
+		bool strip = is_strip(point, 50, 100, 50);
 
 		if(!strip){
 			ValuesAtPoint<dim> value = sol->get_values(point);
@@ -200,17 +206,18 @@ void StraightLine<dim>::write_data_file() {
 	}
 	gnu_graph.close();
 
-	gnu_graph.open("exact_sol_on_line", std::fstream::in | std::fstream::out | std::fstream::trunc);
+	std::ofstream agnu_graph;
+	agnu_graph.open("exact_sol_on_line", std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-	if(gnu_graph.is_open()){
+	if(agnu_graph.is_open()){
 
-		gnu_graph << "# X\tY" << std::endl;
+		agnu_graph << "# X\tY" << std::endl;
 		for(unsigned i = 0; i < exact_values_on_line.size(); i++){
 			
-			gnu_graph << exact_values_on_line[i].second[1] << "\t"
+			agnu_graph << exact_values_on_line[i].second[1] << "\t"
 					  << exact_values_on_line[i].first.fun << std::endl;;
 
 		}
 	}
-	gnu_graph.close();
+	agnu_graph.close();
 }

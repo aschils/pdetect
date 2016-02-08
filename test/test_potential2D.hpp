@@ -17,7 +17,7 @@ void test_serrated_2D_potential() {
 
 	double strip_potential = 1;
 	unsigned strip_length = 100;
-	unsigned strip_width = 0;
+	unsigned strip_width = 50;
 	unsigned half_pitch = 50;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;

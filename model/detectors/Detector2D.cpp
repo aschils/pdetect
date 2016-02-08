@@ -21,7 +21,7 @@ void Detector2D::compute() {
 	Point<2> pass;
 	pass[0] = 100;
 	pass[1] = 0;
-	line = new StraightLine<2>(PI/2, pass, &solution_potential, 0.0001);
+	line = new StraightLine<2>(PI/2, pass, &solution_potential, 0.1);
 }
 
 void Detector2D::compute_weight(){
