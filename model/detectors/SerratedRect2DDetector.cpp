@@ -7,18 +7,6 @@
 
 #include "SerratedRect2DDetector.hpp"
 
-/**
- * Compute the length of the rectangle (detector) in the domain language unit
- * (microm) depending on the number of strips, the strip length and the pitch.
- */
-unsigned SerratedRect2DDetector::compute_total_length() {
-	unsigned pitch = 2*half_pitch;
-	if (nbr_of_strips == 0)
-		return pitch;
-	else
-		return nbr_of_strips * (strip_length + pitch);
-}
-
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		unsigned strip_length, unsigned strip_width, unsigned half_pitch,
 		double strip_potential, unsigned refine_level, unsigned max_iter,
@@ -42,19 +30,23 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	this->refine_level = refine_level;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
-	total_length = compute_total_length();
+
+	serr_geo_info = new SerratedRectGeoInfo(
+			nbr_of_strips, width, strip_length,
+			strip_width, half_pitch);
+	geo_info = serr_geo_info;
 
 	MyGridGenerator<2>::serrated_rectangle(*triangulation, rect_width,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
-	boundary_conditions = new SerratedRect2DBoundaryCond<2>(nbr_of_strips,
-			total_length, rect_width, strip_potential, half_pitch,
+	boundary_conditions = new SerratedRect2DBoundaryCond<2>(serr_geo_info,
+			nbr_of_strips, strip_potential, half_pitch,
 			strip_length, strip_width);
 	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
-			nbr_of_strips, total_length, rect_width, strip_potential,
+			serr_geo_info, nbr_of_strips, strip_potential,
 			half_pitch, strip_length, strip_width);
 	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight,
 			rect_width, nbr_of_strips, strip_length, strip_width,
