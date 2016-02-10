@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Solution.hpp"
+ #include "boundary_conditions/SerratedRect2DBoundaryValues.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -40,8 +41,8 @@ public:
 	 * incline and a given crossing point.
 	 */
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
-	bool is_strip(const Point<dim> &p, unsigned strip_width, 
-				unsigned strip_length, unsigned half_pitch);
+	//bool is_strip(const Point<dim> &p, unsigned strip_width, 
+	//			unsigned strip_length, unsigned half_pitch);
 	ValuesAtPoint<dim> exact_solution(Point<dim> const &point);
 	void construct_line(double alpha, Point<dim> const &pass);
 	void write_data_file();
@@ -102,36 +103,6 @@ Point<dim> StraightLine<dim>::get_beginning(double alpha,
 }
 
 template<unsigned dim>
-bool StraightLine<dim>::is_strip(const Point<dim> &p, unsigned strip_width, 
-				unsigned strip_length, unsigned half_pitch) {
-
-	unsigned pitch = 2*half_pitch;
-	unsigned periodic_str_length = pitch + strip_length;
-
-	double epsilon = 0.00000001;
-
-	double x = p[0];
-	double y = p[1];
-
-	double bottom_of_strip = rect_width - strip_width;
-
-	if (!Utils::greater_than_or_equals_double(y, bottom_of_strip, epsilon)
-			|| periodic_str_length == 0.0 || strip_length == 0.0)
-		return false;
-
-	unsigned nbr_of_prev_periodic_str = x / periodic_str_length;
-	double delta_from_prev_periodic_str = x
-			- nbr_of_prev_periodic_str * periodic_str_length;
-
-	double strip_border_right = half_pitch + strip_length;
-
-	return Utils::greater_than_or_equals_double(delta_from_prev_periodic_str,
-			half_pitch, epsilon)
-			&& Utils::less_than_or_equals_double(delta_from_prev_periodic_str,
-					strip_border_right, epsilon);
-}
-
-template<unsigned dim>
 ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
 	ValuesAtPoint<dim> exact_value;
 
@@ -155,11 +126,10 @@ template <unsigned dim>
 void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
-	point[1] = 149;
 
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 
-		bool strip = is_strip(point, 50, 100, 50);
+		bool strip = SerratedRect2DBoundaryValues<dim>::is_strip(point, rect_width, 50, 100, 50);
 
 		if(!strip){
 			ValuesAtPoint<dim> value = sol->get_values(point);
