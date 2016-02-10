@@ -88,5 +88,7 @@ Detector2D::~Detector2D(){
 	delete boundary_conditions_weight;
 	delete potential_solver_weight;
 	delete triangulation_weight;
+
+	delete geo_info;
 }
 
