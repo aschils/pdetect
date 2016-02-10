@@ -13,6 +13,8 @@
 #include "../model/ZeroRightHandSide.hpp"
 #include "../model/Utils.hpp"
 
+bool enable_vtk = false;
+
 void test_serrated_2D_potential() {
 
 	double strip_potential = 1;
@@ -38,7 +40,7 @@ void test_serrated_2D_potential() {
 				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 		srdd.compute();
 
-		if(0)
+		if(enable_vtk)
 			srdd.draw_vtk_graph_potential(output_file);
 	}
 }
@@ -131,7 +133,7 @@ void test_weighting_potential() {
 				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 		srdd.compute_weight();
 
-		if(0){
+		if(enable_vtk){
 			srdd.draw_vtk_graph_weight_potential(output_file);
 			srdd.draw_vtk_graph_gradient_of_weight_potential(
 					output_dir + "gradient.vtk");
