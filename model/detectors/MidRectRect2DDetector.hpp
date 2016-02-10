@@ -11,6 +11,7 @@
 #include "../MyGridGenerator.hpp"
 #include "../boundary_conditions/MidRectRect2DBoundaryCond.hpp"
 #include "../boundary_conditions/MidRectRect2DBoundaryCondWeight.hpp"
+#include "../geometry_info/MidRectRectGeoInfo.hpp"
 
 class MidRectRect2DDetector: public Detector2D {
 

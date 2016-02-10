@@ -9,6 +9,7 @@
 
 #include "../boundary_conditions/MidCircleRect2DBoundaryCond.hpp"
 #include "../boundary_conditions/MidCircleRect2DBoundaryCondWeight.hpp"
+#include "../geometry_info/MidCircleRectGeoInfo.hpp"
 #include "Detector2D.hpp"
 
 class MidCircleRect2DDetector: public Detector2D {

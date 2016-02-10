@@ -29,6 +29,8 @@ MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned half_width,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
+	this->geo_info = new MidCircleRectGeoInfo();
+
 	MyGridGenerator<2>::rectangle_with_circular_holes(*triangulation,
 			half_width, potential_src_radius, half_inter_potential_srcs_dist,
 			nbr_of_potential_src);
