@@ -118,8 +118,8 @@ public:
 		//algorithm cmp
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(), point, cmp);
 
-		unsigned pos = low - values_at_cells.begin();
-		if(pos == values_at_cells.size() && pos != 0)
+		int pos = low - values_at_cells.begin();
+		if(pos == values_at_cells.size())
 			pos--;
 
 		return pos;
@@ -127,7 +127,8 @@ public:
 
 	std::pair<unsigned, unsigned> get_closest_point(Point<dim> const &point){
 
-		unsigned pos = get_cell(point);
+		int pos = get_cell(point);
+		std::pair<unsigned, unsigned> closest_point;
 
 		double x_left = values_at_cells[pos].first->vertex(0)[0];
 		double x_right = values_at_cells[pos].first->vertex(3)[0];
@@ -160,19 +161,19 @@ public:
 				closest = 3;
 		}
 
-		std::pair<unsigned, unsigned> closest_point;
 		closest_point.first = pos;
 		closest_point.second = closest;
-
-
+		
 		return closest_point;
 	}
 
 	ValuesAtPoint<dim> extrapolate_values(Point<dim> const &point) {
 
 		std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
-		unsigned pos = closest_point.first;
+		int pos = closest_point.first;
 		unsigned closest = closest_point.second;
+
+		ValuesAtPoint<dim> extrapol;
 
 		double x_left = values_at_cells[pos].first->vertex(0)[0];
 		double x_right = values_at_cells[pos].first->vertex(3)[0];
@@ -189,8 +190,6 @@ public:
 			delta_y = point[1]-y_bottom;
 		else
 			delta_y = point[1]-y_top;
-
-		ValuesAtPoint<dim> extrapol;
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
 		extrapol.fun = values_at_cells[pos].second.fun[closest]

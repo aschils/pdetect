@@ -21,14 +21,14 @@ void test_serrated_2D_potential() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 4;
+	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	for (unsigned nbr_of_strips = 0; nbr_of_strips <= 10; nbr_of_strips++) {
+	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 1; nbr_of_strips++) {
 
 		std::cout << "Computing potential for " << nbr_of_strips << " strips"
 				<< std::endl;
