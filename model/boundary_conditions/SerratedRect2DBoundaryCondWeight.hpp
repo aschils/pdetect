@@ -14,13 +14,11 @@ template <unsigned dim>
 class SerratedRect2DBoundaryCondWeight : public SerratedRect2DBoundaryCond<dim> {
 
 public:
-	SerratedRect2DBoundaryCondWeight(unsigned nbr_of_strips, unsigned rect_length,
-			unsigned rect_width, double strip_potential, unsigned half_pitch,
+	SerratedRect2DBoundaryCondWeight(SerratedRectGeoInfo *geo_info,
+			unsigned nbr_of_strips, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width){
-		this->set_class_var(rect_length, rect_width, half_pitch, strip_length,
-						strip_width);
+		this->set_class_var(geo_info, half_pitch, strip_length, strip_width);
 		this->values = new SerratedRect2DBoundaryValuesWeight<dim>(nbr_of_strips,
-				rect_length, rect_width, strip_potential, half_pitch,
-				strip_length, strip_width);
+				strip_potential, geo_info);
 	}
 };

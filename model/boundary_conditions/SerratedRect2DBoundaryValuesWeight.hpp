@@ -15,23 +15,18 @@ class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
 
 public:
 	SerratedRect2DBoundaryValuesWeight(unsigned nbr_of_strips,
-			unsigned rect_length, unsigned rect_width, double strip_potential,
-			unsigned half_pitch, unsigned strip_length, unsigned strip_width) :
-			SerratedRect2DBoundaryValues<dim>(nbr_of_strips, rect_length,
-					rect_width, strip_potential, half_pitch, strip_length,
-					strip_width) {
+			double strip_potential,
+			SerratedRectGeoInfo *geo_info) :
+			SerratedRect2DBoundaryValues<dim>(nbr_of_strips, strip_potential,
+					geo_info) {
 	}
 
 	double value(const Point<dim> &p, const unsigned int /*component*/) const {
 
-		unsigned nbr_of_prev_periodic_str = p[0] / this->periodic_str_length;
+		bool (SerratedRectGeoInfo::*func)(const Point<dim> &p);
+		func = &SerratedRectGeoInfo::is_middle_strip<dim>;
 
-		if (
-				this->nbr_of_strips > 0
-				&& SerratedRect2DBoundaryValues<dim>::is_strip(
-				p, this->rect_width, this->strip_width,	this->strip_length,
-				this->half_pitch)
-				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2) {
+		if ((this->geo_info->*func)(p)) {
 			return this->strip_potential;
 		} else
 			return 0.0;

@@ -21,15 +21,13 @@ public:
 	SerratedRect2DBoundaryCond() {
 	}
 
-	SerratedRect2DBoundaryCond(unsigned nbr_of_strips, unsigned rect_length,
-			unsigned rect_width, double strip_potential, unsigned half_pitch,
+	SerratedRect2DBoundaryCond(SerratedRectGeoInfo *geo_info,
+			unsigned nbr_of_strips, double strip_potential, unsigned half_pitch,
 			unsigned strip_length, unsigned strip_width) {
 
-		set_class_var(rect_length, rect_width, half_pitch, strip_length,
-				strip_width);
+		set_class_var(geo_info, half_pitch,	strip_length, strip_width);
 		this->values = new SerratedRect2DBoundaryValues<dim>(nbr_of_strips,
-				rect_length, rect_width, strip_potential, half_pitch,
-				strip_length, strip_width);
+				strip_potential, geo_info);
 	}
 
 	void set_periodicity_constraints(
@@ -40,15 +38,14 @@ public:
 				if (Utils::equals_double(cell->face(f)->center()[0], 0.0,
 						0.000001)
 						|| Utils::equals_double(cell->face(f)->center()[0],
-								rect_length, 0.000001)) {
+								geo_info->get_length(), 0.000001)) {
 					cell->face(f)->set_boundary_id(1);
 				} else if (Utils::equals_double(cell->face(f)->center()[1],
-						rect_width, 0.000001)) {
+						geo_info->get_width(), 0.000001)) {
 
 					if (!(strip_width == 0
-							&& SerratedRect2DBoundaryValues<dim>::is_strip(
-									cell->face(f)->center(), rect_width,
-									strip_width, strip_length, half_pitch)))
+							&& geo_info->is_strip<dim>(
+									cell->face(f)->center())))
 						cell->face(f)->set_boundary_id(1);
 				}
 			}
@@ -57,16 +54,15 @@ public:
 
 protected:
 
-	void set_class_var(unsigned rect_length, unsigned rect_width,
+	void set_class_var(SerratedRectGeoInfo *geo_info,
 			unsigned half_pitch, unsigned strip_length, unsigned strip_width) {
-		this->rect_length = rect_length;
-		this->rect_width = rect_width;
 		this->strip_width = strip_width;
 		this->strip_length = strip_length;
 		this->half_pitch = half_pitch;
+		this->geo_info = geo_info;
 	}
 
 private:
-	unsigned rect_length, rect_width;
 	unsigned strip_length, strip_width, half_pitch;
+	SerratedRectGeoInfo *geo_info;
 };
