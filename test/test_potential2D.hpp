@@ -28,7 +28,7 @@ void test_serrated_2D_potential() {
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 1; nbr_of_strips++) {
+	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 10; nbr_of_strips++) {
 
 		std::cout << "Computing potential for " << nbr_of_strips << " strips"
 				<< std::endl;
