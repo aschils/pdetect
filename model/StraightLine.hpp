@@ -127,9 +127,11 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
 
+	SerratedRectGeoInfo geo_info(1, rect_width, 100, 50, 50);
+
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 
-		bool strip = SerratedRect2DBoundaryValues<dim>::is_strip(point, rect_width, 50, 100, 50);
+		bool strip =  geo_info.is_strip<dim>(point);
 
 		if(!strip){
 			ValuesAtPoint<dim> value = sol->get_values(point);
