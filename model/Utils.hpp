@@ -132,7 +132,7 @@ public:
 		double x = standard_deviation*sqrt(2*log(2));
 		double y = peak/2;
 
-		while(!equals_double(y, 0.0, max_error)){
+		while(!equals_double(y, 0.0, max_error) || x == 0.0){
 			x = x+x/2.0;
 			y = gaussian(peak, standard_deviation, 0.0, x);
 		}
