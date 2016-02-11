@@ -14,7 +14,7 @@ class SerratedRectGeoInfo: public MyGeometryInfo {
 
 public:
 
-	SerratedRectGeoInfo(unsigned nbr_of_strips, unsigned width,
+	SerratedRectGeoInfo(unsigned dim, unsigned nbr_of_strips, unsigned width,
 			unsigned strip_length, unsigned strip_width, unsigned half_pitch) {
 		this->nbr_of_strips = nbr_of_strips;
 		this->width = width;
@@ -22,10 +22,10 @@ public:
 		this->strip_width = strip_width;
 		this->half_pitch = half_pitch;
 		this->length = compute_total_length();
+		this->dim = dim;
 	}
 
-	bool is_point_inside_geometry(unsigned dim,
-			std::vector<double> point_coord) {
+	bool is_point_inside_geometry(std::vector<double> point_coord) {
 
 		switch (dim) {
 		case 2:
@@ -99,6 +99,7 @@ public:
 
 private:
 	unsigned nbr_of_strips,width,strip_length,strip_width,half_pitch,length;
+	unsigned dim;
 
 	bool is_point_inside_detector_2D(std::vector<double> point_coord) {
 

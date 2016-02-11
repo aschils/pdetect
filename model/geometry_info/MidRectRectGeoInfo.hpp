@@ -12,8 +12,7 @@
 class MidRectRectGeoInfo : public MyGeometryInfo {
 	//TODO
 
-	bool is_point_inside_geometry(unsigned dim,
-			std::vector<double> point_coord) {
+	bool is_point_inside_geometry(std::vector<double> point_coord) {
 		return false;
 	}
 

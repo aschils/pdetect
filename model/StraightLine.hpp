@@ -127,7 +127,7 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
 
-	SerratedRectGeoInfo geo_info(1, rect_width, 100, 50, 50);
+	SerratedRectGeoInfo geo_info(2, 1, rect_width, 100, 50, 50);
 
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 

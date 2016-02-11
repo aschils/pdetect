@@ -31,7 +31,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
-	serr_geo_info = new SerratedRectGeoInfo(
+	serr_geo_info = new SerratedRectGeoInfo(2,
 			nbr_of_strips, width, strip_length,
 			strip_width, half_pitch);
 	geo_info = serr_geo_info;
