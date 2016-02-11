@@ -4,6 +4,7 @@
 
 #include "test/test_potential2D.hpp"
 #include "test/test_grid_generator.hpp"
+#include "test/test_electrode_current.hpp"
 //#include "view/cli/Cli.hpp"
 
 int main(int argc, char* argv[]) {
