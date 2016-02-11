@@ -8,6 +8,7 @@
 #pragma once
 
 #include "MyGeometryInfo.hpp"
+#include "../Utils.hpp"
 
 class MidCircleRectGeoInfo: public MyGeometryInfo {
 	//TODO
@@ -23,5 +24,11 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 	unsigned get_nbr_of_strips(){ return 0;}
 
 	unsigned get_dimension(){ return 2; }
+
+	std::vector<Utils::Segment<2>> segments_at_intersec(
+					Utils::Line<2> line){
+		std::vector<Utils::Segment<2>> v;
+		return v;
+	}
 
 };

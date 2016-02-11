@@ -116,6 +116,11 @@ public:
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2;
 	}
 
+	std::vector<Utils::Segment<2>> segments_at_intersec(
+				Utils::Line<2> line){
+		//TODO
+	}
+
 private:
 	unsigned nbr_of_strips, width, strip_length, strip_width, half_pitch,
 			length;
