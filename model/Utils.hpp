@@ -139,6 +139,33 @@ public:
 		return x+center;
 	}
 
+	template <unsigned dim>
+	class Line {
+	public:
+		double slope = 0.0;
+		Point<dim> intercept;
+
+		Line(double slope, Point<dim> intercept){
+			this->slope = slope;
+			this->intercept = intercept;
+		}
+
+		double eval(Point<dim> ){
+			//TODO
+		}
+	};
+
+	template <unsigned dim>
+	class Segment {
+	public:
+		Point<dim> p1, p2;
+
+		Segment(Point<dim> p1, Point<dim> p2){
+			this->p1 = p1;
+			this->p2 = p2;
+		}
+	};
+
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
