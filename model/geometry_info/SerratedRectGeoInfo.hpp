@@ -25,6 +25,34 @@ public:
 		this->dim = dim;
 	}
 
+	unsigned get_width() {
+		return width;
+	}
+
+	unsigned get_length() {
+		return length;
+	}
+
+	unsigned get_nbr_of_strips() {
+		return nbr_of_strips;
+	}
+
+	unsigned get_dimension(){
+		return dim;
+	}
+
+	unsigned get_strip_length(){
+		return strip_length;
+	}
+
+	unsigned get_strip_width(){
+		return strip_width;
+	}
+
+	unsigned get_half_pitch(){
+		return half_pitch;
+	}
+
 	bool is_point_inside_geometry(std::vector<double> point_coord) {
 
 		switch (dim) {
@@ -78,27 +106,19 @@ public:
 						epsilon);
 	}
 
-	unsigned get_width(){
-		return this->width;
-	}
+	template<unsigned dim>
+	bool is_middle_strip(const Point<dim> &p) {
 
-	unsigned get_length(){
-		return this->length;
-	}
-
-	template <unsigned dim>
-	bool is_middle_strip(const Point<dim> &p){
-
-		unsigned periodic_str_length = 2*half_pitch + strip_length;
+		unsigned periodic_str_length = 2 * half_pitch + strip_length;
 		unsigned nbr_of_prev_periodic_str = p[0] / periodic_str_length;
 
-		return this->nbr_of_strips > 0
-				&& is_strip<dim>(p)
+		return this->nbr_of_strips > 0 && is_strip<dim>(p)
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2;
 	}
 
 private:
-	unsigned nbr_of_strips,width,strip_length,strip_width,half_pitch,length;
+	unsigned nbr_of_strips, width, strip_length, strip_width, half_pitch,
+			length;
 	unsigned dim;
 
 	bool is_point_inside_detector_2D(std::vector<double> point_coord) {
@@ -113,14 +133,13 @@ private:
 		if (y > width - strip_width) {
 			dealii::Point<2> point(x, y);
 			return !is_strip<2>(point);
-		}
-		else{
+		} else {
 			return true;
 		}
 	}
 
 	unsigned compute_total_length() {
-		unsigned pitch = 2*half_pitch;
+		unsigned pitch = 2 * half_pitch;
 		if (nbr_of_strips == 0)
 			return pitch;
 		else

@@ -39,10 +39,6 @@ public:
 
 private:
 
-	unsigned nbr_of_strips, strip_length, strip_width, half_pitch = 1;
-	unsigned total_length = 1;
-	double rect_width = 1.0;
-
 	unsigned nbr_of_pts_along_x = 0, nbr_of_pts_along_y = 0;
 
 	unsigned compute_total_length();

@@ -26,4 +26,8 @@ class MidRectRectGeoInfo : public MyGeometryInfo {
 		return 0;
 	}
 
+	unsigned get_nbr_of_strips(){ return 0;}
+
+	unsigned get_dimension(){ return 2; }
+
 };

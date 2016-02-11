@@ -12,8 +12,8 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		double strip_potential, unsigned refine_level, unsigned max_iter,
 		double stop_accuracy) :
 		SerratedRect2DDetector(nbr_of_strips, DEFAULT_RECT_WIDTH, strip_length,
-				strip_width, half_pitch, strip_potential, refine_level, max_iter,
-				stop_accuracy) {
+				strip_width, half_pitch, strip_potential, refine_level,
+				max_iter, stop_accuracy) {
 }
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
@@ -21,36 +21,27 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		unsigned half_pitch, double strip_potential, unsigned refine_level,
 		unsigned max_iter, double stop_accuracy) {
 
-	this->rect_width = width;
-	this->nbr_of_strips = nbr_of_strips;
-	this->strip_length = strip_length;
-	this->strip_width = strip_width;
-	this->half_pitch = half_pitch;
 	this->strip_potential = strip_potential;
 	this->refine_level = refine_level;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
-	serr_geo_info = new SerratedRectGeoInfo(2,
-			nbr_of_strips, width, strip_length,
-			strip_width, half_pitch);
+	serr_geo_info = new SerratedRectGeoInfo(2, nbr_of_strips, width,
+			strip_length, strip_width, half_pitch);
 	geo_info = serr_geo_info;
 
-	MyGridGenerator<2>::serrated_rectangle(*triangulation, rect_width,
-			nbr_of_strips, strip_length, strip_width, half_pitch);
+	MyGridGenerator<2>::serrated_rectangle(*triangulation, width, nbr_of_strips,
+			strip_length, strip_width, half_pitch);
 	boundary_conditions = new SerratedRect2DBoundaryCond<2>(serr_geo_info,
-			nbr_of_strips, strip_potential, half_pitch,
-			strip_length, strip_width);
+			strip_potential);
 	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
-			serr_geo_info, nbr_of_strips, strip_potential,
-			half_pitch, strip_length, strip_width);
-	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight,
-			rect_width, nbr_of_strips, strip_length, strip_width,
-			half_pitch);
+			serr_geo_info, strip_potential);
+	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight, width,
+			nbr_of_strips, strip_length, strip_width, half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
@@ -85,13 +76,14 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
  nbr_of_pts_along_y++;
  }*/
 
-
 std::string SerratedRect2DDetector::params_to_string() {
 
-	std::string str = "width" + std::to_string(rect_width) + "_nbr_of_strips_"
-			+ std::to_string(nbr_of_strips) + +"_strip_length_"
-			+ std::to_string(strip_length) + "_strip_width_"
-			+ std::to_string(strip_width) + "_half-pitch_" + std::to_string(half_pitch)
+	std::string str = "width" + std::to_string(geo_info->get_width())
+			+ "_nbr_of_strips_" + std::to_string(geo_info->get_nbr_of_strips())
+			+ "_strip_length_"
+			+ std::to_string(serr_geo_info->get_strip_length())
+			+ "_strip_width_" + std::to_string(serr_geo_info->get_strip_width())
+			+ "_half-pitch_" + std::to_string(serr_geo_info->get_half_pitch())
 			+ "_strip_potential_" + std::to_string(strip_potential)
 			+ "_refine_level_" + std::to_string(refine_level) + "_max_iter_"
 			+ std::to_string(max_iter) + "_stop_accuracy_"

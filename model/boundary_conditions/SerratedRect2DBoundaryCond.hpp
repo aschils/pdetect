@@ -22,11 +22,11 @@ public:
 	}
 
 	SerratedRect2DBoundaryCond(SerratedRectGeoInfo *geo_info,
-			unsigned nbr_of_strips, double strip_potential, unsigned half_pitch,
-			unsigned strip_length, unsigned strip_width) {
+			double strip_potential) {
 
-		set_class_var(geo_info, half_pitch,	strip_length, strip_width);
-		this->values = new SerratedRect2DBoundaryValues<dim>(nbr_of_strips,
+		set_class_var(geo_info);
+		this->values = new SerratedRect2DBoundaryValues<dim>(
+				geo_info->get_nbr_of_strips(),
 				strip_potential, geo_info);
 	}
 
@@ -43,7 +43,7 @@ public:
 				} else if (Utils::equals_double(cell->face(f)->center()[1],
 						geo_info->get_width(), 0.000001)) {
 
-					if (!(strip_width == 0
+					if (!(geo_info->get_strip_width() == 0
 							&& geo_info->is_strip<dim>(
 									cell->face(f)->center())))
 						cell->face(f)->set_boundary_id(1);
@@ -54,15 +54,10 @@ public:
 
 protected:
 
-	void set_class_var(SerratedRectGeoInfo *geo_info,
-			unsigned half_pitch, unsigned strip_length, unsigned strip_width) {
-		this->strip_width = strip_width;
-		this->strip_length = strip_length;
-		this->half_pitch = half_pitch;
+	void set_class_var(SerratedRectGeoInfo *geo_info) {
 		this->geo_info = geo_info;
 	}
 
 private:
-	unsigned strip_length, strip_width, half_pitch;
 	SerratedRectGeoInfo *geo_info;
 };

@@ -19,6 +19,10 @@ public:
 	//Return the maximum length of the domain
 	virtual unsigned get_length() = 0;
 
+	virtual unsigned get_nbr_of_strips() = 0;
+
+	virtual unsigned get_dimension() = 0;
+
 	~MyGeometryInfo() {
 	}
 };

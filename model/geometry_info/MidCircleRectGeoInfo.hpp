@@ -20,4 +20,8 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 	//Return the maximum length of the domain
 	unsigned get_length(){ return 0; }
 
+	unsigned get_nbr_of_strips(){ return 0;}
+
+	unsigned get_dimension(){ return 2; }
+
 };
