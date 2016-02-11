@@ -27,11 +27,23 @@ public:
 
 	void draw_vtk_graph_weight_potential(std::string output_file);
 
-	void draw_vtk_graph_gradient_of_potential(
-			std::string output_file);
+	void draw_vtk_graph_gradient_of_potential(std::string output_file);
 
-	void draw_vtk_graph_gradient_of_weight_potential(
-			std::string output_file);
+	void draw_vtk_graph_gradient_of_weight_potential(std::string output_file);
+
+	MyGeometryInfo get_geometry_info();
+
+	Solution<2> get_solution_potential();
+
+	Solution<2> get_solution_weight_potential();
+
+	std::vector<
+			std::pair<typename DoFHandler<2>::active_cell_iterator,
+					std::vector<Tensor<1, 2> > > > get_electric_field();
+
+	std::vector<
+			std::pair<typename DoFHandler<2>::active_cell_iterator,
+					std::vector<Tensor<1, 2> > > > get_electric_field_weight();
 
 	virtual std::string params_to_string() = 0;
 
@@ -63,8 +75,8 @@ protected:
 
 	MyGeometryInfo *geo_info;
 
-
 	void compute_electric_field(Solution<2> &potential,
-				std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-				std::vector<Tensor<1, 2> > > > &electric_field);
+			std::vector<
+					std::pair<typename DoFHandler<2>::active_cell_iterator,
+							std::vector<Tensor<1, 2> > > > &electric_field);
 };

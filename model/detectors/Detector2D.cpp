@@ -5,7 +5,6 @@
  *      Author: aschils
  */
 
-
 #include "Detector2D.hpp"
 
 #define PI 3.14159265
@@ -21,10 +20,10 @@ void Detector2D::compute() {
 	Point<2> pass;
 	pass[0] = 100;
 	pass[1] = 0;
-	line = new StraightLine<2>(PI/2, pass, &solution_potential, 0.1);
+	line = new StraightLine<2>(PI / 2, pass, &solution_potential, 0.1);
 }
 
-void Detector2D::compute_weight(){
+void Detector2D::compute_weight() {
 	potential_solver_weight->compute_solution();
 
 	potential_solver_weight->get_solution(solution_weight_potential);
@@ -34,22 +33,22 @@ void Detector2D::compute_weight(){
 }
 
 void Detector2D::compute_electric_field(Solution<2> &potential,
-		std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-		std::vector<Tensor<1, 2> > > > &electric_field) {
+		std::vector<
+				std::pair<typename DoFHandler<2>::active_cell_iterator,
+						std::vector<Tensor<1, 2> > > > &electric_field) {
 
-	std::vector<std::pair<typename DoFHandler<2>::active_cell_iterator,
-		ValuesAtCell<2> > > values_at_cells =
+	std::vector<
+			std::pair<typename DoFHandler<2>::active_cell_iterator,
+					ValuesAtCell<2> > > values_at_cells =
 			potential.values_at_cells;
 	electric_field.resize(values_at_cells.size());
 
 	for (unsigned i = 0; i < values_at_cells.size(); i++) {
-		std::pair<
-			typename DoFHandler<2>::active_cell_iterator,
-			std::vector<Tensor<1, 2> >
-		> EF_at_one_cell;
+		std::pair<typename DoFHandler<2>::active_cell_iterator,
+				std::vector<Tensor<1, 2> > > EF_at_one_cell;
 		EF_at_one_cell.first = values_at_cells[i].first;
 		//Electric field is -grad V
-		EF_at_one_cell.second = TensorUtils::opposite_vector_of_tensors<1,2>(
+		EF_at_one_cell.second = TensorUtils::opposite_vector_of_tensors<1, 2>(
 				values_at_cells[i].second.gradient);
 		electric_field[i] = EF_at_one_cell;
 	}
@@ -57,18 +56,15 @@ void Detector2D::compute_electric_field(Solution<2> &potential,
 	//VectorUtils::print_vec_of_pair_of_vec(electric_field);
 }
 
-void Detector2D::draw_vtk_graph_potential(
-		std::string output_file) {
+void Detector2D::draw_vtk_graph_potential(std::string output_file) {
 	solution_potential.draw_vtk_graph_fun(output_file);
 }
 
-void Detector2D::draw_vtk_graph_weight_potential(
-		std::string output_file){
+void Detector2D::draw_vtk_graph_weight_potential(std::string output_file) {
 	solution_weight_potential.draw_vtk_graph_fun(output_file);
 }
 
-void Detector2D::draw_vtk_graph_gradient_of_potential(
-		std::string output_file) {
+void Detector2D::draw_vtk_graph_gradient_of_potential(std::string output_file) {
 	solution_potential.draw_vtk_graph_derivatives(output_file);
 }
 
@@ -77,7 +73,31 @@ void Detector2D::draw_vtk_graph_gradient_of_weight_potential(
 	solution_weight_potential.draw_vtk_graph_derivatives(output_file);
 }
 
-Detector2D::~Detector2D(){
+MyGeometryInfo Detector2D::get_geometry_info() {
+	return *geo_info;
+}
+
+Solution<2> Detector2D::get_solution_potential() {
+	return solution_potential;
+}
+
+Solution<2> Detector2D::get_solution_weight_potential() {
+	return solution_weight_potential;
+}
+
+std::vector<
+		std::pair<typename DoFHandler<2>::active_cell_iterator,
+				std::vector<Tensor<1, 2> > > > Detector2D::get_electric_field() {
+	return electric_field;
+}
+
+std::vector<
+		std::pair<typename DoFHandler<2>::active_cell_iterator,
+				std::vector<Tensor<1, 2> > > > Detector2D::get_electric_field_weight() {
+	return electric_field_weight;
+}
+
+Detector2D::~Detector2D() {
 	delete zero_right_hand_side;
 	delete boundary_conditions;
 	delete potential_solver;
