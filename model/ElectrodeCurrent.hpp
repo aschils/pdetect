@@ -29,7 +29,7 @@ public:
 			std::vector<
 					std::pair<typename DoFHandler<dim>::active_cell_iterator,
 							std::vector<Tensor<1, dim> > > > *electric_field_weight,
-			Utils::Line<dim> particle_trajectory) {
+			Line particle_trajectory) {
 		this->geo_info = geo_info;
 		this->electric_field = electric_field;
 		this->electric_field_weight = electric_field_weight;
@@ -50,6 +50,6 @@ private:
 			std::pair<typename DoFHandler<dim>::active_cell_iterator,
 					std::vector<Tensor<1, dim> > > > *electric_field,
 			*electric_field_weight;
-	Utils::Line<dim> particle_trajectory;
+	Line particle_trajectory;
 
 };
