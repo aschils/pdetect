@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../Utils.hpp"
+#include "../geometry_info/BasicGeometry.hpp"
 
 class MyGeometryInfo {
 
@@ -17,8 +17,8 @@ public:
 
 	//Returns the segments part of the line which are inside the detector
 	//domain
-	virtual std::vector<Utils::Segment<2>> segments_at_intersec(
-			Utils::Line<2> line) = 0;
+	virtual std::vector<Point<2>> segments_at_intersec(
+			Line line) = 0;
 
 	//Return the maximum width of the domain
 	virtual unsigned get_width() = 0;

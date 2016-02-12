@@ -37,19 +37,19 @@ public:
 		return nbr_of_strips;
 	}
 
-	unsigned get_dimension(){
+	unsigned get_dimension() {
 		return dim;
 	}
 
-	unsigned get_strip_length(){
+	unsigned get_strip_length() {
 		return strip_length;
 	}
 
-	unsigned get_strip_width(){
+	unsigned get_strip_width() {
 		return strip_width;
 	}
 
-	unsigned get_half_pitch(){
+	unsigned get_half_pitch() {
 		return half_pitch;
 	}
 
@@ -116,9 +116,80 @@ public:
 				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2;
 	}
 
-	std::vector<Utils::Segment<2>> segments_at_intersec(
-				Utils::Line<2> line){
-		//TODO
+	/**
+	 * intersections are placed in increasing x position
+	 */
+	std::vector<Point<2>> segments_at_intersec(Line line) {
+
+		std::vector<Segment> segments;
+
+		//left side
+		Point<2> left_side_bot(0.0, 0.0);
+		Point<2> left_side_top(0.0, width);
+		Segment left_side(left_side_bot, left_side_top);
+		segments.push_back(left_side);
+
+		//half pitch at left
+		Point<2> left_half_pitch_left(0.0, width);
+		Point<2> left_half_pitch_right(half_pitch, width);
+		Segment left_half_pitch(left_half_pitch_left, left_half_pitch_right);
+		segments.push_back(left_half_pitch);
+
+		unsigned x = half_pitch;
+		unsigned strip_y = width - strip_width;
+		unsigned pitch = 2 * half_pitch;
+		//strips and pitchs
+		for (unsigned i = 0; i < nbr_of_strips; i++) {
+
+			//Add vertical segment "between pitch and strip"
+			Point<2> vert_bot(x, strip_y);
+			Point<2> vert_top(x, width);
+			Segment vert_seg(vert_bot, vert_top);
+			segments.push_back(vert_seg);
+
+			if (i % 2 == 0) { //strip
+				Point<2> left(x, strip_y);
+				Point<2> right(x + strip_length, strip_y);
+				Segment strip_seg(left, right);
+				segments.push_back(strip_seg);
+				x += strip_length;
+			} else { //pitch
+				Point<2> left(x, width);
+				Point<2> right(x + pitch, width);
+				Segment pitch_seg(left, right);
+				segments.push_back(pitch_seg);
+				x += pitch;
+			}
+		}
+
+		//Add last vert segment
+		if (nbr_of_strips > 0) {
+			Point<2> vert_bot(x, strip_y);
+			Point<2> vert_top(x, width);
+			Segment vert_seg(vert_bot, vert_top);
+			segments.push_back(vert_seg);
+		}
+
+		//Right side
+		Point<2> right_side_bot(length, 0.0);
+		Point<2> right_side_top(length, width);
+		Segment right_side(right_side_bot, right_side_top);
+		segments.push_back(right_side);
+
+		//Bottom side
+		Point<2> bot_side_left(0.0, 0.0);
+		Point<2> bot_side_right(length, 0.0);
+		Segment bot_side_seg(bot_side_left, bot_side_right);
+		segments.push_back(bot_side_seg);
+
+		//Compute intersections with all segments of detector boundary
+		std::vector<Point<2>> intersections;
+
+		for(unsigned i=0; i<segments.size(); i++)
+			add_intersection(line, segments[i], intersections);
+
+		Utils::sort_points_by_coord<2>(&intersections);
+		return intersections;
 	}
 
 private:
@@ -149,6 +220,34 @@ private:
 			return pitch;
 		else
 			return nbr_of_strips * (strip_length + pitch);
+	}
+
+	bool intersect_segment(Line line, Segment seg, Point<2> &intersect_pt) {
+
+		//Build Line passing through segment seg
+		Line seg_line(seg);
+		try {
+			intersect_pt = line.intersection_point(seg_line);
+		} catch (int e) {
+			return false;
+		}
+
+		double seg_low_y = seg.get_low_y();
+		double seg_high_y = seg.get_high_y();
+		double seg_low_x = seg.get_low_x();
+		double seg_high_x = seg.get_high_x();
+
+		if (seg.is_vertical())
+			return seg_low_y <= intersect_pt[1] && intersect_pt[1] <= seg_high_y;
+		else
+			return seg_low_x <= intersect_pt[0] && intersect_pt[0] <= seg_high_x;
+	}
+
+	void add_intersection(Line line, Segment seg,
+			std::vector<Point<2>> &intersections) {
+		Point<2> intersect;
+		if (intersect_segment(line, seg, intersect))
+			intersections.push_back(intersect);
 	}
 
 };
