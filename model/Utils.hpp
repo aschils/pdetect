@@ -96,7 +96,8 @@ public:
 	 */
 
 	template<unsigned dim, typename T>
-	static void sort_cells_by_coord(std::vector<
+	static void sort_cells_by_coord(
+			std::vector<
 					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > *v) {
 		auto cmp =
 				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
@@ -110,9 +111,25 @@ public:
 					double epsilon = 0.00001;
 					for(int i=dim-1; i>=0; i--) {
 						if(bottom_left_point_a[i] - bottom_left_point_b[i] < -epsilon)
-							return true;
+						return true;
 						else if(bottom_left_point_a[i] - bottom_left_point_b[i] > epsilon)
-							return false;
+						return false;
+					}
+					return false;
+				};
+		std::sort(v->begin(), v->end(), cmp);
+	}
+
+	template<unsigned dim>
+	static void sort_points_by_coord(std::vector<Point<dim> > *v) {
+		auto cmp =
+				[](Point<dim> & a, Point<dim> & b) {
+					double epsilon = 0.00001;
+					for(int i=dim-1; i>=0; i--) {
+						if(a[i] - b[i] < -epsilon)
+						return true;
+						else if(a[i] - b[i] > epsilon)
+						return false;
 					}
 					return false;
 				};
@@ -120,51 +137,25 @@ public:
 	}
 
 	static double gaussian(double peak, double standard_deviation,
-			double center, double x){
-		double exp_arg = -std::pow((x-center),2)/(2*std::pow(standard_deviation,2));
-		return peak*std::exp(exp_arg);
+			double center, double x) {
+		double exp_arg = -std::pow((x - center), 2)
+				/ (2 * std::pow(standard_deviation, 2));
+		return peak * std::exp(exp_arg);
 	}
 
 	static double gaussian_near_zero_x(double peak, double standard_deviation,
-			double center, double max_error){
+			double center, double max_error) {
 
 		//Init x to value for which f(x) = max/2 (half width at half maximum)
-		double x = standard_deviation*sqrt(2*log(2));
-		double y = peak/2;
+		double x = standard_deviation * sqrt(2 * log(2));
+		double y = peak / 2;
 
-		while(!equals_double(y, 0.0, max_error) || x == 0.0){
-			x = x+x/2.0;
+		while (!equals_double(y, 0.0, max_error) || x == 0.0) {
+			x = x + x / 2.0;
 			y = gaussian(peak, standard_deviation, 0.0, x);
 		}
-		return x+center;
+		return x + center;
 	}
-
-	template <unsigned dim>
-	class Line {
-	public:
-		double slope = 0.0;
-		Point<dim> intercept;
-
-		Line(double slope, Point<dim> intercept){
-			this->slope = slope;
-			this->intercept = intercept;
-		}
-
-		double eval(Point<dim> ){
-			//TODO
-		}
-	};
-
-	template <unsigned dim>
-	class Segment {
-	public:
-		Point<dim> p1, p2;
-
-		Segment(Point<dim> p1, Point<dim> p2){
-			this->p1 = p1;
-			this->p2 = p2;
-		}
-	};
 
 private:
 
