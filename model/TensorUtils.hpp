@@ -122,4 +122,5 @@ public:
 			std::vector<Tensor<order, dim> > &v) {
 		return multiply_vector_of_tensors_by_scalar<order,dim>(v, -1.0);
 	}
+
 };

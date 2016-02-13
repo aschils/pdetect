@@ -30,7 +30,7 @@ class Utils {
 
 public:
 	static bool equals_double(double a, double b, double epsilon) {
-		return abs(a - b) <= epsilon;
+		return fabs(a - b) <= epsilon;
 	}
 
 	static bool less_than_or_equals_double(double a, double b, double epsilon) {
@@ -120,19 +120,18 @@ public:
 		std::sort(v->begin(), v->end(), cmp);
 	}
 
+	//Increasing order, smaller if x1 < x2 or x1==x1 and y1<y2...
 	template<unsigned dim>
 	static void sort_points_by_coord(std::vector<Point<dim> > *v) {
-		auto cmp =
-				[](Point<dim> & a, Point<dim> & b) {
-					double epsilon = 0.00001;
-					for(int i=dim-1; i>=0; i--) {
-						if(a[i] - b[i] < -epsilon)
-						return true;
-						else if(a[i] - b[i] > epsilon)
-						return false;
-					}
-					return false;
-				};
+		auto cmp = [](Point<dim> & a, Point<dim> & b) {
+			for(int i=0; i<dim; i++) {
+				if(a[i] < b[i])
+				return true;
+				else if(a[i] > b[i])
+				return false;
+			}
+			return false;
+		};
 		std::sort(v->begin(), v->end(), cmp);
 	}
 
@@ -155,6 +154,15 @@ public:
 			y = gaussian(peak, standard_deviation, 0.0, x);
 		}
 		return x + center;
+	}
+
+	template<unsigned dim>
+	static std::vector<double> point_to_std_vec(Point<dim> p) {
+		std::vector<double> v(dim);
+		for (unsigned i = 0; i < dim; i++) {
+			v[i] = p[i];
+		}
+		return v;
 	}
 
 private:
