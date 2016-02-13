@@ -64,6 +64,12 @@ public:
 			return p2[1];
 	}
 
+	double compute_length(){
+		double diff_x = p2[0]-p1[0];
+		double diff_y = p2[1]-p1[1];
+		return std::sqrt(diff_x*diff_x + diff_y*diff_y);
+	}
+
 private:
 	bool vertical;
 	double slope;
