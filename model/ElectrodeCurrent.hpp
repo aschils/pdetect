@@ -40,6 +40,19 @@ public:
 		place_initial_charges();
 	}
 
+	void print_charges(){
+
+		//std::list<int>::iterator it=mylist.begin(); it != mylist.end(); ++it
+
+		for(std::forward_list<std::pair<Point<2>, bool>>::iterator it = charges.begin();
+				it != charges.end(); it++){
+			std::pair<Point<2>, bool> el = *it;
+			Point<2> p = el.first;
+			std::cout << "(" << p[0] << "," << p[1] << "," << el.second << ") ";
+		}
+		std::cout << std::endl;
+	}
+
 private:
 
 	double hole_pairs_nbr_per_lgth = 80; //per microm
@@ -55,6 +68,7 @@ private:
 
 	//bool type: true if hole, false if electron
 	std::forward_list<std::pair<Point<2>, bool>> charges;
+	double ponctual_charge;
 
 	/**
 	 * Compute total distance covered by the particle INSIDE the detector.
@@ -80,34 +94,35 @@ private:
 				*particle_trajectory);
 
 		//
+		std::cout << "intersections:" << std::endl;
 		for(unsigned i=0; i<intersect.size(); i++){
 			std::cout << "(" << intersect[i][0] << "," << intersect[i][1] << ")";
 		}
-
+		std::cout << std::endl;
 		//
 
-		//TODO: remove latter
+		//Should not happen
 		if (intersect.size() % 2 != 0) {
 			std::cout << "Warning odd intersections number (initial_charges): "
 				<< intersect.size()	<< std::endl;
-
 		}
 
 		double covered_dist = dist_covered_inside_det(intersect);
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = covered_dist
 				/ (nbr_of_punctual_charges + 1);
+		ponctual_charge = dist_between_punctual_charges*hole_pairs_nbr_per_lgth;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
-			Point<2> particle_exit = intersect[1];
+			Point<2> particle_exit = intersect[i+1];
 			Segment seg(particle_entry, particle_exit);
 			place_initial_charges_on_segment(seg, dist_between_punctual_charges,
 					covered_dist, nbr_of_punctual_charges);
 		}
 	}
 
-	void place_initial_charges_on_segment(Segment seg,
+	void place_initial_charges_on_segment(Segment &seg,
 			double dist_between_punctual_charges, double covered_dist,
 			unsigned nbr_of_punctual_charges) {
 
@@ -126,6 +141,8 @@ private:
 					/ std::sqrt(1 + slope * slope);
 			delta_y = slope * delta_x;
 		}
+
+		std::cout << "delta_x " << delta_x << " delta_y " << delta_y << std::endl;
 
 		double x_coord = seg.p1[0] + delta_x;
 		double y_coord = seg.p1[1] + delta_y;
