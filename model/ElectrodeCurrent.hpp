@@ -28,7 +28,7 @@ public:
 			std::vector<
 					std::pair<typename DoFHandler<dim>::active_cell_iterator,
 							std::vector<Tensor<1, dim> > > > *electric_field_weight,
-			Line particle_trajectory, unsigned refine_level) {
+			Line *particle_trajectory, unsigned refine_level) {
 		this->geo_info = geo_info;
 		this->potential = potential;
 		this->weight_potential = weight_potential;
@@ -36,6 +36,8 @@ public:
 		this->electric_field_weight = electric_field_weight;
 		this->particle_trajectory = particle_trajectory;
 		this->refine_level = refine_level;
+
+		place_initial_charges();
 	}
 
 private:
@@ -49,7 +51,7 @@ private:
 			std::pair<typename DoFHandler<dim>::active_cell_iterator,
 					std::vector<Tensor<1, dim> > > > *electric_field,
 			*electric_field_weight;
-	Line particle_trajectory;
+	Line *particle_trajectory;
 
 	//bool type: true if hole, false if electron
 	std::forward_list<std::pair<Point<2>, bool>> charges;
@@ -74,13 +76,21 @@ private:
 
 		//Get all the points of intersection between the line
 		//(particle trajectory) and the boundaries of the detector
-		std::vector<Point<2>> intersect = geo_info->segments_at_intersec(
-				particle_trajectory);
+		std::vector<Point<2>> intersect = geo_info->boundaries_intersections(
+				*particle_trajectory);
+
+		//
+		for(unsigned i=0; i<intersect.size(); i++){
+			std::cout << "(" << intersect[i][0] << "," << intersect[i][1] << ")";
+		}
+
+		//
 
 		//TODO: remove latter
 		if (intersect.size() % 2 != 0) {
-			std::cout << "Warning odd intersections number (initial_charges)"
-					<< std::endl;
+			std::cout << "Warning odd intersections number (initial_charges): "
+				<< intersect.size()	<< std::endl;
+
 		}
 
 		double covered_dist = dist_covered_inside_det(intersect);
