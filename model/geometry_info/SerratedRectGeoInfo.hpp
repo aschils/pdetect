@@ -170,6 +170,12 @@ public:
 			segments.push_back(vert_seg);
 		}
 
+		//half pitch at right
+		Point<2> right_half_pitch_left(length-half_pitch, width);
+		Point<2> right_half_pitch_right(length, width);
+		Segment right_half_pitch(right_half_pitch_left, right_half_pitch_right);
+		segments.push_back(right_half_pitch);
+
 		//Right side
 		Point<2> right_side_bot(length, 0.0);
 		Point<2> right_side_top(length, width);
