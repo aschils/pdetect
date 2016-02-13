@@ -44,13 +44,14 @@ void test_electrode_current() {
 			srdd.get_electric_field_weight();
 
 
-	Point<2> p1(0,300);
-	Point<2> p2(10, 300);
+	Point<2> p1(100,0.0);
+	Point<2> p2(100, 100);
 	Segment seg(p1,p2);
 
-	Line particle_traj(5, 0.0);
+	Line particle_traj(-1, 300);
 
 	ElectrodeCurrent<2> ec(geo_info, &potential, &weight_potential, &electric_field,
-			&electric_field_weight, &particle_traj, refine_level);
+			&electric_field_weight, &particle_traj, 7);
+	ec.print_charges();
 }
 
