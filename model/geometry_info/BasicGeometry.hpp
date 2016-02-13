@@ -19,10 +19,10 @@ public:
 		this->p1 = p1;
 		this->p2 = p2;
 		double x_diff = p1[0] - p2[0];
-		vertical = x_diff == 0.0;
+		vertical = (x_diff == 0.0);
 
 		if (!vertical)
-			slope = p1[1] - p2[1] / x_diff;
+			slope = (p1[1] - p2[1]) / x_diff;
 	}
 
 	bool is_vertical() {
