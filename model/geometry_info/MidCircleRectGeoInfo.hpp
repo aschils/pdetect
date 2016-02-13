@@ -25,7 +25,7 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 
 	unsigned get_dimension(){ return 2; }
 
-	std::vector<Point<2>> segments_at_intersec(
+	std::vector<Point<2>> boundaries_intersections(
 				Line line){
 		std::vector<Point<2>> v;
 		return v;

@@ -9,6 +9,7 @@
 
 #include "MyGeometryInfo.hpp"
 #include "../errors.hpp"
+#include "../Utils.hpp"
 
 class SerratedRectGeoInfo: public MyGeometryInfo {
 
@@ -119,7 +120,7 @@ public:
 	/**
 	 * intersections are placed in increasing x position
 	 */
-	std::vector<Point<2>> segments_at_intersec(Line line) {
+	std::vector<Point<2>> boundaries_intersections(Line line) {
 
 		std::vector<Segment> segments;
 
@@ -171,7 +172,7 @@ public:
 		}
 
 		//half pitch at right
-		Point<2> right_half_pitch_left(length-half_pitch, width);
+		Point<2> right_half_pitch_left(length - half_pitch, width);
 		Point<2> right_half_pitch_right(length, width);
 		Segment right_half_pitch(right_half_pitch_left, right_half_pitch_right);
 		segments.push_back(right_half_pitch);
@@ -191,10 +192,18 @@ public:
 		//Compute intersections with all segments of detector boundary
 		std::vector<Point<2>> intersections;
 
-		for(unsigned i=0; i<segments.size(); i++)
+		for (unsigned i = 0; i < segments.size(); i++) {
 			add_intersection(line, segments[i], intersections);
+			//std::cout << "[(" << segments[i].p1[0] << "," <<
+			//		segments[i].p1[1] << "),(" <<  segments[i].p2[0] << "," <<
+			//		segments[i].p2[1] << ")]" << std::endl;
+		}
 
 		Utils::sort_points_by_coord<2>(&intersections);
+		intersections.erase(
+				unique(intersections.begin(), intersections.end()),
+				intersections.end());
+		intersections.shrink_to_fit();
 		return intersections;
 	}
 
@@ -229,31 +238,35 @@ private:
 	}
 
 	bool intersect_segment(Line line, Segment seg, Point<2> &intersect_pt) {
-
-		//Build Line passing through segment seg
-		Line seg_line(seg);
-		try {
-			intersect_pt = line.intersection_point(seg_line);
-		} catch (int e) {
-			return false;
-		}
-
-		double seg_low_y = seg.get_low_y();
-		double seg_high_y = seg.get_high_y();
-		double seg_low_x = seg.get_low_x();
-		double seg_high_x = seg.get_high_x();
-
-		if (seg.is_vertical())
-			return seg_low_y <= intersect_pt[1] && intersect_pt[1] <= seg_high_y;
-		else
-			return seg_low_x <= intersect_pt[0] && intersect_pt[0] <= seg_high_x;
+		return line.intersection_point(seg, intersect_pt);
 	}
 
 	void add_intersection(Line line, Segment seg,
 			std::vector<Point<2>> &intersections) {
 		Point<2> intersect;
-		if (intersect_segment(line, seg, intersect))
-			intersections.push_back(intersect);
+		if (intersect_segment(line, seg, intersect)) {
+
+			//We must remove the intersection point
+			//if at + and -epsilon not in detector OR
+			// if at + and - epsilon in detector
+
+			double epsilon = 0.001;
+			Point<2> eps_direction_vec = epsilon * line.get_direction_vector();
+			Point<2> before(intersect[0] - eps_direction_vec[0],
+					intersect[1] - eps_direction_vec[1]);
+			Point<2> after = intersect + eps_direction_vec;
+
+			bool before_in_det = is_point_inside_detector_2D(
+					Utils::point_to_std_vec<2>(before));
+			bool after_in_det = is_point_inside_detector_2D(
+					Utils::point_to_std_vec<2>(after));
+			bool is_a_cross_boundary_point = !((before_in_det && after_in_det)
+					|| (!before_in_det && !after_in_det));
+
+			if (is_a_cross_boundary_point) {
+				intersections.push_back(intersect);
+			}
+		}
 	}
 
 };

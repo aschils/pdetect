@@ -15,9 +15,9 @@ public:
 
 	virtual bool is_point_inside_geometry(std::vector<double> point_coord) = 0;
 
-	//Returns the segments part of the line which are inside the detector
-	//domain
-	virtual std::vector<Point<2>> segments_at_intersec(
+	//Returns the intersection points between the particle trajectory
+	//and the domain boundaries
+	virtual std::vector<Point<2>> boundaries_intersections(
 			Line line) = 0;
 
 	//Return the maximum width of the domain
