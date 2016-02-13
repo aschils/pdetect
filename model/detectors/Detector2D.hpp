@@ -31,7 +31,7 @@ public:
 
 	void draw_vtk_graph_gradient_of_weight_potential(std::string output_file);
 
-	MyGeometryInfo get_geometry_info();
+	MyGeometryInfo* get_geometry_info();
 
 	Solution<2> get_solution_potential();
 

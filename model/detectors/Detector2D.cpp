@@ -73,8 +73,8 @@ void Detector2D::draw_vtk_graph_gradient_of_weight_potential(
 	solution_weight_potential.draw_vtk_graph_derivatives(output_file);
 }
 
-MyGeometryInfo Detector2D::get_geometry_info() {
-	return *geo_info;
+MyGeometryInfo* Detector2D::get_geometry_info() {
+	return geo_info;
 }
 
 Solution<2> Detector2D::get_solution_potential() {

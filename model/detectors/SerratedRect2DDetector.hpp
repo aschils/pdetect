@@ -33,8 +33,6 @@ public:
 				double strip_potential, unsigned refine_level, unsigned max_iter,
 				double stop_accuracy);
 
-	std::vector<double> get_electric_field(Point<2> p);
-
 	std::string params_to_string();
 
 private:
