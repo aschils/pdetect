@@ -165,6 +165,17 @@ public:
 		return v;
 	}
 
+	template <unsigned dim>
+	static void print_point(Point<dim> p){
+		std::cout << "(";
+		for(unsigned i=0; i<dim; i++){
+			std::cout << p[i];
+			if(i != dim-1)
+				std::cout << ",";
+		}
+		std::cout << ")";
+	}
+
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
