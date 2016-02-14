@@ -71,9 +71,10 @@ private:
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line *particle_trajectory;
 	std::queue<std::pair<Point<2>, Charge*>> charges;
-	double ponctual_charge;
+	double ponctual_charge;// C/e
 	Electron e;
 	Hole h;
+	double electron_charge = 1.60217662e-13; // microCoulomb
 
 
 	/**
@@ -174,11 +175,13 @@ private:
 		return electric_field*charge->get_mobility();
 	}
 
-	double current(Point<2> pos, Tensor<1,2> speed){
-		////Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
+	double current(Point<2> pos, Tensor<1,2> speed, Charge *charge){
+		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
+		//But current is negative with this, formula therefore
+		//we implement \vec{i} = +q \vec{v} \cdot \vec{E_w}
 		ValuesAtPoint<2> val = laplace_sol_weight->get_values(pos);
 		Tensor<1,2> weighting_electric_field = val.gradient;
-		double current = -ponctual_charge*(speed*weighting_electric_field);
+		double current = ponctual_charge*(speed*weighting_electric_field);
 		return current;
 	}
 
@@ -200,7 +203,7 @@ private:
 			Point<2> pos = ponct_charge.first;
 			Charge *charge = ponct_charge.second;
 			Tensor<1,2> speed = poncutal_charge_speed(pos, charge);
-			current_tot += current(pos, speed);
+			current_tot += current(pos, speed, charge);
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
 
 			if(geo_info->is_point_inside_geometry(
@@ -210,7 +213,7 @@ private:
 			}
 		}
 
-		return current_tot;
+		return current_tot*electron_charge;
 	}
 
 };
