@@ -111,7 +111,8 @@ private:
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = covered_dist
 				/ (nbr_of_punctual_charges + 1);
-		ponctual_charge = dist_between_punctual_charges*hole_pairs_nbr_per_lgth;
+		double total_charge = covered_dist*hole_pairs_nbr_per_lgth;
+		ponctual_charge = total_charge/nbr_of_punctual_charges;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
