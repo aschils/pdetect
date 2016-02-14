@@ -11,13 +11,13 @@
 
 void test_electrode_current() {
 
-	double strip_potential = 1;
+	double strip_potential = 200;
 	unsigned nbr_of_strips = 1;
 	unsigned width = 300;
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 5;
+	unsigned refine_level = 6;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
@@ -42,7 +42,7 @@ void test_electrode_current() {
 	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
 			&particle_traj, 10);
 	ec.print_charges();
-	double delta_t = 0.000000001;
+	double delta_t = 0.00000000001;
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(delta_t, current_vs_time);
 
