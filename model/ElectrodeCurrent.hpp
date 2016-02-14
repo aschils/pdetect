@@ -12,6 +12,7 @@
 
 #include "geometry_info/MyGeometryInfo.hpp"
 #include "Utils.hpp"
+#include "Charge.hpp"
 
 using namespace dealii;
 
@@ -22,7 +23,7 @@ public:
 
 	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *solution,
 			Solution<dim> *solution_weight, Line *particle_trajectory,
-			unsigned refine_level) {
+			unsigned refine_level): e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 		this->geo_info = geo_info;
 		this->laplace_sol = solution;
 		this->laplace_sol_weight = solution_weight;
@@ -34,10 +35,10 @@ public:
 
 	void print_charges() {
 		for (unsigned i = 0; i < charges.size(); i++) {
-			std::pair<Point<2>, bool> el = charges.front();
+			std::pair<Point<2>, Charge*> el = charges.front();
 			charges.pop();
 			Point<2> p = el.first;
-			std::cout << "(" << p[0] << "," << p[1] << "," << el.second << ") ";
+			std::cout << "(" << p[0] << "," << p[1] << ") ";
 			charges.push(el);
 		}
 		std::cout << std::endl;
@@ -46,9 +47,8 @@ public:
 	/**
 	 * @pre delta_t > 0
 	 */
-	void compute_current(double delta_t) {
-
-		std::vector<std::pair<double, double> > current_vs_time;
+	void compute_current(double delta_t,
+			std::vector<std::pair<double, double> > &current_vs_time) {
 
 		if (delta_t < 0.0)
 			throw PRECONDITIONS_VIOLATED;
@@ -67,18 +67,14 @@ private:
 
 	double hole_pairs_nbr_per_lgth = 80; //per microm
 	unsigned refine_level;
-
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
-	std::vector<
-			std::pair<typename DoFHandler<dim>::active_cell_iterator,
-					std::vector<Tensor<1, dim> > > > *electric_field,
-			*electric_field_weight;
 	Line *particle_trajectory;
-
-	//bool type: true if hole, false if electron
-	std::queue<std::pair<Point<2>, bool>> charges;
+	std::queue<std::pair<Point<2>, Charge*>> charges;
 	double ponctual_charge;
+	Electron e;
+	Hole h;
+
 
 	/**
 	 * Compute total distance covered by the particle INSIDE the detector.
@@ -161,8 +157,8 @@ private:
 
 		for (unsigned i = 0; i < nbr_of_charges_on_seg; i++) {
 			Point<2> p(x_coord, y_coord);
-			std::pair<Point<2>, bool> holes(p, true);
-			std::pair<Point<2>, bool> electrons(p, false);
+			std::pair<Point<2>, Charge*> holes(p, &h);
+			std::pair<Point<2>, Charge*> electrons(p, &e);
 			charges.push(holes);
 			charges.push(electrons);
 			x_coord += delta_x;
@@ -170,8 +166,51 @@ private:
 		}
 	}
 
-	void move_charges(double delta_t) {
+	Tensor<1,2> poncutal_charge_speed(Point<2> pos, Charge *charge){
+		//Formula in latex: \vec{v} = \mu \vec{E}
 
+		ValuesAtPoint<2> val = laplace_sol->get_values(pos);
+		Tensor<1,2> electric_field = val.gradient;
+		return electric_field*charge->get_mobility();
+	}
+
+	double current(Point<2> pos, Tensor<1,2> speed){
+		////Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
+		ValuesAtPoint<2> val = laplace_sol_weight->get_values(pos);
+		Tensor<1,2> weighting_electric_field = val.gradient;
+		double current = -ponctual_charge*(speed*weighting_electric_field);
+		return current;
+	}
+
+	Point<2> compute_new_pos(Point<2> prev_pos, Tensor<1,2> speed,
+			double delta_t){
+		double new_x = prev_pos[0]+speed[0]*delta_t;
+		double new_y = prev_pos[1]+speed[1]*delta_t;
+		Point<2> new_pos(new_x, new_y);
+		return new_pos;
+	}
+
+	double move_charges(double delta_t) {
+
+		double current_tot = 0.0;
+
+		for(unsigned i=0; i<charges.size(); i++){
+			std::pair<Point<2>, Charge*> ponct_charge = charges.front();
+			charges.pop();
+			Point<2> pos = ponct_charge.first;
+			Charge *charge = ponct_charge.second;
+			Tensor<1,2> speed = poncutal_charge_speed(pos, charge);
+			current_tot += current(pos, speed);
+			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
+
+			if(geo_info->is_point_inside_geometry(
+					Utils::point_to_std_vec<2>(new_pos))){
+				std::pair<Point<2>, Charge*> new_charge(new_pos, charge);
+				charges.push(new_charge);
+			}
+		}
+
+		return current_tot;
 	}
 
 };
