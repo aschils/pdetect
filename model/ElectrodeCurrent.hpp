@@ -172,7 +172,7 @@ private:
 
 		ValuesAtPoint<2> val = laplace_sol->get_values(pos);
 		Tensor<1,2> electric_field = val.gradient;
-		return electric_field*charge->get_mobility();
+		return charge->get_charge_sign()*electric_field*charge->get_mobility();
 	}
 
 	double current(Point<2> pos, Tensor<1,2> speed, Charge *charge){
@@ -181,7 +181,8 @@ private:
 		//we implement \vec{i} = +q \vec{v} \cdot \vec{E_w}
 		ValuesAtPoint<2> val = laplace_sol_weight->get_values(pos);
 		Tensor<1,2> weighting_electric_field = val.gradient;
-		double current = ponctual_charge*(speed*weighting_electric_field);
+		double current = -charge->get_charge_sign()
+				*ponctual_charge*(speed*weighting_electric_field);
 		return current;
 	}
 
