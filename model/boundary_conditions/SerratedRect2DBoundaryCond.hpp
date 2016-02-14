@@ -35,18 +35,22 @@ public:
 
 		for (unsigned f = 0; f < GeometryInfo<dim>::faces_per_cell; f++) {
 			if (cell->face(f)->at_boundary()) {
+
 				if (Utils::equals_double(cell->face(f)->center()[0], 0.0,
 						0.000001)
 						|| Utils::equals_double(cell->face(f)->center()[0],
 								geo_info->get_length(), 0.000001)) {
 					cell->face(f)->set_boundary_id(1);
-				} else if (Utils::equals_double(cell->face(f)->center()[1],
+				}
+
+				else if (Utils::equals_double(cell->face(f)->center()[1],
 						geo_info->get_width(), 0.000001)) {
 
 					if (!(geo_info->get_strip_width() == 0
 							&& geo_info->is_strip<dim>(
-									cell->face(f)->center())))
+									cell->face(f)->center()))){
 						cell->face(f)->set_boundary_id(1);
+					}
 				}
 			}
 		}

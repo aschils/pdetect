@@ -150,12 +150,14 @@ void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 					inter_hole_space :
 					holes_nbr * (hole_length + inter_hole_space);
 
-	if (length == 0 || width == 0 || hole_width == 0 || hole_length == 0
-			|| holes_nbr == 0)
+	if (length == 0 || width == 0 || hole_length == 0
+			|| holes_nbr == 0){
 		return rectangle(tria, length, width);
+	}
 
-	if (inter_hole_space == 0)
+	if (inter_hole_space == 0){
 		return rectangle(tria, length, width - hole_width);
+	}
 
 	Triangulation<dim> half_inter_hole, inter_hole, half_rect, hole_width_rect,
 			inter_hole_space_width_rect;
@@ -193,7 +195,9 @@ void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 	//Init tria to half_rect + half non hole left
 	GridGenerator::hyper_rectangle(tria, bottom_left_half_rect_pt,
 			top_right_half_rect_pt);
-	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
+
+	if(hole_width != 0)
+		GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
 
 	dealii::Tensor<1, dim> half_inter_hole_space_translation;
 	half_inter_hole_space_translation[0] = half_inter_hole_space;
@@ -220,7 +224,8 @@ void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 		} else {
 			GridGenerator::merge_triangulations(tria,
 					inter_hole_space_width_rect, tria);
-			GridGenerator::merge_triangulations(tria, inter_hole, tria);
+			if(hole_width != 0)
+				GridGenerator::merge_triangulations(tria, inter_hole, tria);
 			GridTools::shift(inter_hole_translation, hole_width_rect);
 			GridTools::shift(inter_hole_translation, inter_hole);
 			GridTools::shift(inter_hole_translation,
@@ -233,7 +238,8 @@ void MyGridGenerator<dim>::serrated_rectangle(Triangulation<dim> &tria,
 			+ (holes_nbr - 1) * inter_hole_space;
 	GridTools::shift(hole_translation, half_inter_hole);
 	GridTools::shift(hole_translation, half_rect);
-	GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
+	if(hole_width != 0)
+		GridGenerator::merge_triangulations(tria, half_inter_hole, tria);
 	GridGenerator::merge_triangulations(tria, half_rect, tria);
 }
 

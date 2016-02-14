@@ -34,13 +34,14 @@ void test_serrated_2D_potential() {
 				<< std::endl;
 
 		std::string output_file = output_dir + "/" + "half-pitch_"
-				+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
-				+ ".vtk";
+				+ std::to_string(half_pitch) + "_"
+				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+				half_pitch, strip_potential, refine_level, max_iter,
+				stop_accuracy);
 		srdd.compute();
 
-		if(enable_vtk)
+		if (enable_vtk)
 			srdd.draw_vtk_graph_potential(output_file);
 	}
 }
@@ -65,11 +66,13 @@ void test_serrated_rect_limit_cases() {
 				50) {
 			for (unsigned strip_width = 0; strip_width <= 30; strip_width +=
 					30) {
-				for (unsigned half_pitch = 0; half_pitch <= 25; half_pitch += 25) {
+				for (unsigned half_pitch = 0; half_pitch <= 25; half_pitch +=
+						25) {
 
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
-							strip_length, strip_width, half_pitch, strip_potential,
-							refine_level, max_iter, stop_accuracy);
+							strip_length, strip_width, half_pitch,
+							strip_potential, refine_level, max_iter,
+							stop_accuracy);
 					srdd.compute();
 					std::string output_file = output_dir
 							+ srdd.params_to_string() + ".vtk";
@@ -99,8 +102,9 @@ void test_electric_field() {
 
 	Utils::create_directory_if_not_exists(output_dir);
 
-	std::string output_file = output_dir + "half-pitch_" + std::to_string(half_pitch)
-			+ "_" + std::to_string(nbr_of_strips) + ".vtk";
+	std::string output_file = output_dir + "half-pitch_"
+			+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
+			+ ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 	srdd.compute();
@@ -127,13 +131,14 @@ void test_weighting_potential() {
 				<< " strips" << std::endl;
 
 		std::string output_file = output_dir + "/" + "half-pitch_"
-				+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
-				+ ".vtk";
+				+ std::to_string(half_pitch) + "_"
+				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+				half_pitch, strip_potential, refine_level, max_iter,
+				stop_accuracy);
 		srdd.compute_weight();
 
-		if(enable_vtk){
+		if (enable_vtk) {
 			srdd.draw_vtk_graph_weight_potential(output_file);
 			srdd.draw_vtk_graph_gradient_of_weight_potential(
 					output_dir + "gradient.vtk");
@@ -195,7 +200,24 @@ void test_mid_rect_rect_2D_det() {
 }
 
 void test_various() {
+	unsigned width = 300;
+	unsigned nbr_of_strips = 2;
+	unsigned strip_length = 50;
+	unsigned strip_width = 0;
+	unsigned half_pitch = 25;
+	double strip_potential = 1;
+	unsigned refine_level = 5;
+	unsigned max_iter = 10000;
+	double max_error = 10e-12;
 
+	SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
+			half_pitch, strip_potential, refine_level, max_iter, max_error);
+	srdd.compute();
+
+	std::string output_file = "various.vtk";
+
+	if (enable_vtk)
+		srdd.draw_vtk_graph_potential(output_file);
 
 }
 
