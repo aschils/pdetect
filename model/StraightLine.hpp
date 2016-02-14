@@ -8,11 +8,11 @@
 #pragma once
 
 #include "Solution.hpp"
- #include "boundary_conditions/SerratedRect2DBoundaryValues.hpp"
-#include <fstream>
+#include "boundary_conditions/SerratedRect2DBoundaryValues.hpp"
+#include "Utils.hpp"
 #include <iostream>
 
- #define PI 3.14159265
+#define PI 3.14159265
 
 using namespace dealii;
 
@@ -43,7 +43,7 @@ public:
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
 	//bool is_strip(const Point<dim> &p, unsigned strip_width, 
 	//			unsigned strip_length, unsigned half_pitch);
-	ValuesAtPoint<dim> exact_solution(Point<dim> const &point);
+	ValuesAtPoint<dim> exact_solution(Point<dim> const &point, double strip_width);
 	void construct_line(double alpha, Point<dim> const &pass);
 	void write_data_file();
 
@@ -103,16 +103,16 @@ Point<dim> StraightLine<dim>::get_beginning(double alpha,
 }
 
 template<unsigned dim>
-ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
+ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point, double strip_width){
 	ValuesAtPoint<dim> exact_value;
 
 	double epsilon = 0.000000001;
 	double x = point[0]-rect_length_fe/2;
-	double y = -point[1]/rect_width + 1;
+	double y = -point[1]/(rect_width-strip_width) + 1;
 	double pot;
 	pot = sin(PI*y)*sinh(PI*50);
 	pot = pot/ (cosh(PI*x)-cos(PI*y)*cosh(PI*50));
-	if(point[1] >= rect_width/2 - epsilon)
+	if(point[1] >= (rect_width-strip_width)/2 - epsilon)
 		pot = (atan(pot)+PI)/PI;
 	else
 		pot = (atan(pot))/PI;
@@ -127,7 +127,11 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
 
-	SerratedRectGeoInfo geo_info(2, 1, rect_width, 100, 50, 50);
+	double strip_width = 50;
+	SerratedRectGeoInfo geo_info(2, 1, rect_width, 100, strip_width, 50);
+
+	std::vector<std::pair<double, double>> solution_data;
+	std::vector<std::pair<double, double>> exact_solution_data;
 
 	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
 
@@ -142,8 +146,10 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 			values_at_point.second = point;
 
 			values_on_line.push_back(values_at_point);
+			solution_data.push_back(std::pair<double, double>(point[1], value.fun));
 
-			ValuesAtPoint<dim> exact_value = exact_solution(point);
+
+			ValuesAtPoint<dim> exact_value = exact_solution(point, strip_width);
 
 			std::pair<ValuesAtPoint<dim>, Point<dim>> exact_values_at_point;
 
@@ -151,45 +157,13 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 			exact_values_at_point.second = point;
 
 			exact_values_on_line.push_back(exact_values_at_point);
+			exact_solution_data.push_back(std::pair<double, double>(point[1], exact_value.fun));
 		}
 
 		point[0] = point[0] + precision*cos(alpha);
 		point[1] = point[1] + precision*sin(alpha);
 	}
 
-	write_data_file();
-}
-
-template<unsigned dim>
-void StraightLine<dim>::write_data_file() {
-
-	std::ofstream gnu_graph;
-	gnu_graph.open("sol_on_line", std::fstream::in | std::fstream::out | std::fstream::trunc);
-
-	if(gnu_graph.is_open()){
-
-		gnu_graph << "# X\tY" << std::endl;
-		for(unsigned i = 0; i < values_on_line.size(); i++){
-			
-			gnu_graph << values_on_line[i].second[1] << "\t"
-					  << values_on_line[i].first.fun << std::endl;;
-
-		}
-	}
-	gnu_graph.close();
-
-	std::ofstream agnu_graph;
-	agnu_graph.open("exact_sol_on_line", std::fstream::in | std::fstream::out | std::fstream::trunc);
-
-	if(agnu_graph.is_open()){
-
-		agnu_graph << "# X\tY" << std::endl;
-		for(unsigned i = 0; i < exact_values_on_line.size(); i++){
-			
-			agnu_graph << exact_values_on_line[i].second[1] << "\t"
-					  << exact_values_on_line[i].first.fun << std::endl;;
-
-		}
-	}
-	agnu_graph.close();
+	Utils::write_gnu_data_file<dim>("sol_on_line", solution_data);
+	Utils::write_gnu_data_file<dim>("exact_sol_on_line", exact_solution_data);
 }
