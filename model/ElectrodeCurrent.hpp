@@ -20,20 +20,12 @@ class ElectrodeCurrent {
 
 public:
 
-	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *potential,
-			Solution<dim> *weight_potential,
-			std::vector<
-					std::pair<typename DoFHandler<dim>::active_cell_iterator,
-							std::vector<Tensor<1, dim> > > > *electric_field,
-			std::vector<
-					std::pair<typename DoFHandler<dim>::active_cell_iterator,
-							std::vector<Tensor<1, dim> > > > *electric_field_weight,
+	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *solution,
+			Solution<dim> *solution_weight,
 			Line *particle_trajectory, unsigned refine_level) {
 		this->geo_info = geo_info;
-		this->potential = potential;
-		this->weight_potential = weight_potential;
-		this->electric_field = electric_field;
-		this->electric_field_weight = electric_field_weight;
+		this->laplace_sol = solution;
+		this->laplace_sol_weight = solution_weight;
 		this->particle_trajectory = particle_trajectory;
 		this->refine_level = refine_level;
 
@@ -53,13 +45,28 @@ public:
 		std::cout << std::endl;
 	}
 
+	/**
+	 * @pre delta_t > 0
+	 */
+	void compute_current(double delta_t){
+
+		std::vector<std::pair<double, double> > current_vs_time;
+
+		if(delta_t < 0.0)
+			throw PRECONDITIONS_VIOLATED;
+
+
+
+
+	}
+
 private:
 
 	double hole_pairs_nbr_per_lgth = 80; //per microm
 	unsigned refine_level;
 
 	MyGeometryInfo *geo_info;
-	Solution<dim> *potential, *weight_potential;
+	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	std::vector<
 			std::pair<typename DoFHandler<dim>::active_cell_iterator,
 					std::vector<Tensor<1, dim> > > > *electric_field,

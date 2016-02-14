@@ -366,7 +366,7 @@ void LaplaceSolver<dim>::build_solution(
 template<unsigned dim>
 void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 
-	if(0){
+	if(1){
 	//Used only to output vtk file
 		DataOut<2> fun_drawer;
 		fun_drawer.attach_dof_handler(dof_handler);

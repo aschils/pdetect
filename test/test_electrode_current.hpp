@@ -29,20 +29,9 @@ void test_electrode_current() {
 	srdd.compute();
 	srdd.compute_weight();
 
-	Solution<2> potential = srdd.get_solution_potential();
-	Solution<2> weight_potential = srdd.get_solution_weight_potential();
+	Solution<2> solution = srdd.get_solution();
+	Solution<2> weight_solution = srdd.get_solution_weight();
 	MyGeometryInfo *geo_info = srdd.get_geometry_info();
-
-	std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > electric_field =
-			srdd.get_electric_field();
-
-	std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > electric_field_weight =
-			srdd.get_electric_field_weight();
-
 
 	Point<2> p1(100,0.0);
 	Point<2> p2(100, 100);
@@ -50,8 +39,8 @@ void test_electrode_current() {
 
 	Line particle_traj(-1, 300);
 
-	ElectrodeCurrent<2> ec(geo_info, &potential, &weight_potential, &electric_field,
-			&electric_field_weight, &particle_traj, 7);
+	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
+			&particle_traj, 7);
 	ec.print_charges();
 }
 
