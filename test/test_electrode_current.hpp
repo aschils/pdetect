@@ -40,10 +40,15 @@ void test_electrode_current() {
 	Line particle_traj(seg);
 
 	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
-			&particle_traj, 7);
+			&particle_traj, 10);
 	ec.print_charges();
 	double delta_t = 0.000000001;
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(delta_t, current_vs_time);
+
+	std::string output_graph = "current";
+
+	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
+
 }
 
