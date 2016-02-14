@@ -128,12 +128,14 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 	Point<dim> point = get_beginning(alpha, pass);
 
 	double strip_width = 50;
-	SerratedRectGeoInfo geo_info(2, 1, rect_width, 100, strip_width, 50);
+	SerratedRectGeoInfo geo_info(2, 1, rect_width, 100, strip_width, 0);
 
 	std::vector<std::pair<double, double>> solution_data;
 	std::vector<std::pair<double, double>> exact_solution_data;
 
-	while(point[0] <= rect_length_fe && point[1] <= rect_width) {
+	double epsilon = 0.0001;
+	while(Utils::less_than_or_equals_double(point[0],rect_length_fe, epsilon) && 
+			Utils::less_than_or_equals_double(point[1],rect_width, epsilon)) {
 
 		bool strip =  geo_info.is_strip<dim>(point);
 
