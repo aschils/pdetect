@@ -37,7 +37,7 @@ void test_electrode_current() {
 	Point<2> p2(100, 100);
 	Segment seg(p1,p2);
 
-	Line particle_traj(-1, 300);
+	Line particle_traj(seg);
 
 	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
 			&particle_traj, 7);

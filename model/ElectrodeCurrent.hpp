@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <forward_list>
+#include <queue>
 #include <deal.II/dofs/dof_handler.h>
 
 #include "geometry_info/MyGeometryInfo.hpp"
@@ -21,8 +21,8 @@ class ElectrodeCurrent {
 public:
 
 	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *solution,
-			Solution<dim> *solution_weight,
-			Line *particle_trajectory, unsigned refine_level) {
+			Solution<dim> *solution_weight, Line *particle_trajectory,
+			unsigned refine_level) {
 		this->geo_info = geo_info;
 		this->laplace_sol = solution;
 		this->laplace_sol_weight = solution_weight;
@@ -32,15 +32,13 @@ public:
 		place_initial_charges();
 	}
 
-	void print_charges(){
-
-		//std::list<int>::iterator it=mylist.begin(); it != mylist.end(); ++it
-
-		for(std::forward_list<std::pair<Point<2>, bool>>::iterator it = charges.begin();
-				it != charges.end(); it++){
-			std::pair<Point<2>, bool> el = *it;
+	void print_charges() {
+		for (unsigned i = 0; i < charges.size(); i++) {
+			std::pair<Point<2>, bool> el = charges.front();
+			charges.pop();
 			Point<2> p = el.first;
 			std::cout << "(" << p[0] << "," << p[1] << "," << el.second << ") ";
+			charges.push(el);
 		}
 		std::cout << std::endl;
 	}
@@ -48,16 +46,21 @@ public:
 	/**
 	 * @pre delta_t > 0
 	 */
-	void compute_current(double delta_t){
+	void compute_current(double delta_t) {
 
 		std::vector<std::pair<double, double> > current_vs_time;
 
-		if(delta_t < 0.0)
+		if (delta_t < 0.0)
 			throw PRECONDITIONS_VIOLATED;
 
+		double time = 0.0;
 
-
-
+		while (!charges.empty()) {
+			double current = move_charges(delta_t);
+			std::pair<double, double> point(time, current);
+			current_vs_time.push_back(point);
+			time += delta_t;
+		}
 	}
 
 private:
@@ -74,7 +77,7 @@ private:
 	Line *particle_trajectory;
 
 	//bool type: true if hole, false if electron
-	std::forward_list<std::pair<Point<2>, bool>> charges;
+	std::queue<std::pair<Point<2>, bool>> charges;
 	double ponctual_charge;
 
 	/**
@@ -102,8 +105,9 @@ private:
 
 		//
 		std::cout << "intersections:" << std::endl;
-		for(unsigned i=0; i<intersect.size(); i++){
-			std::cout << "(" << intersect[i][0] << "," << intersect[i][1] << ")";
+		for (unsigned i = 0; i < intersect.size(); i++) {
+			std::cout << "(" << intersect[i][0] << "," << intersect[i][1]
+					<< ")";
 		}
 		std::cout << std::endl;
 		//
@@ -111,19 +115,19 @@ private:
 		//Should not happen
 		if (intersect.size() % 2 != 0) {
 			std::cout << "Warning odd intersections number (initial_charges): "
-				<< intersect.size()	<< std::endl;
+					<< intersect.size() << std::endl;
 		}
 
 		double covered_dist = dist_covered_inside_det(intersect);
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = covered_dist
 				/ (nbr_of_punctual_charges + 1);
-		double total_charge = covered_dist*hole_pairs_nbr_per_lgth;
-		ponctual_charge = total_charge/nbr_of_punctual_charges;
+		double total_charge = covered_dist * hole_pairs_nbr_per_lgth;
+		ponctual_charge = total_charge / nbr_of_punctual_charges;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
-			Point<2> particle_exit = intersect[i+1];
+			Point<2> particle_exit = intersect[i + 1];
 			Segment seg(particle_entry, particle_exit);
 			place_initial_charges_on_segment(seg, dist_between_punctual_charges,
 					covered_dist, nbr_of_punctual_charges);
@@ -150,7 +154,7 @@ private:
 			delta_y = slope * delta_x;
 		}
 
-		std::cout << "delta_x " << delta_x << " delta_y " << delta_y << std::endl;
+		//std::cout << "delta_x " << delta_x << " delta_y " << delta_y << std::endl;
 
 		double x_coord = seg.p1[0] + delta_x;
 		double y_coord = seg.p1[1] + delta_y;
@@ -159,11 +163,15 @@ private:
 			Point<2> p(x_coord, y_coord);
 			std::pair<Point<2>, bool> holes(p, true);
 			std::pair<Point<2>, bool> electrons(p, false);
-			charges.push_front(holes);
-			charges.push_front(electrons);
+			charges.push(holes);
+			charges.push(electrons);
 			x_coord += delta_x;
 			y_coord += delta_y;
 		}
+	}
+
+	void move_charges(double delta_t) {
+
 	}
 
 };
