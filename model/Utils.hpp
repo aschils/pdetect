@@ -176,6 +176,29 @@ public:
 		std::cout << ")";
 	}
 
+	/*
+	 * This function write a file to open with gnuplot.
+	 * The absciss of each point is the first element of the pair of each element of data
+	 * The ordinate are the second element of the pair.
+	 */
+	template<unsigned dim>
+	static void write_gnu_data_file(std::string file, std::vector<std::pair<double, double>> data) {
+
+		std::ofstream gnu_graph;
+		gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+		if(gnu_graph.is_open()){
+
+			gnu_graph << "# X\tY" << std::endl;
+			for(unsigned i = 0; i < data.size(); i++){
+				
+				gnu_graph << data[i].first << "\t"
+						  << data[i].second << std::endl;;
+			}
+		}
+		gnu_graph.close();
+	}
+
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
