@@ -200,7 +200,6 @@ void test_mid_rect_rect_2D_det() {
 }
 
 void test_various() {
-	unsigned width = 300;
 	unsigned nbr_of_strips = 2;
 	unsigned strip_length = 50;
 	unsigned strip_width = 0;
