@@ -13,7 +13,7 @@
 #include "../model/ZeroRightHandSide.hpp"
 #include "../model/Utils.hpp"
 
-bool enable_vtk = true;
+bool enable_vtk = false;
 
 void test_serrated_2D_potential() {
 
