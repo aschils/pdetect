@@ -47,9 +47,8 @@ public:
 	/**
 	 * @pre delta_t > 0
 	 */
-	void compute_current(double delta_t) {
-
-		std::vector<std::pair<double, double> > current_vs_time;
+	void compute_current(double delta_t,
+			std::vector<std::pair<double, double> > &current_vs_time) {
 
 		if (delta_t < 0.0)
 			throw PRECONDITIONS_VIOLATED;

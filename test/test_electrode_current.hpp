@@ -43,6 +43,7 @@ void test_electrode_current() {
 			&particle_traj, 7);
 	ec.print_charges();
 	double delta_t = 0.000000001;
-	ec.compute_current(delta_t);
+	std::vector<std::pair<double, double> > current_vs_time;
+	ec.compute_current(delta_t, current_vs_time);
 }
 
