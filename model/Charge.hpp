@@ -18,10 +18,14 @@ public:
 		return mobility;
 	}
 
+	virtual int get_charge_sign() = 0;
+
 protected:
+
 	double mobility;
 	double SILICIUM_MOBILITY;
 	unsigned type;
+
 	Charge(unsigned type) {
 		this->type = type;
 	}
@@ -46,6 +50,10 @@ public:
 		this->SILICIUM_MOBILITY = 4.5e10; //(microm)^2/(Vs)
 		set_mobility();
 	}
+
+	int get_charge_sign() {
+		return 1;
+	}
 };
 
 class Electron: public Charge {
@@ -55,5 +63,9 @@ public:
 			Charge(type) {
 		this->SILICIUM_MOBILITY = 1.35e11; //(microm)^2/(Vs)
 		set_mobility();
+	}
+
+	int get_charge_sign() {
+		return -1;
 	}
 };
