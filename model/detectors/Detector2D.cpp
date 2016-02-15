@@ -13,10 +13,10 @@ void Detector2D::compute() {
 	compute_solution(potential_solver, solution_potential);
 	//compute_electric_field(solution_potential, electric_field);
 
-	Point<2> pass;
+	/*Point<2> pass;
 	pass[0] = 100;
 	pass[1] = 0;
-	line = new StraightLine<2>(PI / 2, pass, &solution_potential, 0.1);
+	line = new StraightLine<2>(PI / 2, pass, &solution_potential, 0.1);*/
 }
 
 void Detector2D::compute_weight() {
