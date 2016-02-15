@@ -212,8 +212,11 @@ private:
 			current_tot += current(pos, speed, charge);
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
 
+			SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*)geo_info;
+
 			if(geo_info->is_point_inside_geometry(
-					Utils::point_to_std_vec<2>(new_pos))){
+					Utils::point_to_std_vec<2>(new_pos)) &&
+					!sg->is_strip<2>(new_pos)){
 				std::pair<Point<2>, Charge*> new_charge(new_pos, charge);
 				punctual_charges.push(new_charge);
 			}
