@@ -32,6 +32,10 @@ class MidRectRectGeoInfo : public MyGeometryInfo {
 
 	unsigned get_dimension(){ return 2; }
 
+	unsigned get_strip_length(){ return 0;}
+
+	unsigned get_strip_width(){return 0;}
+
 	std::vector<Point<2>> boundaries_intersections(
 				Line line){
 			std::vector<Point<2>> v;

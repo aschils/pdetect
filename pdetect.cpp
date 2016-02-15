@@ -5,6 +5,7 @@
 #include "test/test_potential2D.hpp"
 #include "test/test_grid_generator.hpp"
 #include "test/test_electrode_current.hpp"
+#include "test/test_straight_line.hpp"
 //#include "view/cli/Cli.hpp"
 
 int main(int argc, char* argv[]) {
@@ -21,6 +22,8 @@ int main(int argc, char* argv[]) {
 	test_serrated_rectangle_gaussian();*/
 
 	test_electrode_current();
+
+	test_straight_line();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();
