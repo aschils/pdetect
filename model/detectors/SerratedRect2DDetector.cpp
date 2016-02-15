@@ -39,7 +39,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			true);
 
 	boundary_conditions_weight = new SerratedRect2DBoundaryCondWeight<2>(
-			serr_geo_info, strip_potential);
+			serr_geo_info, weight_strip_potential);
 	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight, width,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,

@@ -46,7 +46,7 @@ MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned half_width,
 			half_width, potential_src_radius, half_inter_potential_srcs_dist,
 			nbr_of_potential_src);
 	boundary_conditions_weight = new MidCircleRect2DBoundaryCondWeight<2>(
-			half_width, potential, nbr_of_potential_src, potential_src_radius,
+			half_width, weight_strip_potential, nbr_of_potential_src, potential_src_radius,
 			half_inter_potential_srcs_dist);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,

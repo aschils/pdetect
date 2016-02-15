@@ -28,7 +28,7 @@ void Detector2D::compute_solution(LaplaceSolver<2> *potential_solver,
 		Solution<2> &solution_potential) {
 	potential_solver->compute_solution();
 	potential_solver->get_solution(solution_potential);
-	solution_potential.minus_gradient();
+	//solution_potential.minus_gradient();
 	solution_potential.sort_cells_by_coord();
 }
 

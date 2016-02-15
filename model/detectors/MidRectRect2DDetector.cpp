@@ -37,7 +37,7 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 
 	boundary_conditions_weight = new MidRectRect2DBoundaryCondWeight<2>(
 			half_width, half_strip_width, strip_length, half_inter_strip_dist,
-			nbr_of_strips, potential);
+			nbr_of_strips, weight_strip_potential);
 	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation_weight,
 			half_width, strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips);
