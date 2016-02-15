@@ -21,21 +21,6 @@
 using namespace dealii;
 
 template<unsigned dim>
-class ValuesAtPoint {
-public:
-	double fun;
-	Tensor<1, dim> gradient;
-
-	ValuesAtPoint(double fun, Tensor<1, dim> gradient) {
-		this->fun = fun;
-		this->gradient = gradient;
-	}
-
-	ValuesAtPoint() {
-	}
-};
-
-template<unsigned dim>
 class PhysicalValues {
 public:
 	double potential;
@@ -133,7 +118,7 @@ public:
 		low = std::lower_bound(values_at_cells.begin(), values_at_cells.end(),
 				point, cmp);
 
-		int pos = low - values_at_cells.begin();
+		unsigned pos = low - values_at_cells.begin();
 		if (pos == values_at_cells.size())
 			pos--;
 
@@ -142,7 +127,7 @@ public:
 
 	std::pair<unsigned, unsigned> get_closest_point(Point<dim> const &point) {
 
-		int pos = get_cell(point);
+		unsigned pos = get_cell(point);
 		std::pair<unsigned, unsigned> closest_point;
 
 		double x_left = values_at_cells[pos].first->vertex(0)[0];
@@ -184,7 +169,7 @@ public:
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
 		std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
-		int pos = closest_point.first;
+		unsigned pos = closest_point.first;
 		unsigned closest = closest_point.second;
 
 		PhysicalValues<dim> extrapol;

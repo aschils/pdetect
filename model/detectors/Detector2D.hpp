@@ -72,8 +72,6 @@ protected:
 			std::pair<typename DoFHandler<2>::active_cell_iterator,
 					std::vector<Tensor<1, 2> > > > electric_field_weight;*/
 
-	StraightLine<2> *line;
-
 	MyGeometryInfo *geo_info;
 
 	/*void compute_electric_field(Solution<2> &potential,

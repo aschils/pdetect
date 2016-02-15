@@ -124,11 +124,11 @@ public:
 	template<unsigned dim>
 	static void sort_points_by_coord(std::vector<Point<dim> > *v) {
 		auto cmp = [](Point<dim> & a, Point<dim> & b) {
-			for(int i=0; i<dim; i++) {
+			for(unsigned i = 0; i < dim; i++) {
 				if(a[i] < b[i])
-				return true;
+					return true;
 				else if(a[i] > b[i])
-				return false;
+					return false;
 			}
 			return false;
 		};

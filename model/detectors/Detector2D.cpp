@@ -7,16 +7,9 @@
 
 #include "Detector2D.hpp"
 
-#define PI 3.14159265
-
 void Detector2D::compute() {
 	compute_solution(potential_solver, solution_potential);
 	//compute_electric_field(solution_potential, electric_field);
-
-	/*Point<2> pass;
-	pass[0] = 100;
-	pass[1] = 0;
-	line = new StraightLine<2>(PI / 2, pass, &solution_potential, 0.1);*/
 }
 
 void Detector2D::compute_weight() {
@@ -104,8 +97,6 @@ Detector2D::~Detector2D() {
 	delete boundary_conditions;
 	delete potential_solver;
 	delete triangulation;
-
-	//delete line;
 
 	delete boundary_conditions_weight;
 	delete potential_solver_weight;

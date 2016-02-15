@@ -7,4 +7,4 @@
 
 #pragma once
 
-#define ENABLE_VTK true
+#define ENABLE_VTK false

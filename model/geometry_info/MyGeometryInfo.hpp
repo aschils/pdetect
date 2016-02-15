@@ -30,13 +30,6 @@ public:
 
 	virtual unsigned get_dimension() = 0;
 
-	virtual unsigned get_strip_length() = 0;
-
-	virtual unsigned get_strip_width() = 0;
-
-	template<unsigned dim>
-	bool is_strip(const Point<dim> &p);
-
 	~MyGeometryInfo() {
 	}
 };
