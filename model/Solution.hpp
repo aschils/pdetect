@@ -154,11 +154,11 @@ public:
 
 		bool left = false, bottom = false;
 
-		if (Utils::less_than_or_equals_double(abs(x_left - point[0]),
-				abs(x_right - point[0]), epsilon))
+		if (Utils::less_than_or_equals_double(fabs(x_left - point[0]),
+				fabs(x_right - point[0]), epsilon))
 			left = true;
-		if (Utils::less_than_or_equals_double(abs(y_bottom - point[1]),
-				abs(y_top - point[1]), epsilon))
+		if (Utils::less_than_or_equals_double(fabs(y_bottom - point[1]),
+				fabs(y_top - point[1]), epsilon))
 			bottom = true;
 
 		unsigned closest;
@@ -213,6 +213,7 @@ public:
 				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y
 				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y
 				+ values_at_cells[pos].second.hessian[closest][1][0] * delta_x;
+		//E = -grad V
 		extrapol.electric_field = -(values_at_cells[pos].second.gradient[closest]
 				+ values_at_cells[pos].second.hessian[closest][0] * delta_x
 				+ values_at_cells[pos].second.hessian[closest][1] * delta_y);
@@ -231,23 +232,6 @@ public:
 
 		return extrapol;
 	}
-
-	/*
-	 *
-	 *  E = -grad V, not grad V, therefore inverse gradient values
-	 *
-	 */
-	/*void minus_gradient() {
-
-		for (unsigned i = 0; i < values_at_cells.size(); i++) {
-						//Electric field is -grad V
-			values_at_cells[i].second.gradient =
-					TensorUtils::opposite_vector_of_tensors<1, 2>(
-							values_at_cells[i].second.gradient);
-		}
-		//std::cout << electric_field.size() << std::endl;
-		//VectorUtils::print_vec_of_pair_of_vec(electric_field);
-	}*/
 
 	void print() {
 
