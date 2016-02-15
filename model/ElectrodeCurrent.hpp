@@ -70,7 +70,7 @@ private:
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line *particle_trajectory;
-	double hole_pairs_nbr_per_lgth = 75; //per microm
+	double hole_pairs_nbr_per_lgth = 75*0.92; //per microm
 
 	/**
 	 * A punctual charge is defined as a point where resides an electric
@@ -110,13 +110,6 @@ private:
 		//(particle trajectory) and the boundaries of the detector
 		std::vector<Point<2>> intersect = geo_info->boundaries_intersections(
 				*particle_trajectory);
-
-//		std::cout << "intersections:" << std::endl;
-//		for (unsigned i = 0; i < intersect.size(); i++) {
-//			std::cout << "(" << intersect[i][0] << "," << intersect[i][1]
-//					<< ")";
-//		}
-//		std::cout << std::endl;
 
 		//Should not happen
 		if (Utils::is_odd(intersect.size())) {
@@ -164,8 +157,6 @@ private:
 			delta_y = slope * delta_x;
 		}
 
-		//std::cout << "delta_x " << delta_x << " delta_y " << delta_y << std::endl;
-
 		double x_coord = seg.p1[0] + delta_x;
 		double y_coord = seg.p1[1] + delta_y;
 
@@ -186,7 +177,7 @@ private:
 		Tensor<1,2> electric_field = val.electric_field;
 		int electric_charge_sign = charge->get_charge_sign();
 		double mobility = charge->get_mobility();
-		return electric_charge_sign*electric_field*mobility*0.86;
+		return electric_charge_sign*electric_field*mobility;//*0.86;
 	}
 
 	double current(Point<2> pos, Tensor<1,2> speed, Charge *charge){
