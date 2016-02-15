@@ -36,6 +36,20 @@ public:
 };
 
 template<unsigned dim>
+class PhysicalValues {
+public:
+	double potential;
+	Tensor<1, dim> electric_field;
+
+	PhysicalValues(double potential, Tensor<1, dim> electric_field) {
+		this->potential = potential;
+		this->electric_field = electric_field;
+	}
+
+	PhysicalValues() {}
+};
+
+template<unsigned dim>
 class ValuesAtCell {
 public:
 	std::vector<double> fun;
@@ -167,13 +181,13 @@ public:
 		return closest_point;
 	}
 
-	ValuesAtPoint<dim> extrapolate_values(Point<dim> const &point) {
+	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
 		std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
 		int pos = closest_point.first;
 		unsigned closest = closest_point.second;
 
-		ValuesAtPoint<dim> extrapol;
+		PhysicalValues<dim> extrapol;
 
 		double x_left = values_at_cells[pos].first->vertex(0)[0];
 		double x_right = values_at_cells[pos].first->vertex(3)[0];
@@ -192,16 +206,16 @@ public:
 			delta_y = point[1] - y_top;
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
-		extrapol.fun = values_at_cells[pos].second.fun[closest]
+		extrapol.potential = values_at_cells[pos].second.fun[closest]
 				+ values_at_cells[pos].second.gradient[closest][0] * delta_x
 				+ values_at_cells[pos].second.gradient[closest][1] * delta_y
 				+ values_at_cells[pos].second.hessian[closest][0][0] * delta_x
 				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y
 				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y
 				+ values_at_cells[pos].second.hessian[closest][1][0] * delta_x;
-		extrapol.gradient = values_at_cells[pos].second.gradient[closest]
+		extrapol.electric_field = -(values_at_cells[pos].second.gradient[closest]
 				+ values_at_cells[pos].second.hessian[closest][0] * delta_x
-				+ values_at_cells[pos].second.hessian[closest][1] * delta_y;
+				+ values_at_cells[pos].second.hessian[closest][1] * delta_y);
 
 		return extrapol;
 	}
@@ -210,9 +224,9 @@ public:
 	 * Take the coordinates of a point, find the cell in which the point lies
 	 * and extrapole the values of fun, gradient, and hessian at this point.
 	 */
-	ValuesAtPoint<dim> get_values(Point<dim> const &point) {
+	PhysicalValues<dim> get_values(Point<dim> const &point) {
 
-		ValuesAtPoint<dim> extrapol;
+		PhysicalValues<dim> extrapol;
 		extrapol = extrapolate_values(point);
 
 		return extrapol;
@@ -223,7 +237,7 @@ public:
 	 *  E = -grad V, not grad V, therefore inverse gradient values
 	 *
 	 */
-	void minus_gradient() {
+	/*void minus_gradient() {
 
 		for (unsigned i = 0; i < values_at_cells.size(); i++) {
 						//Electric field is -grad V
@@ -233,7 +247,7 @@ public:
 		}
 		//std::cout << electric_field.size() << std::endl;
 		//VectorUtils::print_vec_of_pair_of_vec(electric_field);
-	}
+	}*/
 
 	void print() {
 

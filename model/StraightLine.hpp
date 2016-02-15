@@ -43,7 +43,7 @@ public:
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
 	//bool is_strip(const Point<dim> &p, unsigned strip_width, 
 	//			unsigned strip_length, unsigned half_pitch);
-	ValuesAtPoint<dim> exact_solution(Point<dim> const &point, double strip_width);
+	PhysicalValues<dim> exact_solution(Point<dim> const &point, double strip_width);
 	void construct_line(double alpha, Point<dim> const &pass);
 	void write_data_file();
 
@@ -52,8 +52,8 @@ private:
 	double rect_length_fe;
 	double rect_width;
 	Solution<dim> *sol;
-	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> values_on_line;
-	std::vector<std::pair<ValuesAtPoint<dim>, Point<dim>>> exact_values_on_line;
+	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> values_on_line;
+	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> exact_values_on_line;
 };
 
 
@@ -103,8 +103,8 @@ Point<dim> StraightLine<dim>::get_beginning(double alpha,
 }
 
 template<unsigned dim>
-ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point, double strip_width){
-	ValuesAtPoint<dim> exact_value;
+PhysicalValues<dim> StraightLine<dim>::exact_solution(Point<dim> const &point, double strip_width){
+	PhysicalValues<dim> exact_value;
 
 	double epsilon = 0.000000001;
 	double x = point[0]-rect_length_fe/2;
@@ -117,7 +117,7 @@ ValuesAtPoint<dim> StraightLine<dim>::exact_solution(Point<dim> const &point, do
 	else
 		pot = (atan(pot))/PI;
 
-	exact_value.fun = pot;
+	exact_value.potential = pot;
 
 	return exact_value;
 }
@@ -140,26 +140,26 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 		bool strip =  geo_info.is_strip<dim>(point);
 
 		if(!strip){
-			ValuesAtPoint<dim> value = sol->get_values(point);
+			PhysicalValues<dim> value = sol->get_values(point);
 
-			std::pair<ValuesAtPoint<dim>, Point<dim>> values_at_point;
+			std::pair<PhysicalValues<dim>, Point<dim>> values_at_point;
 
 			values_at_point.first = value;
 			values_at_point.second = point;
 
 			values_on_line.push_back(values_at_point);
-			solution_data.push_back(std::pair<double, double>(point[1], value.fun));
+			solution_data.push_back(std::pair<double, double>(point[1], value.potential));
 
 
-			ValuesAtPoint<dim> exact_value = exact_solution(point, strip_width);
+			PhysicalValues<dim> exact_value = exact_solution(point, strip_width);
 
-			std::pair<ValuesAtPoint<dim>, Point<dim>> exact_values_at_point;
+			std::pair<PhysicalValues<dim>, Point<dim>> exact_values_at_point;
 
 			exact_values_at_point.first = exact_value;
 			exact_values_at_point.second = point;
 
 			exact_values_on_line.push_back(exact_values_at_point);
-			exact_solution_data.push_back(std::pair<double, double>(point[1], exact_value.fun));
+			exact_solution_data.push_back(std::pair<double, double>(point[1], exact_value.potential));
 		}
 
 		point[0] = point[0] + precision*cos(alpha);
