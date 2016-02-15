@@ -199,6 +199,14 @@ public:
 		gnu_graph.close();
 	}
 
+	static bool is_even(int nbr){
+		return nbr%2 == 0;
+	}
+
+	static bool is_odd(int nbr){
+		return !is_even(nbr);
+	}
+
 private:
 
 	static std::vector<double> parse_gnuplot_line(std::string line) {
