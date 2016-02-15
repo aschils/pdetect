@@ -65,7 +65,7 @@ public:
 
 private:
 
-	double hole_pairs_nbr_per_lgth = 80; //per microm
+	double hole_pairs_nbr_per_lgth = 75; //per microm
 	unsigned refine_level;
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
@@ -119,6 +119,9 @@ private:
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = covered_dist
 				/ (nbr_of_punctual_charges + 1);
+		std::cout << "ICI " << covered_dist*hole_pairs_nbr_per_lgth << std::endl;
+
+
 		double total_charge = covered_dist * hole_pairs_nbr_per_lgth;
 		ponctual_charge = total_charge / nbr_of_punctual_charges;
 
@@ -170,8 +173,8 @@ private:
 	Tensor<1,2> poncutal_charge_speed(Point<2> pos, Charge *charge){
 		//Formula in latex: \vec{v} = \mu \vec{E}
 
-		ValuesAtPoint<2> val = laplace_sol->get_values(pos);
-		Tensor<1,2> electric_field = val.gradient;
+		PhysicalValues<2> val = laplace_sol->get_values(pos);
+		Tensor<1,2> electric_field = val.electric_field;
 		return charge->get_charge_sign()*electric_field*charge->get_mobility();
 	}
 
@@ -179,8 +182,8 @@ private:
 		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
 		//But current is negative with this, formula therefore
 		//we implement \vec{i} = +q \vec{v} \cdot \vec{E_w}
-		ValuesAtPoint<2> val = laplace_sol_weight->get_values(pos);
-		Tensor<1,2> weighting_electric_field = val.gradient;
+		PhysicalValues<2> val = laplace_sol_weight->get_values(pos);
+		Tensor<1,2> weighting_electric_field = val.electric_field;
 		double current = -charge->get_charge_sign()
 				*ponctual_charge*(speed*weighting_electric_field);
 		return current;
@@ -197,8 +200,9 @@ private:
 	double move_charges(double delta_t) {
 
 		double current_tot = 0.0;
+		unsigned init_nbr_ponctual_charges = charges.size();
 
-		for(unsigned i=0; i<charges.size(); i++){
+		for(unsigned i=0; i<init_nbr_ponctual_charges; i++){
 			std::pair<Point<2>, Charge*> ponct_charge = charges.front();
 			charges.pop();
 			Point<2> pos = ponct_charge.first;
