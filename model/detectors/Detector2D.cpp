@@ -7,8 +7,6 @@
 
 #include "Detector2D.hpp"
 
-#define PI 3.14159265
-
 void Detector2D::compute() {
 	compute_solution(potential_solver, solution_potential);
 
@@ -63,8 +61,6 @@ Detector2D::~Detector2D() {
 	delete boundary_conditions;
 	delete potential_solver;
 	delete triangulation;
-
-	//delete line;
 
 	delete boundary_conditions_weight;
 	delete potential_solver_weight;

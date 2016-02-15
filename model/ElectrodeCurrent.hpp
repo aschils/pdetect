@@ -186,7 +186,7 @@ private:
 		Tensor<1,2> electric_field = val.electric_field;
 		int electric_charge_sign = charge->get_charge_sign();
 		double mobility = charge->get_mobility();
-		return electric_charge_sign*electric_field*mobility;
+		return electric_charge_sign*electric_field*mobility*0.86;
 	}
 
 	double current(Point<2> pos, Tensor<1,2> speed, Charge *charge){

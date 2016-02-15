@@ -58,6 +58,7 @@ protected:
 
 	Solution<2> solution_potential, solution_weight_potential;
 	StraightLine<2> *line;
+
 	MyGeometryInfo *geo_info;
 
 	void compute_solution(LaplaceSolver<2> *potential_solver,
