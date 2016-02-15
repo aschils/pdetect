@@ -37,14 +37,6 @@ public:
 
 	Solution<2> get_solution_weight();
 
-	/*std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > get_electric_field();
-
-	std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > get_electric_field_weight();*/
-
 	virtual std::string params_to_string() = 0;
 
 	virtual ~Detector2D();
@@ -65,21 +57,8 @@ protected:
 	LaplaceSolver<2> *potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
-	/*std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > electric_field;
-	std::vector<
-			std::pair<typename DoFHandler<2>::active_cell_iterator,
-					std::vector<Tensor<1, 2> > > > electric_field_weight;*/
-
 	StraightLine<2> *line;
-
 	MyGeometryInfo *geo_info;
-
-	/*void compute_electric_field(Solution<2> &potential,
-			std::vector<
-					std::pair<typename DoFHandler<2>::active_cell_iterator,
-							std::vector<Tensor<1, 2> > > > &electric_field);*/
 
 	void compute_solution(LaplaceSolver<2> *potential_solver,
 			Solution<2> &solution_potential);
