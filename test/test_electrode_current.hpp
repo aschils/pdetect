@@ -28,20 +28,21 @@ void test_electrode_current() {
 			half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
 	srdd.compute();
 	srdd.compute_weight();
+	srdd.draw_vtk_graph_potential("electrode_pot.vtk");
 
 	Solution<2> solution = srdd.get_solution();
 	Solution<2> weight_solution = srdd.get_solution_weight();
 	MyGeometryInfo *geo_info = srdd.get_geometry_info();
 
-	Point<2> p1(100,0.0);
-	Point<2> p2(100, 100);
+	Point<2> p1(50,0.0);
+	Point<2> p2(50, 100);
 	Segment seg(p1,p2);
 
 	Line particle_traj(seg);
 
 	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
 			&particle_traj, 10);
-	ec.print_charges();
+	//ec.print_charges();
 	double delta_t = 0.00000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(delta_t, current_vs_time);
