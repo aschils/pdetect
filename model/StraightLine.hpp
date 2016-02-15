@@ -12,8 +12,9 @@
 #include "Utils.hpp"
 #include "geometry_info/MyGeometryInfo.hpp"
 #include <iostream>
+#include <math.h>
 
-#define PI 3.14159265
+//#define M_PI 3.14159265
 
 using namespace dealii;
 
@@ -45,18 +46,21 @@ public:
 	 */
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
 	//bool is_strip(const Point<dim> &p, unsigned strip_width, 
-	//			unsigned strip_length, unsigned half_pitch);
+	//			unsigned strip_length, unsigned half_M_PItch);
 	PhysicalValues<dim> exact_solution(Point<dim> const &point);
 	void construct_line(double alpha, Point<dim> const &pass);
-	void write_data_file();
+	std::vector<std::pair<double, double>> get_data();
+	std::vector<std::pair<double, double>> get_exact_data();
 
 private:
 	unsigned strip_length, strip_width, detector_width, detector_length;
 	double precision;
 	Solution<dim> *sol;
-	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> values_on_line;
-	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> exact_values_on_line;
 	SerratedRectGeoInfo *geo_info;
+	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> values_on_line;
+	std::vector<std::pair<double, double>> solution_data;
+	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> exact_values_on_line;
+	std::vector<std::pair<double, double>> exact_solution_data;
 
 };
 
@@ -111,16 +115,17 @@ template<unsigned dim>
 PhysicalValues<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
 	PhysicalValues<dim> exact_value;
 
-	double epsilon = 0.000000001;
 	double x = point[0]-detector_length/2;
 	double y = -point[1]/(detector_width-strip_width) + 1;
 	double pot;
-	pot = sin(PI*y)*sinh(PI*strip_length/2);
-	pot = pot/ (cosh(PI*x)-cos(PI*y)*cosh(PI*strip_length/2));
-	if(point[1] >= (detector_width-strip_width)/2 - epsilon)
-		pot = (atan(pot)+PI)/PI;
+
+	pot = sin(M_PI*y)*sinh(M_PI*strip_length/2);
+	pot = pot/ (cosh(M_PI*x)-cos(M_PI*y)*cosh(M_PI*strip_length/2));
+
+	if(point[1] >= (detector_width-strip_width)/2)
+		pot = (atan(pot)+M_PI)/M_PI;
 	else
-		pot = (atan(pot))/PI;
+		pot = (atan(pot))/M_PI;
 
 	exact_value.potential = pot;
 
@@ -131,9 +136,6 @@ template <unsigned dim>
 void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 	Point<dim> point = get_beginning(alpha, pass);
-
-	std::vector<std::pair<double, double>> solution_data;
-	std::vector<std::pair<double, double>> exact_solution_data;
 
 	double epsilon = 0.0001;
 	while(Utils::less_than_or_equals_double(point[0],detector_length, epsilon) && 
@@ -166,7 +168,16 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 		point[0] = point[0] + precision*cos(alpha);
 		point[1] = point[1] + precision*sin(alpha);
 	}
+}
 
-	Utils::write_gnu_data_file<dim>("sol_on_line", solution_data);
-	Utils::write_gnu_data_file<dim>("exact_sol_on_line", exact_solution_data);
+template<unsigned dim>
+std::vector<std::pair<double, double>> StraightLine<dim>::get_data() {
+
+	return solution_data;
+}
+
+template<unsigned dim>
+std::vector<std::pair<double, double>> StraightLine<dim>::get_exact_data() {
+
+	return exact_solution_data;
 }
