@@ -194,13 +194,16 @@ public:
 		extrapol.potential = values_at_cells[pos].second.fun[closest]
 				+ values_at_cells[pos].second.gradient[closest][0] * delta_x
 				+ values_at_cells[pos].second.gradient[closest][1] * delta_y
-				+ values_at_cells[pos].second.hessian[closest][0][0] * delta_x
-				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y
-				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y
-				+ values_at_cells[pos].second.hessian[closest][1][0] * delta_x;
-		extrapol.electric_field = -(values_at_cells[pos].second.gradient[closest]
-				+ values_at_cells[pos].second.hessian[closest][0] * delta_x
-				+ values_at_cells[pos].second.hessian[closest][1] * delta_y);
+				+ values_at_cells[pos].second.hessian[closest][0][0] * delta_x * delta_x
+				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y * delta_y
+				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y * delta_x
+				+ values_at_cells[pos].second.hessian[closest][1][0] * delta_x * delta_y; 
+
+		for(int i = 0; i < dim; i++) {
+			extrapol.electric_field[i] = -(values_at_cells[pos].second.gradient[closest][i]
+					+ values_at_cells[pos].second.hessian[closest][i][0] * delta_x
+					+ values_at_cells[pos].second.hessian[closest][i][1] * delta_y);
+		}
 
 		return extrapol;
 	}
