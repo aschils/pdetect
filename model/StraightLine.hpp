@@ -51,6 +51,7 @@ public:
 	void construct_line(double alpha, Point<dim> const &pass);
 	std::vector<std::pair<double, double>> get_data();
 	std::vector<std::pair<double, double>> get_exact_data();
+	std::vector<std::pair<double, double>> get_ratio();
 
 private:
 	unsigned strip_length, strip_width, detector_width, detector_length;
@@ -180,4 +181,24 @@ template<unsigned dim>
 std::vector<std::pair<double, double>> StraightLine<dim>::get_exact_data() {
 
 	return exact_solution_data;
+}
+
+template<unsigned dim>
+std::vector<std::pair<double, double>> StraightLine<dim>::get_ratio() {
+
+	std::vector<std::pair<double, double>> ratio;
+	std::pair<double, double> point_ratio;
+
+	for(unsigned i = 0; i < solution_data.size(); i++) {
+
+		if(!Utils::equals_double(exact_solution_data[i].second, 0, 0.000001))
+			point_ratio.second = solution_data[i].second /
+								exact_solution_data[i].second;
+		else
+			point_ratio.second = 1;
+		point_ratio.first = solution_data[i].first;
+		ratio.push_back(point_ratio);
+	}
+
+	return ratio;
 }
