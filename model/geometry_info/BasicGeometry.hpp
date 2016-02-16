@@ -234,6 +234,8 @@ class Line {
 
 public:
 
+	Line(){}
+
 	Line(double slope, double intercept) {
 		Point<2> p1(0.0, intercept);
 		double y = slope + intercept;
@@ -245,6 +247,11 @@ public:
 	}
 
 	Line(Segment seg) {
+		constructor_from_segment(seg);
+	}
+
+	Line(Point<2> p1, Point<2> p2){
+		Segment seg(p1,p2);
 		constructor_from_segment(seg);
 	}
 
@@ -262,17 +269,16 @@ public:
 		bool same_vec_x = Utils::equals_double(vec[0], l.vec[0], epsilon);
 		bool same_vec_y = Utils::equals_double(vec[1], l.vec[1], epsilon);
 		return same_vec_x && same_vec_y;
-
 	}
 
 	bool intersection_point(Line l, Point<2> &intersect_pt) {
 
 		if (is_parallel(l)) {
-			std::cout << "parallel" << std::endl;
 			return false;
 		}
 
-		//Well it's math
+		//Well it's geometry: intersection between two lines described
+		//by parametric equations
 		double v1 = vec[0];
 		double v2 = vec[1];
 		double w1 = l.vec[0];
@@ -284,8 +290,6 @@ public:
 
 		double alpha = 1 / (w1 * v2 - w2 * v1)
 				* (w2 * (x1 - x2) + w1 * (y2 - y1));
-
-		//std::cout << "alpha " << alpha << " v1 " << v1 << " x1 " << x1 << std::endl;
 
 		double x = alpha * v1 + x1;
 		double y = alpha * v2 + y1;
@@ -317,6 +321,13 @@ public:
 
 	Point<2> get_direction_vector(){
 		return vec;
+	}
+
+	bool is_vertical(){
+		Point<2> p1(0,0);
+		Point<2> p2(0,1);
+		Line vert_line(p1,p2);
+		return is_parallel(vert_line);
 	}
 
 private:
