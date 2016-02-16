@@ -24,7 +24,8 @@ public:
 
 	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *solution,
 			Solution<dim> *solution_weight, Line *particle_trajectory,
-			unsigned refine_level): e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
+			unsigned refine_level) :
+			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 		this->geo_info = geo_info;
 		this->laplace_sol = solution;
 		this->laplace_sol_weight = solution_weight;
@@ -55,11 +56,11 @@ public:
 			throw PRECONDITIONS_VIOLATED;
 
 		double time = 0.0;
+		bool no_moves = false;
 
-		while (!punctual_charges.empty()) {
-			double current = move_charges(delta_t);
+		while (!punctual_charges.empty() && !no_moves) {
+			double current = move_charges(delta_t, no_moves);
 			std::pair<double, double> point(time, current);
-			current_vs_time.push_back(point);
 			time += delta_t;
 		}
 	}
@@ -70,7 +71,7 @@ private:
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line *particle_trajectory;
-	double hole_pairs_nbr_per_lgth = 75*0.92; //per microm
+	double hole_pairs_nbr_per_lgth = 75 * 0.92; //per microm
 
 	/**
 	 * A punctual charge is defined as a point where resides an electric
@@ -93,7 +94,7 @@ private:
 	 */
 	double dist_covered_inside_det(std::vector<Point<2>> intersect) {
 
-		if(Utils::is_odd(intersect.size()))
+		if (Utils::is_odd(intersect.size()))
 			throw PRECONDITIONS_VIOLATED;
 
 		double total_dist = 0.0;
@@ -111,6 +112,9 @@ private:
 		std::vector<Point<2>> intersect = geo_info->boundaries_intersections(
 				*particle_trajectory);
 
+		for (unsigned i = 0; i < intersect.size(); i++) {
+			Utils::print_point<2>(intersect[i]);
+		}
 		//Should not happen
 		if (Utils::is_odd(intersect.size())) {
 			std::cout << "Warning odd intersections number (initial_charges): "
@@ -123,9 +127,11 @@ private:
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
 
-		double total_electric_charge =
-				dist_covered_by_particle * hole_pairs_nbr_per_lgth;
-		punctual_electric_charge = total_electric_charge / nbr_of_punctual_charges;
+		double total_hole_pairs_nbr = dist_covered_by_particle
+				* hole_pairs_nbr_per_lgth;
+		std::cout << "Hole-pairs number: " << total_hole_pairs_nbr << std::endl;
+		punctual_electric_charge = total_hole_pairs_nbr
+				/ nbr_of_punctual_charges;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
@@ -138,11 +144,11 @@ private:
 
 	void place_initial_charges_on_segment(Segment &seg,
 			double dist_between_punctual_charges,
-			double dist_covered_by_particle,
-			unsigned nbr_of_punctual_charges) {
+			double dist_covered_by_particle, unsigned nbr_of_punctual_charges) {
 
 		unsigned nbr_of_charges_on_seg = ceil(
-				seg.compute_length() / dist_covered_by_particle * nbr_of_punctual_charges);
+				seg.compute_length() / dist_covered_by_particle
+						* nbr_of_punctual_charges);
 
 		double delta_x;
 		double delta_y;
@@ -171,58 +177,64 @@ private:
 		}
 	}
 
-	Tensor<1,2> puncutal_charge_speed(Point<2> pos, Charge *charge){
+	Tensor<1, 2> puncutal_charge_speed(Point<2> pos, Charge *charge) {
 		//Formula in latex: \vec{v} = \mu \vec{E}
 		PhysicalValues<2> val = laplace_sol->get_values(pos);
-		Tensor<1,2> electric_field = val.electric_field;
+		Tensor<1, 2> electric_field = val.electric_field;
+		//std::cout << "electric_field (" << electric_field[0] << "," << electric_field[1] << ") ";
 		int electric_charge_sign = charge->get_charge_sign();
 		double mobility = charge->get_mobility();
-		return electric_charge_sign*electric_field*mobility;//*0.86;
+		return electric_charge_sign * electric_field * mobility;		//*0.86;
 	}
 
-	double current(Point<2> pos, Tensor<1,2> speed, Charge *charge){
+	double current(Point<2> pos, Tensor<1, 2> speed, Charge *charge) {
 		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
 		PhysicalValues<2> val = laplace_sol_weight->get_values(pos);
-		Tensor<1,2> weighting_electric_field = val.electric_field;
+		Tensor<1, 2> weighting_electric_field = val.electric_field;
+		//std::cout << "WF" << weighting_electric_field[0] << "," << weighting_electric_field[1] << " " << std::endl;
 		int electric_charge_sign = charge->get_charge_sign();
-		double current = -electric_charge_sign
-				*punctual_electric_charge*speed*weighting_electric_field;
+		double current = -electric_charge_sign * punctual_electric_charge
+				* speed * weighting_electric_field;
 		return current;
 	}
 
-	Point<2> compute_new_pos(Point<2> prev_pos, Tensor<1,2> speed,
-			double delta_t){
-		double new_x = prev_pos[0]+speed[0]*delta_t;
-		double new_y = prev_pos[1]+speed[1]*delta_t;
+	Point<2> compute_new_pos(Point<2> prev_pos, Tensor<1, 2> speed,
+			double delta_t) {
+		double new_x = prev_pos[0] + speed[0] * delta_t;
+		double new_y = prev_pos[1] + speed[1] * delta_t;
 		Point<2> new_pos(new_x, new_y);
 		return new_pos;
 	}
 
-	double move_charges(double delta_t) {
+	double move_charges(double delta_t, bool &no_moves) {
 
 		double current_tot = 0.0;
 		unsigned init_nbr_punctual_charges = punctual_charges.size();
+		no_moves = true;
 
-		for(unsigned i=0; i<init_nbr_punctual_charges; i++){
-			std::pair<Point<2>, Charge*> punct_charge = punctual_charges.front();
+		for (unsigned i = 0; i < init_nbr_punctual_charges; i++) {
+
+			std::pair<Point<2>, Charge*> punct_charge =
+					punctual_charges.front();
 			punctual_charges.pop();
 			Point<2> pos = punct_charge.first;
 			Charge *charge = punct_charge.second;
-			Tensor<1,2> speed = puncutal_charge_speed(pos, charge);
+			Tensor<1, 2> speed = puncutal_charge_speed(pos, charge);
+
+			if (!TensorUtils::is_zero_tensor<2>(speed))
+				no_moves = false;
+
 			current_tot += current(pos, speed, charge);
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
+			SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*) geo_info;
 
-			SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*)geo_info;
-
-			if(geo_info->is_point_inside_geometry(
-					Utils::point_to_std_vec<2>(new_pos)) &&
-					!sg->is_strip<2>(new_pos)){
+			if (sg->is_point_inside_detector_and_not_strip_2D(new_pos)) {
 				std::pair<Point<2>, Charge*> new_charge(new_pos, charge);
 				punctual_charges.push(new_charge);
 			}
 		}
 
-		return current_tot*ELECTRON_CHARGE;
+		return current_tot * ELECTRON_CHARGE;
 	}
 
 };

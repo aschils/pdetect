@@ -15,9 +15,9 @@ void test_electrode_current() {
 	unsigned nbr_of_strips = 1;
 	unsigned width = 300;
 	unsigned strip_length = 100;
-	unsigned strip_width = 0;
-	unsigned half_pitch = 0;
-	unsigned refine_level = 6;
+	unsigned strip_width = 2;
+	unsigned half_pitch = 50;
+	unsigned refine_level = 7;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
@@ -29,13 +29,15 @@ void test_electrode_current() {
 	srdd.compute();
 	srdd.compute_weight();
 	srdd.draw_vtk_graph_potential("electrode_pot.vtk");
+	srdd.draw_vtk_graph_weight_potential("electrode_pot_weight.vtk");
+	srdd.draw_vtk_graph_gradient_of_potential("electrode_pot_grad.vtk");
 
 	Solution<2> solution = srdd.get_solution();
 	Solution<2> weight_solution = srdd.get_solution_weight();
 	MyGeometryInfo *geo_info = srdd.get_geometry_info();
 
-	Point<2> p1(50,0.0);
-	Point<2> p2(50, 100);
+	Point<2> p1(100,0.0);
+	Point<2> p2(100, 100);
 	Segment seg(p1,p2);
 
 	Line particle_traj(seg);
@@ -43,7 +45,7 @@ void test_electrode_current() {
 	ElectrodeCurrent<2> ec(geo_info, &solution, &weight_solution,
 			&particle_traj, 10);
 	//ec.print_charges();
-	double delta_t = 0.00000000001; //100ps p.76, V_b = 100V, v_d = 30V
+	double delta_t = 0.000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(delta_t, current_vs_time);
 

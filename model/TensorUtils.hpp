@@ -123,4 +123,13 @@ public:
 		return multiply_vector_of_tensors_by_scalar<order,dim>(v, -1.0);
 	}
 
+	template <unsigned dim>
+	static bool is_zero_tensor(Tensor<1,dim> t){
+		for(unsigned i=0; i<dim; i++){
+			if(t[i] != 0)
+				return false;
+		}
+		return true;
+	}
+
 };

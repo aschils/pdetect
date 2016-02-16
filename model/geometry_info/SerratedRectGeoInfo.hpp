@@ -54,11 +54,11 @@ public:
 		return half_pitch;
 	}
 
-	bool is_point_inside_geometry(std::vector<double> point_coord) {
+	bool is_point_inside_geometry(Point<2> p) {
 
 		switch (dim) {
 		case 2:
-			return is_point_inside_detector_2D(point_coord);
+			return is_point_inside_detector_2D(p);
 		default:
 			throw NOT_YET_IMPLEMENTED;
 		}
@@ -80,6 +80,9 @@ public:
 	template<unsigned dim>
 	bool is_strip(const Point<dim> &p) {
 
+		if (coord_outside_geo_coord_range(p))
+			return false;
+
 		unsigned pitch = 2 * half_pitch;
 		unsigned periodic_str_length = pitch + strip_length;
 
@@ -90,8 +93,9 @@ public:
 
 		double bottom_of_strip = width - strip_width;
 
-		if (!Utils::greater_than_or_equals_double(y, bottom_of_strip, epsilon)
-				|| periodic_str_length == 0.0 || strip_length == 0.0)
+		if (periodic_str_length == 0.0 || strip_length == 0.0 ||
+				!Utils::greater_than_or_equals_double(y, bottom_of_strip, epsilon)
+		|| !Utils::less_than_or_equals_double(y, width, epsilon))
 			return false;
 
 		unsigned nbr_of_prev_periodic_str = x / periodic_str_length;
@@ -111,10 +115,17 @@ public:
 	bool is_middle_strip(const Point<dim> &p) {
 
 		unsigned periodic_str_length = 2 * half_pitch + strip_length;
+		unsigned periodic_str_before_mid_strip = this->nbr_of_strips / 2;
 		unsigned nbr_of_prev_periodic_str = p[0] / periodic_str_length;
 
+		//Fixed bug when half_pitch == 0, we must take the last point at the right
+		//side of the strip
+		if(half_pitch == 0 && p[0] == (periodic_str_before_mid_strip+1)*periodic_str_length){
+			nbr_of_prev_periodic_str -= 1;
+		}
+
 		return this->nbr_of_strips > 0 && is_strip<dim>(p)
-				&& nbr_of_prev_periodic_str == this->nbr_of_strips / 2;
+				&& nbr_of_prev_periodic_str == periodic_str_before_mid_strip;
 	}
 
 	/**
@@ -207,23 +218,31 @@ public:
 		return intersections;
 	}
 
+	bool is_point_inside_detector_and_not_strip_2D(Point<2> p){
+		return is_point_inside_detector_2D(p) && !is_strip<2>(p);
+	}
+
 private:
 	unsigned nbr_of_strips, width, strip_length, strip_width, half_pitch,
 			length;
 	unsigned dim;
 
-	bool is_point_inside_detector_2D(std::vector<double> point_coord) {
+	bool coord_outside_geo_coord_range(Point<2> p){
+		double x = p[0];
+		double y = p[1];
+		return x < 0 || x > length || y < 0 || y > width;
+	}
 
-		double x = point_coord[0];
-		double y = point_coord[1];
+	bool is_point_inside_detector_2D(Point<2> point) {
 
 		//Quick check to exclude points obviously not inside detector domain
-		if (x < 0 || x > length || y < 0 || y > width)
+		if (coord_outside_geo_coord_range(point))
 			return false;
 
+		double y = point[1];
+
 		if (y > width - strip_width) {
-			dealii::Point<2> point(x, y);
-			return !is_strip<2>(point);
+			return is_strip<2>(point);
 		} else {
 			return true;
 		}
@@ -256,10 +275,10 @@ private:
 					intersect[1] - eps_direction_vec[1]);
 			Point<2> after = intersect + eps_direction_vec;
 
-			bool before_in_det = is_point_inside_detector_2D(
-					Utils::point_to_std_vec<2>(before));
-			bool after_in_det = is_point_inside_detector_2D(
-					Utils::point_to_std_vec<2>(after));
+			bool before_in_det =
+					is_point_inside_detector_and_not_strip_2D(before);
+			bool after_in_det =
+					is_point_inside_detector_and_not_strip_2D(after);
 			bool is_a_cross_boundary_point = !((before_in_det && after_in_det)
 					|| (!before_in_det && !after_in_det));
 

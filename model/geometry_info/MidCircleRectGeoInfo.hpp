@@ -13,7 +13,7 @@
 class MidCircleRectGeoInfo: public MyGeometryInfo {
 	//TODO
 
-	bool is_point_inside_geometry(std::vector<double> point_coord){ return false; }
+	bool is_point_inside_geometry(Point<2> point_coord){ return false; }
 
 	//Return the maximum width of the domain
 	unsigned get_width(){ return 0; }

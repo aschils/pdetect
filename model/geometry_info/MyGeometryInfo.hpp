@@ -13,7 +13,7 @@ class MyGeometryInfo {
 
 public:
 
-	virtual bool is_point_inside_geometry(std::vector<double> point_coord) = 0;
+	virtual bool is_point_inside_geometry(Point<2> p) = 0;
 
 	//Returns the intersection points between the particle trajectory
 	//and the domain boundaries
