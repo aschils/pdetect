@@ -221,10 +221,6 @@ public:
 		return intersections;
 	}
 
-	bool is_point_inside_detector_and_not_strip_2D(Point<2> p) {
-		return is_point_inside_detector_2D(p) && !is_strip<2>(p);
-	}
-
 	Line get_mid_length_vertical_line() {
 		double mid_length = length/2.0;
 		Point<2> p1(mid_length, 0);
@@ -253,7 +249,7 @@ private:
 		double y = point[1];
 
 		if (y > width - strip_width) {
-			return is_strip<2>(point);
+			return !is_strip<2>(point);
 		} else {
 			return true;
 		}
@@ -286,10 +282,9 @@ private:
 					intersect[1] - eps_direction_vec[1]);
 			Point<2> after = intersect + eps_direction_vec;
 
-			bool before_in_det = is_point_inside_detector_and_not_strip_2D(
-					before);
-			bool after_in_det = is_point_inside_detector_and_not_strip_2D(
-					after);
+			bool before_in_det = is_point_inside_detector_2D(before);
+			bool after_in_det = is_point_inside_detector_2D(after);
+
 			bool is_a_cross_boundary_point = !((before_in_det && after_in_det)
 					|| (!before_in_det && !after_in_det));
 
