@@ -113,9 +113,9 @@ private:
 		std::vector<Point<2>> intersect = geo_info->boundaries_intersections(
 				*particle_trajectory);
 
-		for (unsigned i = 0; i < intersect.size(); i++) {
-			Utils::print_point<2>(intersect[i]);
-		}
+		//for (unsigned i = 0; i < intersect.size(); i++) {
+		//	Utils::print_point<2>(intersect[i]);
+		//}
 		//Should not happen
 		if (Utils::is_odd(intersect.size())) {
 			std::cout << "Warning odd intersections number (initial_charges): "
@@ -192,7 +192,7 @@ private:
 		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
 		PhysicalValues<2> val = laplace_sol_weight->get_values(pos);
 		Tensor<1, 2> weighting_electric_field = val.electric_field;
-		//std::cout << "WF" << weighting_electric_field[0] << "," << weighting_electric_field[1] << " " << std::endl;
+		//std::cout << "WF (" << weighting_electric_field[0] << "," << weighting_electric_field[1] << ") " << std::endl;
 		int electric_charge_sign = charge->get_charge_sign();
 		double current = -electric_charge_sign * punctual_electric_charge
 				* speed * weighting_electric_field;
