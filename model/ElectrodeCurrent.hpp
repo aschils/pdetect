@@ -22,16 +22,23 @@ class ElectrodeCurrent {
 
 public:
 
-	ElectrodeCurrent(MyGeometryInfo *geo_info, Solution<dim> *solution,
-			Solution<dim> *solution_weight, Line *particle_trajectory,
+	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
+			Solution<dim> *solution, Solution<dim> *solution_weight,
+			Line particle_trajectory, unsigned refine_level) :
+			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
+		this->particle_trajectory = particle_trajectory;
+		common_constructor(strip_potential, geo_info, solution, solution_weight,
+				refine_level);
+	}
+
+	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
+			Solution<dim> *solution, Solution<dim> *solution_weight,
 			unsigned refine_level) :
 			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
-		this->geo_info = geo_info;
-		this->laplace_sol = solution;
-		this->laplace_sol_weight = solution_weight;
-		this->particle_trajectory = particle_trajectory;
-		this->refine_level = refine_level;
-		place_initial_charges();
+
+		this->particle_trajectory = geo_info->get_mid_length_vertical_line();
+		common_constructor(strip_potential, geo_info, solution, solution_weight,
+				refine_level);
 	}
 
 	void print_charges() {
@@ -47,13 +54,22 @@ public:
 	}
 
 	/**
-	 * @pre delta_t > 0
+	 * @pre: delta_t > 0
+	 *
+	 * @return:
+	 * - true if all charges have left the detector at the end of simultion.
+	 * - false if the simulation has stopped because the speed of every
+	 * charges with zero. It may happen, for example, if the detector potential
+	 * difference is 0V.
+	 *
 	 */
-	void compute_current(double delta_t,
+	bool compute_current(double delta_t,
 			std::vector<std::pair<double, double> > &current_vs_time) {
 
 		if (delta_t <= 0.0)
 			throw PRECONDITIONS_VIOLATED;
+
+		std::cout << "Delta time: " << delta_t << "s" << std::endl;
 
 		double time = 0.0;
 		bool no_moves = false;
@@ -64,6 +80,13 @@ public:
 			current_vs_time.push_back(point);
 			time += delta_t;
 		}
+		return no_moves;
+	}
+
+	bool compute_current(
+			std::vector<std::pair<double, double> > &current_vs_time) {
+		double delta_t = compute_delta_t();
+		return compute_current(delta_t, current_vs_time);
 	}
 
 private:
@@ -71,8 +94,24 @@ private:
 	unsigned refine_level;
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
-	Line *particle_trajectory;
+	Line particle_trajectory;
 	double hole_pairs_nbr_per_lgth = 75 * 0.92; //per microm
+	double strip_potential;
+	double covered_dist;
+
+	void common_constructor(unsigned strip_potential, MyGeometryInfo *geo_info,
+			Solution<dim> *solution, Solution<dim> *solution_weight,
+			unsigned refine_level) {
+		this->geo_info = geo_info;
+		this->laplace_sol = solution;
+		this->laplace_sol_weight = solution_weight;
+		this->refine_level = refine_level;
+		this->strip_potential = strip_potential;
+
+		std::vector<Point<2>> intersect = get_trajectory_intersect();
+		covered_dist = dist_covered_inside_det(intersect);
+		place_initial_charges(intersect, covered_dist);
+	}
 
 	/**
 	 * A punctual charge is defined as a point where resides an electric
@@ -106,12 +145,11 @@ private:
 		return total_dist;
 	}
 
-	void place_initial_charges() {
-
+	std::vector<Point<2>> get_trajectory_intersect() {
 		//Get all the points of intersection between the line
 		//(particle trajectory) and the boundaries of the detector
 		std::vector<Point<2>> intersect = geo_info->boundaries_intersections(
-				*particle_trajectory);
+				particle_trajectory);
 
 		//for (unsigned i = 0; i < intersect.size(); i++) {
 		//	Utils::print_point<2>(intersect[i]);
@@ -122,15 +160,19 @@ private:
 					<< intersect.size() << std::endl;
 			throw PRECONDITIONS_VIOLATED;
 		}
+		return intersect;
+	}
 
-		double dist_covered_by_particle = dist_covered_inside_det(intersect);
+	void place_initial_charges(std::vector<Point<2>> intersect,
+			double dist_covered_by_particle) {
+
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
 
 		double total_hole_pairs_nbr = dist_covered_by_particle
 				* hole_pairs_nbr_per_lgth;
-		std::cout << "Hole-pairs number: " << total_hole_pairs_nbr << std::endl;
+		std::cout << "Hole pairs number: " << total_hole_pairs_nbr << std::endl;
 		punctual_electric_charge = total_hole_pairs_nbr
 				/ nbr_of_punctual_charges;
 
@@ -236,6 +278,20 @@ private:
 		}
 
 		return current_tot * ELECTRON_CHARGE;
+	}
+
+	double estimate_collection_time() {
+		//t = d^2/(mu V)
+		SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*) geo_info;
+		double max_mobility = h.get_mobility();
+		double dist_to_strip = sg->get_width()-sg->get_strip_width();
+		return std::pow(dist_to_strip,2) / (max_mobility * strip_potential);
+	}
+
+	double compute_delta_t() {
+		double col_time = estimate_collection_time();
+		std::cout << "Predicted collection time: " << col_time << std::endl;
+		return col_time / std::pow(2, refine_level);
 	}
 
 };
