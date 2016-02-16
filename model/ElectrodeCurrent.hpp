@@ -61,6 +61,7 @@ public:
 		while (!punctual_charges.empty() && !no_moves) {
 			double current = move_charges(delta_t, no_moves);
 			std::pair<double, double> point(time, current);
+			current_vs_time.push_back(point);
 			time += delta_t;
 		}
 	}
