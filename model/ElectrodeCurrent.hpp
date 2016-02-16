@@ -166,15 +166,21 @@ private:
 	void place_initial_charges(std::vector<Point<2>> intersect,
 			double dist_covered_by_particle) {
 
+		std::cout << "dist_covered_by_particle " << dist_covered_by_particle << std::endl;
+
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
+
+		std::cout << "dist_between_punctual_charges: " << dist_between_punctual_charges << std::endl;
 
 		double total_hole_pairs_nbr = dist_covered_by_particle
 				* hole_pairs_nbr_per_lgth;
 		std::cout << "Hole pairs number: " << total_hole_pairs_nbr << std::endl;
 		punctual_electric_charge = total_hole_pairs_nbr
 				/ nbr_of_punctual_charges;
+
+		std::cout << "punctual_electric_charge: " << punctual_electric_charge << std::endl;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
@@ -189,9 +195,11 @@ private:
 			double dist_between_punctual_charges,
 			double dist_covered_by_particle, unsigned nbr_of_punctual_charges) {
 
-		unsigned nbr_of_charges_on_seg = ceil(
+		unsigned nbr_of_punctual_charges_on_seg = ceil(
 				seg.compute_length() / dist_covered_by_particle
 						* nbr_of_punctual_charges);
+
+		std::cout << "nbr_of_charges_on_seg " << nbr_of_punctual_charges_on_seg << std::endl;
 
 		double delta_x;
 		double delta_y;
@@ -209,7 +217,7 @@ private:
 		double x_coord = seg.p1[0] + delta_x;
 		double y_coord = seg.p1[1] + delta_y;
 
-		for (unsigned i = 0; i < nbr_of_charges_on_seg; i++) {
+		for (unsigned i = 0; i < nbr_of_punctual_charges_on_seg; i++) {
 			Point<2> p(x_coord, y_coord);
 			std::pair<Point<2>, Charge*> holes(p, &h);
 			std::pair<Point<2>, Charge*> electrons(p, &e);
