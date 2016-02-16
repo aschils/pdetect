@@ -10,8 +10,7 @@
 #include "MyGeometryInfo.hpp"
 #include "../Utils.hpp"
 
-
-class MidRectRectGeoInfo : public MyGeometryInfo {
+class MidRectRectGeoInfo: public MyGeometryInfo {
 	//TODO
 
 	bool is_point_inside_geometry(Point<2> p) {
@@ -28,18 +27,30 @@ class MidRectRectGeoInfo : public MyGeometryInfo {
 		return 0;
 	}
 
-	unsigned get_nbr_of_strips(){ return 0;}
+	unsigned get_nbr_of_strips() {
+		return 0;
+	}
 
-	unsigned get_dimension(){ return 2; }
+	unsigned get_dimension() {
+		return 2;
+	}
 
-	unsigned get_strip_length(){ return 0;}
+	unsigned get_strip_length() {
+		return 0;
+	}
 
-	unsigned get_strip_width(){return 0;}
+	unsigned get_strip_width() {
+		return 0;
+	}
 
-	std::vector<Point<2>> boundaries_intersections(
-				Line line){
-			std::vector<Point<2>> v;
-			return v;
-		}
+	std::vector<Point<2>> boundaries_intersections(Line line) {
+		std::vector<Point<2>> v;
+		return v;
+	}
+
+	Line get_mid_length_vertical_line() {
+		Line l(0.0, 0.0);
+		return l;
+	}
 
 };

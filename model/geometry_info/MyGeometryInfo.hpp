@@ -30,6 +30,8 @@ public:
 
 	virtual unsigned get_dimension() = 0;
 
+	virtual Line get_mid_length_vertical_line() = 0;
+
 	~MyGeometryInfo() {
 	}
 };

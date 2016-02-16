@@ -35,4 +35,9 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 		return v;
 	}
 
+	Line get_mid_length_vertical_line(){
+		Line l(0.0,0.0);
+		return l;
+	}
+
 };

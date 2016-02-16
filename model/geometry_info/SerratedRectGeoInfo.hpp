@@ -93,9 +93,10 @@ public:
 
 		double bottom_of_strip = width - strip_width;
 
-		if (periodic_str_length == 0.0 || strip_length == 0.0 ||
-				!Utils::greater_than_or_equals_double(y, bottom_of_strip, epsilon)
-		|| !Utils::less_than_or_equals_double(y, width, epsilon))
+		if (periodic_str_length == 0.0 || strip_length == 0.0
+				|| !Utils::greater_than_or_equals_double(y, bottom_of_strip,
+						epsilon)
+				|| !Utils::less_than_or_equals_double(y, width, epsilon))
 			return false;
 
 		unsigned nbr_of_prev_periodic_str = x / periodic_str_length;
@@ -120,7 +121,10 @@ public:
 
 		//Fixed bug when half_pitch == 0, we must take the last point at the right
 		//side of the strip
-		if(half_pitch == 0 && p[0] == (periodic_str_before_mid_strip+1)*periodic_str_length){
+		if (half_pitch == 0
+				&& p[0]
+						== (periodic_str_before_mid_strip + 1)
+								* periodic_str_length) {
 			nbr_of_prev_periodic_str -= 1;
 		}
 
@@ -211,15 +215,22 @@ public:
 		}
 
 		Utils::sort_points_by_coord<2>(&intersections);
-		intersections.erase(
-				unique(intersections.begin(), intersections.end()),
+		intersections.erase(unique(intersections.begin(), intersections.end()),
 				intersections.end());
 		intersections.shrink_to_fit();
 		return intersections;
 	}
 
-	bool is_point_inside_detector_and_not_strip_2D(Point<2> p){
+	bool is_point_inside_detector_and_not_strip_2D(Point<2> p) {
 		return is_point_inside_detector_2D(p) && !is_strip<2>(p);
+	}
+
+	Line get_mid_length_vertical_line() {
+		double mid_length = length/2.0;
+		Point<2> p1(mid_length, 0);
+		Point<2> p2(mid_length, 1);
+		Segment seg(p1,p2);
+		return Line(seg);
 	}
 
 private:
@@ -227,7 +238,7 @@ private:
 			length;
 	unsigned dim;
 
-	bool coord_outside_geo_coord_range(Point<2> p){
+	bool coord_outside_geo_coord_range(Point<2> p) {
 		double x = p[0];
 		double y = p[1];
 		return x < 0 || x > length || y < 0 || y > width;
@@ -275,10 +286,10 @@ private:
 					intersect[1] - eps_direction_vec[1]);
 			Point<2> after = intersect + eps_direction_vec;
 
-			bool before_in_det =
-					is_point_inside_detector_and_not_strip_2D(before);
-			bool after_in_det =
-					is_point_inside_detector_and_not_strip_2D(after);
+			bool before_in_det = is_point_inside_detector_and_not_strip_2D(
+					before);
+			bool after_in_det = is_point_inside_detector_and_not_strip_2D(
+					after);
 			bool is_a_cross_boundary_point = !((before_in_det && after_in_det)
 					|| (!before_in_det && !after_in_det));
 
