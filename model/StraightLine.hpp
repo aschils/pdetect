@@ -120,10 +120,10 @@ PhysicalValues<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
 	double y = -point[1]/(detector_width-strip_width) + 1;
 	double pot;
 
-	pot = sin(M_PI*y)*sinh(M_PI*strip_length/2);
-	pot = pot/ (cosh(M_PI*x)-cos(M_PI*y)*cosh(M_PI*strip_length/2));
+	pot = sin(M_PI*y)*sinh(M_PI*strip_length/(2*detector_width));
+	pot = pot/ (cosh(M_PI*x)-cos(M_PI*y)*cosh(M_PI*strip_length/(2*detector_width)));
 
-	if(point[1] >= (detector_width-strip_width)/2)
+	if(atan(pot) <= 0)
 		pot = (atan(pot)+M_PI)/M_PI;
 	else
 		pot = (atan(pot))/M_PI;
@@ -146,26 +146,18 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 		if(!strip){
 			PhysicalValues<dim> value = sol->get_values(point);
-
-			std::pair<PhysicalValues<dim>, Point<dim>> values_at_point;
-
-			values_at_point.first = value;
-			values_at_point.second = point;
+			std::pair<PhysicalValues<dim>, Point<dim>> values_at_point(value, point);
 
 			values_on_line.push_back(values_at_point);
 			solution_data.push_back(std::pair<double, double>(point[1], value.potential));
 
 
 			PhysicalValues<dim> exact_value = exact_solution(point);
-			std::pair<PhysicalValues<dim>, Point<dim>> exact_values_at_point;
-
-			exact_values_at_point.first = exact_value;
-			exact_values_at_point.second = point;
+			std::pair<PhysicalValues<dim>, Point<dim>> exact_values_at_point(exact_value, point);
 
 			exact_values_on_line.push_back(exact_values_at_point);
 			exact_solution_data.push_back(std::pair<double, double>(point[1], exact_value.potential));
 		}
-
 		point[0] = point[0] + precision*cos(alpha);
 		point[1] = point[1] + precision*sin(alpha);
 	}

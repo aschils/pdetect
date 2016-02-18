@@ -12,7 +12,6 @@
 #include "../LaplaceSolver.hpp"
 #include "../MyGridGenerator.hpp"
 #include "../ZeroRightHandSide.hpp"
-#include "../StraightLine.hpp"
 #include "../boundary_conditions/BoundaryConditions.hpp"
 #include "../geometry_info/MyGeometryInfo.hpp"
 
@@ -57,7 +56,6 @@ protected:
 	LaplaceSolver<2> *potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
-	StraightLine<2> *line;
 
 	MyGeometryInfo *geo_info;
 
