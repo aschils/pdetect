@@ -57,7 +57,6 @@ protected:
 	LaplaceSolver<2> *potential_solver_weight;
 
 	Solution<2> solution_potential, solution_weight_potential;
-	StraightLine<2> *line;
 
 	MyGeometryInfo *geo_info;
 
