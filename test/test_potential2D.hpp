@@ -199,10 +199,10 @@ void test_mid_rect_rect_2D_det() {
 }
 
 void test_various() {
-	unsigned nbr_of_strips = 2;
+	unsigned nbr_of_strips = 1;
 	unsigned strip_length = 50;
-	unsigned strip_width = 0;
-	unsigned half_pitch = 25;
+	unsigned strip_width = 1;
+	unsigned half_pitch = 300;
 	double strip_potential = 1;
 	unsigned refine_level = 5;
 	unsigned max_iter = 10000;
