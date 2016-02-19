@@ -44,7 +44,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
-			boundary_conditions_weight, true);
+			boundary_conditions_weight, false);
 
 	//nbr_of_points_along_axes();
 }

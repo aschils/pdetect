@@ -14,18 +14,18 @@ void test_straight_line() {
 	double strip_potential = 1;
 	unsigned nbr_of_strips = 1;
 	unsigned width = 300;
-	unsigned strip_length = 50;
+	unsigned strip_length = 100;
 	unsigned strip_width = 1;
-	unsigned half_pitch = 50;
+	unsigned half_pitch = 150;
 	unsigned refine_level = 6;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
-	srdd.compute();
+	srdd.compute_weight();
 
-	Solution<2> solution = srdd.get_solution();
+	Solution<2> solution = srdd.get_solution_weight();
 	SerratedRectGeoInfo *geo_info = (SerratedRectGeoInfo*)srdd.get_geometry_info();
 
 	double x = half_pitch + strip_length/2;

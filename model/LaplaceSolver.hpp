@@ -91,7 +91,7 @@ private:
 	void assemble_system();
 	void solve();
 	void output_results(std::string result_file_path) const;
-	void make_periodicity_constraints();
+	//void make_periodicity_constraints();
 
 	/*void set_solution_at_that_point_as_already_known(
 	 std::unordered_map<Point<2>, bool> &already_known, Point<dim> &point);
@@ -140,7 +140,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->triangulation->refine_global(refine_level);
 }
 
-template<unsigned dim>
+/*template<unsigned dim>
 void LaplaceSolver<dim>::make_periodicity_constraints() {
 	std::map<unsigned int, double> dof_locations;
 
@@ -179,14 +179,14 @@ void LaplaceSolver<dim>::make_periodicity_constraints() {
 			}
 		}
 	}
-}
+}*/
 
 template<unsigned dim>
 void LaplaceSolver<dim>::setup_system() {
 
 	dof_handler.distribute_dofs(fe);
 
-	if (constraints_are_periodic) {
+	/*if (constraints_are_periodic) {
 		ConstraintMatrix constraints;
 		constraints.clear();
 		make_periodicity_constraints();
@@ -199,11 +199,11 @@ void LaplaceSolver<dim>::setup_system() {
 		sparsity_pattern.copy_from(dsp);
 	}
 
-	else {
+	else {*/
 		DynamicSparsityPattern dsp(dof_handler.n_dofs());
 		DoFTools::make_sparsity_pattern(dof_handler, dsp);
 		sparsity_pattern.copy_from(dsp);
-	}
+	//}
 
 	system_matrix.reinit(sparsity_pattern);
 	solution_vec.reinit(dof_handler.n_dofs());
