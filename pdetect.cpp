@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 
 	//test_electrode_current();
 
-	//test_straight_line();
+	test_straight_line();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();

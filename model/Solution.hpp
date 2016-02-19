@@ -198,7 +198,7 @@ public:
 				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y * delta_y)
 				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y * delta_x;
 
-		for(int i = 0; i < dim; i++) {
+		for(unsigned i = 0; i < dim; i++) {
 			extrapol.electric_field[i] = -(values_at_cells[pos].second.gradient[closest][i]
 					+ values_at_cells[pos].second.hessian[closest][i][0] * delta_x
 					+ values_at_cells[pos].second.hessian[closest][i][1] * delta_y);
