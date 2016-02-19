@@ -8,10 +8,8 @@
 #pragma once
 
 #include "Solution.hpp"
-#include "boundary_conditions/SerratedRect2DBoundaryValues.hpp"
 #include "Utils.hpp"
-#include "geometry_info/MyGeometryInfo.hpp"
-#include <iostream>
+#include "geometry_info/SerratedRectGeoInfo.hpp"
 #include <math.h>
 
 //#define M_PI 3.14159265
@@ -45,8 +43,6 @@ public:
 	 * incline and a given crossing point.
 	 */
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
-	//bool is_strip(const Point<dim> &p, unsigned strip_width, 
-	//			unsigned strip_length, unsigned half_M_PItch);
 	PhysicalValues<dim> exact_solution(Point<dim> const &point);
 	void construct_line(double alpha, Point<dim> const &pass);
 	std::vector<std::pair<double, double>> get_data();
@@ -54,7 +50,7 @@ public:
 	std::vector<std::pair<double, double>> get_ratio();
 
 private:
-	unsigned strip_length, strip_width, detector_width, detector_length;
+	double strip_length, strip_width, detector_width, detector_length;
 	double precision;
 	Solution<dim> *sol;
 	SerratedRectGeoInfo *geo_info;
@@ -64,7 +60,6 @@ private:
 	std::vector<std::pair<double, double>> exact_solution_data;
 
 };
-
 
 
 template<unsigned dim>
@@ -77,17 +72,17 @@ StraightLine<dim>::StraightLine(double alpha, Point<dim> const &pass,
 	this->sol = sol;
 	this->geo_info = geo_info;
 
-	detector_length = geo_info->get_length();
-	detector_width = geo_info->get_width();
-	strip_length = geo_info->get_strip_length();
-	strip_width = geo_info->get_strip_width();
+	detector_length = (double)geo_info->get_length();
+	detector_width = (double)geo_info->get_width();
+	strip_length = (double)geo_info->get_strip_length();
+	strip_width = (double)geo_info->get_strip_width();
 
 	construct_line(alpha, pass);
 }
 
 template<unsigned dim>
 Point<dim> StraightLine<dim>::get_beginning(double alpha,
-														Point<dim> const &pass) {
+									Point<dim> const &pass) {
 	Point<dim> begin;
 
 	begin[1] = 0;
@@ -116,14 +111,14 @@ template<unsigned dim>
 PhysicalValues<dim> StraightLine<dim>::exact_solution(Point<dim> const &point){
 	PhysicalValues<dim> exact_value;
 
-	double x = point[0]-detector_length/2;
+	double x = (point[0]-detector_length/2)/detector_width;
 	double y = -point[1]/(detector_width-strip_width) + 1;
 	double pot;
 
-	pot = sin(M_PI*y)*sinh(M_PI*strip_length/2);
-	pot = pot/ (cosh(M_PI*x)-cos(M_PI*y)*cosh(M_PI*strip_length/2));
+	pot = sin(M_PI*y)*sinh(M_PI*strip_length/(2*detector_width));
+	pot = pot/ (cosh(M_PI*x)-cos(M_PI*y)*cosh(M_PI*strip_length/(2*detector_width)));
 
-	if(point[1] >= (detector_width-strip_width)/2)
+	if(atan(pot) <= 0)
 		pot = (atan(pot)+M_PI)/M_PI;
 	else
 		pot = (atan(pot))/M_PI;
@@ -147,23 +142,18 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 		if(!strip){
 			PhysicalValues<dim> value = sol->get_values(point);
 
-			std::pair<PhysicalValues<dim>, Point<dim>> values_at_point;
-
-			values_at_point.first = value;
-			values_at_point.second = point;
-
-			values_on_line.push_back(values_at_point);
-			solution_data.push_back(std::pair<double, double>(point[1], value.potential));
+			values_on_line.push_back(std::pair<PhysicalValues<dim>, Point<dim>>
+										(value, point));
+			solution_data.push_back(std::pair<double, double>
+									(point[1], value.potential));
 
 
 			PhysicalValues<dim> exact_value = exact_solution(point);
-			std::pair<PhysicalValues<dim>, Point<dim>> exact_values_at_point;
 
-			exact_values_at_point.first = exact_value;
-			exact_values_at_point.second = point;
-
-			exact_values_on_line.push_back(exact_values_at_point);
-			exact_solution_data.push_back(std::pair<double, double>(point[1], exact_value.potential));
+			exact_values_on_line.push_back(std::pair<PhysicalValues<dim>, Point<dim>>
+											(exact_value, point));
+			exact_solution_data.push_back(std::pair<double, double>
+									(point[1], exact_value.potential));
 		}
 
 		point[0] = point[0] + precision*cos(alpha);
