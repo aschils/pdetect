@@ -33,9 +33,9 @@ public:
 
 	MyGeometryInfo* get_geometry_info();
 
-	Solution<2> get_solution();
+	void get_solution(Solution<2> &sol);
 
-	Solution<2> get_solution_weight();
+	void get_solution_weight(Solution<2> &sol);
 
 	virtual std::string params_to_string() = 0;
 

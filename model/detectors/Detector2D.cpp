@@ -43,12 +43,12 @@ MyGeometryInfo* Detector2D::get_geometry_info() {
 	return geo_info;
 }
 
-Solution<2> Detector2D::get_solution() {
-	return solution_potential;
+void Detector2D::get_solution(Solution<2> &sol) {
+	sol = solution_potential;
 }
 
-Solution<2> Detector2D::get_solution_weight() {
-	return solution_weight_potential;
+void Detector2D::get_solution_weight(Solution<2> &sol) {
+	sol = solution_weight_potential;
 }
 
 Detector2D::~Detector2D() {
