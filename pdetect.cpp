@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	test_serrated_rect_limit_cases();
 	test_electric_field();
 	test_weighting_potential();*/
-	test_various();
+	//test_various();
 	/*test_mid_circle_rect2D_det();
 	test_mid_rect_rect_2D_det();*/
 
@@ -21,9 +21,9 @@ int main(int argc, char* argv[]) {
 	test_rectangle_width_rectangular_holes();
 	test_serrated_rectangle_gaussian();*/
 
-	//test_electrode_current();
+	test_electrode_current();
 
-	test_straight_line();
+	//test_straight_line();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();
