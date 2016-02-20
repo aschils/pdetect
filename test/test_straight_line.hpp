@@ -25,6 +25,7 @@ void test_straight_line() {
 			width, strip_length, strip_width, half_pitch, strip_potential,
 			refine_level, max_iter, stop_accuracy);
 	srdd->compute_weight();
+	srdd->draw_vtk_graph_weight_potential("weighting_pot.vtk");
 
 	Solution<2> *solution = new Solution<2>();
 	srdd->get_solution_weight(*solution);

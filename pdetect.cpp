@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 	test_serrated_rect_limit_cases();
 	test_electric_field();
 	test_weighting_potential();*/
-	test_various();
+	//test_various();
 	/*test_mid_circle_rect2D_det();
 	test_mid_rect_rect_2D_det();*/
 

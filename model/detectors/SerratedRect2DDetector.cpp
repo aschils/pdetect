@@ -44,37 +44,10 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
 			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
-			boundary_conditions_weight, false);
+			boundary_conditions_weight, true);
 
 	//nbr_of_points_along_axes();
 }
-
-/**
- * The number of points along an axis is simply the number
- * of cells along this axes plus one. 
- * (The bottom left corner of each cells plus de bottom right 
- * corner of the last cell)
- */
-/*void SerratedRect2DDetector::nbr_of_points_along_axes() {
-
- Triangulation<2>::active_cell_iterator cell = triangulation->begin_active(),
- endc = triangulation->end();
- for(; cell != endc; ++cell) {
- for(unsigned int v = 0; v < GeometryInfo<2>::faces_per_cell; ++v) {
- if(cell->face(v)->at_boundary()){
- Point<2> p = cell->face(v)->center();
-
- if(Utils::equals_double(p[1], 0, 0.000001))
- nbr_of_pts_along_x++;
- else if(Utils::equals_double(p[0], 0, 0.000001))
- nbr_of_pts_along_y++;
- }
- }
- }
-
- nbr_of_pts_along_x++;
- nbr_of_pts_along_y++;
- }*/
 
 std::string SerratedRect2DDetector::params_to_string() {
 
