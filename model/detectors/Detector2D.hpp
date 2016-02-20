@@ -12,7 +12,6 @@
 #include "../LaplaceSolver.hpp"
 #include "../MyGridGenerator.hpp"
 #include "../ZeroRightHandSide.hpp"
-#include "../StraightLine.hpp"
 #include "../boundary_conditions/BoundaryConditions.hpp"
 #include "../geometry_info/MyGeometryInfo.hpp"
 

@@ -155,7 +155,6 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 			exact_solution_data.push_back(std::pair<double, double>
 									(point[1], exact_value.potential));
 		}
-
 		point[0] = point[0] + precision*cos(alpha);
 		point[1] = point[1] + precision*sin(alpha);
 	}
