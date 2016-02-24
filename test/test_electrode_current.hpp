@@ -15,8 +15,8 @@ void test_electrode_current() {
 	unsigned nbr_of_strips = 1;
 	unsigned width = 300;
 	unsigned strip_length = 100;
-	unsigned strip_width = 0;
-	unsigned half_pitch = 150;
+	unsigned strip_width = 2;
+	unsigned half_pitch = 50;
 	unsigned refine_level = 6;
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;

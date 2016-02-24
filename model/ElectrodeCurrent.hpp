@@ -95,7 +95,7 @@ private:
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line particle_trajectory;
-	double hole_pairs_nbr_per_lgth = 75 * 0.92; //per microm
+	double hole_pairs_nbr_per_lgth = 75; //per microm
 	double strip_potential;
 	double covered_dist;
 
@@ -234,7 +234,7 @@ private:
 		Tensor<1, 2> electric_field = val.electric_field;
 		//std::cout << "electric_field (" << electric_field[0] << "," << electric_field[1] << ") ";
 		int electric_charge_sign = charge->get_charge_sign();
-		double mobility = charge->get_mobility();
+		double mobility = charge->get_mobility_saturation(electric_field);
 		return electric_charge_sign * electric_field * mobility;		//*0.86;
 	}
 
@@ -290,7 +290,7 @@ private:
 	double estimate_collection_time() {
 		//t = d^2/(mu V)
 		SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*) geo_info;
-		double max_mobility = h.get_mobility();
+		double max_mobility = h.get_mobility_300K();
 		double dist_to_strip = sg->get_width()-sg->get_strip_width();
 		return std::pow(dist_to_strip,2) / (max_mobility * strip_potential);
 	}
