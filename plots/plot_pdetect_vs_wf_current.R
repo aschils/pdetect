@@ -2,7 +2,8 @@
 nbr_of_pt_spline = 1000
 
 my_mse = function(v, w){
-  norm(as.matrix(v-w))^2
+  diff = v-w
+  sum(diff*diff)
 }
 
 dir_names = list.dirs(path = ".", full.names = FALSE, recursive = FALSE)
@@ -44,10 +45,11 @@ for(dir_name in dir_names){
   pdet_y = pdet_spline(t)
   wf_y = wf_spline(t)
 
+  print(dir_name)
   print(my_mse(pdet_y, wf_y))
 
   #Plot ratio
-  ratio = pdet_y/wf_y
+  ratio = (pdet_y-1)/(wf_y-1)
   pdf(paste(plot_file,"_ratio.pdf",sep=""))
   #print(ratio)
   plot(x=t,ratio, col="red")
