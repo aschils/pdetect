@@ -7,7 +7,5 @@
 
 #pragma once
 
-const bool ENABLE_VTK = true;
-
 //Physical constants
 const double ELECTRON_CHARGE = 1.602176e-13; // microCoulomb
