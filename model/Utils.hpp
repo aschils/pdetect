@@ -51,37 +51,6 @@ public:
 			mkdir(cpath, 0777);
 	}
 
-	template<unsigned dim>
-	static void parse_gnuplot(std::stringstream &gnuplot_stream,
-			unsigned nbr_of_components,
-			std::vector<std::pair<std::vector<double>, std::vector<double> > > &coord_and_data) {
-
-		std::string line;
-		unsigned numbers_per_line = dim + nbr_of_components;
-
-		while (getline(gnuplot_stream, line)) {
-
-			if (line.length() == 0 || line[0] == '#' || line[0] == '\n')
-				continue;
-
-			std::vector<double> numbers = parse_gnuplot_line(line);
-			if (numbers.size() != numbers_per_line)
-				continue;
-
-			std::vector<double> point_coord(dim);
-			for (unsigned i = 0; i < dim; i++)
-				point_coord[i] = numbers[i];
-
-			std::vector<double> point_data(nbr_of_components);
-			for (unsigned i = dim; i < numbers_per_line; i++)
-				point_data[i - dim] = numbers[i];
-
-			std::pair<std::vector<double>, std::vector<double> > coord_and_data_pair(
-					point_coord, point_data);
-			coord_and_data.push_back(coord_and_data_pair);
-		}
-	}
-
 	/**
 	 * Sort cells in ascending order i.e. the bottom left point is used
 	 * for comparison with the following ordering:
@@ -135,6 +104,11 @@ public:
 		std::sort(v->begin(), v->end(), cmp);
 	}
 
+	/*********** WARNING ***********/
+	/*
+	 * GAUSSIAN related function not yet tested / fully implemented
+	 */
+
 	static double gaussian(double peak, double standard_deviation,
 			double center, double x) {
 		double exp_arg = -std::pow((x - center), 2)
@@ -155,6 +129,8 @@ public:
 		}
 		return x + center;
 	}
+
+	/*********** END WARNING ***********/
 
 	template<unsigned dim>
 	static std::vector<double> point_to_std_vec(Point<dim> p) {
@@ -205,20 +181,5 @@ public:
 
 	static bool is_odd(int nbr){
 		return !is_even(nbr);
-	}
-
-private:
-
-	static std::vector<double> parse_gnuplot_line(std::string line) {
-
-		std::vector<double> numbers;
-		std::stringstream stream(line);
-		std::string token;
-
-		while (getline(stream, token, ' ')) {
-			double number = std::stod(token);
-			numbers.push_back(number);
-		}
-		return numbers;
 	}
 };
