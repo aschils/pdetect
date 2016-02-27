@@ -185,16 +185,24 @@ public:
 
 	template <typename T1, typename T2>
 	static void write_vector_of_pair(std::string out_file_path,
-			std::vector<std::pair<T1, T2> > &vec_of_pair){
+			std::vector<std::pair<T1, T2> > &vec_of_pair,
+			bool header, std::string var_name1, std::string var_name2){
 
 		std::ofstream out_file;
 		out_file.open(out_file_path, std::fstream::trunc);
 
 		if (out_file.is_open()) {
+
+			if(header)
+				out_file << var_name1 << "    " << var_name2 << std::endl;
+
 			for(unsigned i=0; i<vec_of_pair.size(); i++){
 				out_file << vec_of_pair[i].first << "    ";
 				out_file << vec_of_pair[i].second << std::endl;
 			}
+		}
+		else{
+			std::cout << "Error, unable to open file: " << out_file_path << std::endl;
 		}
 
 		out_file.close();
