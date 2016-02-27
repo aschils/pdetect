@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
 	test_rectangle_width_rectangular_holes();
 	test_serrated_rectangle_gaussian();*/
 
-	test_electrode_current();
-
+	//test_electrode_current();
+	gen_comparison_data();
 	//test_straight_line();
 
 	//Cli cli(argc, argv);
