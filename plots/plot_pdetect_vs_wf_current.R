@@ -2,7 +2,7 @@
 nbr_of_pt_spline = 1000
 
 my_mse = function(v, w){
-  norm(as.matrix(v-w))/nbr_of_pt_spline
+  norm(as.matrix(v-w))^2
 }
 
 pdetect_file = args[1]
