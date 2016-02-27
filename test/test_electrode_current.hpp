@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../model/ElectrodeCurrent.hpp"
+#include "../model/ResultsOut.hpp"
 
 void test_electrode_current() {
 
@@ -21,17 +22,17 @@ void test_electrode_current() {
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 
-	//std::string output_dir = "tests_electrode_current";
-	//Utils::create_directory_if_not_exists(output_dir);
+	std::string output_dir = "tests_electrode_current/";
+	Utils::create_directory_if_not_exists(output_dir);
 
 	SerratedRect2DDetector *srdd = new SerratedRect2DDetector(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
 			refine_level, max_iter, stop_accuracy);
 	srdd->compute();
 	srdd->compute_weight();
-	srdd->draw_vtk_graph_potential("electrode_pot.vtk");
-	srdd->draw_vtk_graph_weight_potential("electrode_pot_weight.vtk");
-	srdd->draw_vtk_graph_gradient_of_potential("electrode_pot_grad.vtk");
+	srdd->draw_vtk_graph_potential(output_dir+"electrode_pot.vtk");
+	srdd->draw_vtk_graph_weight_potential(output_dir+"electrode_pot_weight.vtk");
+	srdd->draw_vtk_graph_gradient_of_potential(output_dir+"electrode_pot_grad.vtk");
 
 	Solution<2> *solution = new Solution<2>();
 
@@ -55,9 +56,10 @@ void test_electrode_current() {
 
 	//std::cout << current_vs_time[0].second << " " << std::endl;
 
-	std::string output_graph = "current";
+	std::string output_graph = output_dir+"current";
 	//gnuplot --persist -e 'set terminal png; plot "current" with dots;' > out.png
 	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
+	ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t.txt", current_vs_time);
 
 	delete solution;
 	delete weight_solution;
