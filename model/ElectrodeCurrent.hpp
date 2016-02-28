@@ -289,9 +289,8 @@ private:
 
 	double estimate_collection_time() {
 		//t = d^2/(mu V)
-		SerratedRectGeoInfo *sg = (SerratedRectGeoInfo*) geo_info;
 		double max_mobility = h.get_mobility_300K();
-		double dist_to_strip = sg->get_width()-sg->get_strip_width();
+		double dist_to_strip = geo_info->get_width()-geo_info->get_strip_width();
 		return std::pow(dist_to_strip,2) / (max_mobility * strip_potential);
 	}
 

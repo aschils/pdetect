@@ -185,14 +185,17 @@ void test_mid_rect_rect_2D_det() {
 	unsigned max_iter = 10000;
 	double max_error = 10e-12;
 
+	std::string output_dir = "tests_mid_rect_rect_det/";
+	Utils::create_directory_if_not_exists(output_dir);
+
 	MidRectRect2DDetector det(half_width, strip_length, half_strip_width,
 			half_inter_potential_srcs_dist, nbr_of_strips, potential,
 			refine_level, max_iter, max_error);
 
 	det.compute();
 	det.compute_weight();
-	det.draw_vtk_graph_potential("out.vtk");
-	det.draw_vtk_graph_weight_potential("out_weight.vtk");
+	det.draw_vtk_graph_potential(output_dir+"out.vtk");
+	det.draw_vtk_graph_weight_potential(output_dir+"out_weight.vtk");
 }
 
 void test_various() {
