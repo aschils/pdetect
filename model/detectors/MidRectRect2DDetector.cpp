@@ -22,7 +22,8 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
-	this->geo_info = new MidRectRectGeoInfo();
+	this->geo_info = new MidRectRectGeoInfo(half_width, half_strip_width,
+			strip_length, nbr_of_strips, half_inter_strip_dist);
 
 	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation,
 			half_width, strip_length, half_strip_width, half_inter_strip_dist,

@@ -40,4 +40,9 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 		return l;
 	}
 
+	std::vector<Segment> get_geometry_segments(){
+		std::vector<Segment> v;
+		return v;
+	}
+
 };

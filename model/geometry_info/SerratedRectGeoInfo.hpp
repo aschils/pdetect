@@ -128,14 +128,21 @@ public:
 			nbr_of_prev_periodic_str -= 1;
 		}
 
-		return this->nbr_of_strips > 0 && is_strip<dim>(p)
-				&& nbr_of_prev_periodic_str == periodic_str_before_mid_strip;
+		return this->nbr_of_strips > 0
+				&& is_strip < dim > (p) &&nbr_of_prev_periodic_str
+						== periodic_str_before_mid_strip;
 	}
 
-	/**
-	 * intersections are placed in increasing x position
-	 */
-	std::vector<Point<2>> boundaries_intersections(Line line) {
+	Line get_mid_length_vertical_line() {
+		double mid_length = length / 2.0;
+		Point<2> p1(mid_length, 0);
+		Point<2> p2(mid_length, 1);
+		Segment seg(p1, p2);
+		return Line(seg);
+	}
+
+protected:
+	std::vector<Segment> get_geometry_segments() {
 
 		std::vector<Segment> segments;
 
@@ -204,29 +211,7 @@ public:
 		Segment bot_side_seg(bot_side_left, bot_side_right);
 		segments.push_back(bot_side_seg);
 
-		//Compute intersections with all segments of detector boundary
-		std::vector<Point<2>> intersections;
-
-		for (unsigned i = 0; i < segments.size(); i++) {
-			add_intersection(line, segments[i], intersections);
-			//std::cout << "[(" << segments[i].p1[0] << "," <<
-			//		segments[i].p1[1] << "),(" <<  segments[i].p2[0] << "," <<
-			//		segments[i].p2[1] << ")]" << std::endl;
-		}
-
-		Utils::sort_points_by_coord<2>(&intersections);
-		intersections.erase(unique(intersections.begin(), intersections.end()),
-				intersections.end());
-		intersections.shrink_to_fit();
-		return intersections;
-	}
-
-	Line get_mid_length_vertical_line() {
-		double mid_length = length/2.0;
-		Point<2> p1(mid_length, 0);
-		Point<2> p2(mid_length, 1);
-		Segment seg(p1,p2);
-		return Line(seg);
+		return segments;
 	}
 
 private:
@@ -262,36 +247,4 @@ private:
 		else
 			return nbr_of_strips * (strip_length + pitch);
 	}
-
-	bool intersect_segment(Line line, Segment seg, Point<2> &intersect_pt) {
-		return line.intersection_point(seg, intersect_pt);
-	}
-
-	void add_intersection(Line line, Segment seg,
-			std::vector<Point<2>> &intersections) {
-		Point<2> intersect;
-		if (intersect_segment(line, seg, intersect)) {
-
-			//We must remove the intersection point
-			//if at + and -epsilon not in detector OR
-			// if at + and - epsilon in detector
-
-			double epsilon = 0.001;
-			Point<2> eps_direction_vec = epsilon * line.get_direction_vector();
-			Point<2> before(intersect[0] - eps_direction_vec[0],
-					intersect[1] - eps_direction_vec[1]);
-			Point<2> after = intersect + eps_direction_vec;
-
-			bool before_in_det = is_point_inside_detector_2D(before);
-			bool after_in_det = is_point_inside_detector_2D(after);
-
-			bool is_a_cross_boundary_point = !((before_in_det && after_in_det)
-					|| (!before_in_det && !after_in_det));
-
-			if (is_a_cross_boundary_point) {
-				intersections.push_back(intersect);
-			}
-		}
-	}
-
 };
