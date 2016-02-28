@@ -25,6 +25,8 @@ int main(int argc, char* argv[]) {
 	test_electrode_current_mid_rect_rect();
 	//gen_comparison_data();
 	//test_straight_line();
+	//gen_comparison_data();
+	test_straight_line();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();

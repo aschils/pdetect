@@ -33,6 +33,8 @@
 
 #include <deal.II/numerics/data_out_dof_data.h>
 
+#include <deal.II/numerics/error_estimator.h>
+
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
@@ -88,8 +90,11 @@ private:
 	const Function<dim> *right_hand_side;
 	BoundaryConditions<dim> *boundary_conditions;
 
+	Vector<float> uncertainty_per_cell;
+
 	void setup_system();
 	void assemble_system();
+	void compute_uncertainties();
 	void solve();
 	void output_results(std::string result_file_path) const;
 	void build_solution(
@@ -194,6 +199,19 @@ void LaplaceSolver<dim>::assemble_system() {
 }
 
 template<unsigned dim>
+void LaplaceSolver<dim>::compute_uncertainties() {
+	Vector<float> estimated_error_per_cell(triangulation->n_active_cells());
+    KellyErrorEstimator<dim>::estimate (dof_handler,
+	                                    QGauss<dim-1>(3),
+	                                    typename FunctionMap<dim>::type(),
+	                                    solution_vec,
+	                                    estimated_error_per_cell);
+    uncertainty_per_cell = estimated_error_per_cell;
+    for(int i=0; i < uncertainty_per_cell.size(); i++)
+    	std::cout << uncertainty_per_cell[i] << std::endl;
+}
+
+template<unsigned dim>
 void LaplaceSolver<dim>::solve() {
 	SolverControl solver_control(max_iter, stop_accuracy);
 	SolverCG<> solver(solver_control);
@@ -206,6 +224,7 @@ void LaplaceSolver<dim>::compute_solution() {
 	setup_system();
 	assemble_system();
 	solve();
+	compute_uncertainties();
 }
 
 template<unsigned dim>
@@ -221,7 +240,7 @@ void LaplaceSolver<dim>::build_solution(
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
-
+	unsigned pos = 0;
 	for (; cell != endc; cell++) {
 
 		fe_values->reinit(cell);
@@ -230,13 +249,21 @@ void LaplaceSolver<dim>::build_solution(
 				gradient_at_pts_of_one_cell);
 		fe_values->get_function_hessians(solution_vec,
 				hessian_at_pts_of_one_cell);
-		ValuesAtCell<dim> values(fun_at_pts_of_one_cell,
+
+		std::vector<std::pair<double, double>> fun_at_cell;
+		for(int i=0; i < vertices_per_cell; i++) {
+			fun_at_cell.push_back(std::pair<double, double>
+						(fun_at_pts_of_one_cell[i], uncertainty_per_cell[pos]));
+		}
+
+		ValuesAtCell<dim> values(fun_at_cell,
 				gradient_at_pts_of_one_cell, hessian_at_pts_of_one_cell);
 		std::pair<typename DoFHandler<dim>::active_cell_iterator,
 				ValuesAtCell<dim> > values_at_cell;
 		values_at_cell.first = cell;
 		values_at_cell.second = values;
 		values_at_cells.push_back(values_at_cell);
+		pos++;
 	}
 }
 

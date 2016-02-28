@@ -17,6 +17,7 @@
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/dofs/dof_handler.h>
+//#include "Solution.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -170,6 +171,26 @@ public:
 				
 				gnu_graph << data[i].first << "\t"
 						  << data[i].second << std::endl;;
+			}
+		}
+		gnu_graph.close();
+	}
+
+	template<unsigned dim>
+	static void write_gnu_error_data_file(std::string file, std::vector<std::pair
+											<double, std::pair<double, double>>> data) {
+
+		std::ofstream gnu_graph;
+		gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+		if(gnu_graph.is_open()){
+
+			gnu_graph << "# X\tY\tZ" << std::endl;
+			for(unsigned i = 0; i < data.size(); i++){
+				
+				gnu_graph << data[i].first << "\t"
+						  << data[i].second.first << "\t"
+						  << data[i].second.second << std::endl;;
 			}
 		}
 		gnu_graph.close();
