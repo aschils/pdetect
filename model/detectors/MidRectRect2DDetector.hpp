@@ -24,6 +24,5 @@ public:
 	std::string params_to_string();
 
 private:
-	unsigned half_width, strip_length, half_strip_width;
-	unsigned half_inter_strip_dist, nbr_of_strips;
+	MidRectRectGeoInfo *mrr_geo_info;
 };

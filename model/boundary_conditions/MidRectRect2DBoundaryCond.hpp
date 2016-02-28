@@ -9,18 +9,20 @@
 
 #include "BoundaryConditions.hpp"
 #include "MidRectRect2DBoundaryValues.hpp"
+#include "../geometry_info/MidRectRectGeoInfo.hpp"
 
 template<unsigned dim>
 class MidRectRect2DBoundaryCond: public BoundaryConditions<dim> {
 
 public:
-	MidRectRect2DBoundaryCond(unsigned half_width, double potential,
-			unsigned nbr_of_strips, unsigned half_inter_potential_srcs_dist,
-			unsigned strip_length, unsigned half_strip_width) {
-		set_class_var(nbr_of_strips, half_inter_potential_srcs_dist,
-				strip_length);
+	MidRectRect2DBoundaryCond(MidRectRectGeoInfo *geo_info,
+			double potential) {
+		set_class_var(geo_info->get_nbr_of_strips(),
+					  geo_info->get_half_inter_strip_dist(),
+					  geo_info->get_strip_length());
 		this->values = new MidRectRect2DBoundaryValues<dim>(potential,
-						half_strip_width, half_width);
+						geo_info->get_half_strip_width(),
+						geo_info->get_half_width());
 	}
 
 	void set_periodicity_constraints(

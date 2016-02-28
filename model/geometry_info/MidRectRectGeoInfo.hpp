@@ -74,6 +74,10 @@ public:
 		return width;
 	}
 
+	unsigned get_half_width(){
+		return half_width;
+	}
+
 	//Return the maximum length of the domain
 	unsigned get_length() {
 		return length;
@@ -93,6 +97,14 @@ public:
 
 	unsigned get_strip_width() {
 		return 2 * half_strip_width;
+	}
+
+	unsigned get_half_strip_width() {
+		return half_strip_width;
+	}
+
+	unsigned get_half_inter_strip_dist() {
+		return half_inter_strip_dist;
 	}
 
 	Line get_mid_length_vertical_line() {
@@ -129,16 +141,17 @@ public:
 
 		//Add strip borders
 		double x_shift = 0;
-		double periodic_struct_length = strip_length+2*half_inter_strip_dist;
+		double periodic_struct_length = strip_length
+				+ 2 * half_inter_strip_dist;
 
 		for (unsigned i = 0; i < nbr_of_strips; i++) {
 
-			x_shift += i*periodic_struct_length;
+			x_shift += i * periodic_struct_length;
 
-			Point<2> top_left_strip(left_x_strip+x_shift, top_y_strip);
-			Point<2> bot_left_strip(left_x_strip+x_shift, bot_y_strip);
-			Point<2> top_right_strip(right_x_strip+x_shift, top_y_strip);
-			Point<2> bot_right_strip(right_x_strip+x_shift, bot_y_strip);
+			Point<2> top_left_strip(left_x_strip + x_shift, top_y_strip);
+			Point<2> bot_left_strip(left_x_strip + x_shift, bot_y_strip);
+			Point<2> top_right_strip(right_x_strip + x_shift, top_y_strip);
+			Point<2> bot_right_strip(right_x_strip + x_shift, bot_y_strip);
 
 			Segment bot_strip(bot_left_strip, bot_right_strip);
 			Segment top_strip(top_left_strip, top_right_strip);
