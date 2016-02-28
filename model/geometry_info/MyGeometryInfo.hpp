@@ -27,6 +27,7 @@ public:
 	std::vector<Point<2>> boundaries_intersections(Line line) {
 
 		std::vector<Segment> segments = get_geometry_segments();
+
 		//Compute intersections with all segments of detector boundary
 		std::vector<Point<2>> intersections;
 

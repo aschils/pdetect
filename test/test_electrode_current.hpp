@@ -10,7 +10,7 @@
 #include "../model/ElectrodeCurrent.hpp"
 #include "../model/ResultsOut.hpp"
 
-void test_electrode_current() {
+void test_electrode_current_serrated() {
 
 	double strip_potential = 90; //typiquement 100V
 	unsigned nbr_of_strips = 1;
@@ -61,11 +61,74 @@ void test_electrode_current() {
 	std::string output_graph = output_dir + "current";
 	//gnuplot --persist -e 'set terminal png; plot "current" with dots;' > out.png
 	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
-	ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t.txt",
+	ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t_5_strip.txt",
 			current_vs_time);
 
 	std::cout << "detector params: " << srdd.params_to_string() << std::endl;
 }
+
+void test_electrode_current_mid_rect_rect() {
+
+	double strip_potential = 90; //typiquement 100V
+	unsigned nbr_of_strips = 3;
+	unsigned half_width = 150;
+	unsigned strip_length = 100;
+	unsigned half_strip_width = 10;
+	unsigned half_inter_strip_dist = 50;
+	unsigned refine_level = 6;
+	unsigned max_iter = 10000;
+	double stop_accuracy = 10e-12;
+
+	std::string output_dir = "tests_electrode_current/";
+	Utils::create_directory_if_not_exists(output_dir);
+
+	MidRectRect2DDetector *mrr = new MidRectRect2DDetector(half_width,
+			strip_length, half_strip_width, half_inter_strip_dist,
+			nbr_of_strips, strip_potential, refine_level,
+			max_iter, stop_accuracy);
+	mrr->compute();
+	mrr->compute_weight();
+	mrr->draw_vtk_graph_potential(output_dir + "electrode_pot_mid_rect_rect.vtk");
+	mrr->draw_vtk_graph_weight_potential(
+			output_dir + "electrode_pot_weight_mid_rect_rect.vtk");
+	mrr->draw_vtk_graph_gradient_of_potential(
+			output_dir + "electrode_pot_grad_mid_rect_rect.vtk");
+
+	Solution<2> *solution = new Solution<2>();
+
+	mrr->get_solution(*solution);
+	Solution<2> *weight_solution = new Solution<2>();
+	mrr->get_solution_weight(*weight_solution);
+	MyGeometryInfo *geo_info = mrr->get_geometry_info();
+
+	//Point<2> p1(0.0,half_width*2);
+	//Point<2> p2(nbr_of_strips*(strip_length+2*half_inter_strip_dist), 0);
+	Point<2> p1(0,20);
+	Point<2> p2(20, 20);
+	Line particle_traj(p1,p2);
+
+	ElectrodeCurrent<2> ec(strip_potential, geo_info, solution, weight_solution,
+			particle_traj, 13);
+	//ec.print_charges();
+	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
+	std::vector<std::pair<double, double> > current_vs_time;
+	ec.compute_current(current_vs_time);
+
+	//std::cout << current_vs_time[0].second << " " << std::endl;
+
+	std::string output_graph = output_dir + "current_mrr";
+	//gnuplot --persist -e 'set terminal png; plot "current" with dots;' > out.png
+	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
+	//ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t_mrr.txt",
+	//		current_vs_time);
+
+	std::cout << "detector params: " << mrr->params_to_string() << std::endl;
+
+	delete solution;
+	delete weight_solution;
+	delete mrr;
+}
+
 
 void gen_comparison_data() {
 
