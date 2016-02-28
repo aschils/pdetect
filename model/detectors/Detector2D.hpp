@@ -55,7 +55,8 @@ protected:
 	BoundaryConditions<2> *boundary_conditions_weight;
 	LaplaceSolver<2> *potential_solver_weight;
 
-	Solution<2> solution_potential, solution_weight_potential;
+	Solution<2> *solution_potential = new Solution<2>(); 
+	Solution<2> *solution_weight_potential = new Solution<2>();
 
 	MyGeometryInfo *geo_info;
 

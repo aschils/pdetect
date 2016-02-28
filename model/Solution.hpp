@@ -24,10 +24,13 @@ template<unsigned dim>
 class PhysicalValues {
 public:
 	double potential;
+	double uncertainty;
 	Tensor<1, dim> electric_field;
 
-	PhysicalValues(double potential, Tensor<1, dim> electric_field) {
+	PhysicalValues(double potential, double uncertainty, 
+					Tensor<1, dim> electric_field) {
 		this->potential = potential;
+		this->uncertainty = uncertainty;
 		this->electric_field = electric_field;
 	}
 
@@ -37,12 +40,13 @@ public:
 template<unsigned dim>
 class ValuesAtCell {
 public:
-	std::vector<double> fun;
+	std::vector<std::pair<double, double>> fun;
 	std::vector<Tensor<1, dim> > gradient;
 	std::vector<Tensor<2, dim> > hessian;
 
-	ValuesAtCell(std::vector<double> fun, std::vector<Tensor<1, dim> > gradient,
-			std::vector<Tensor<2, dim> > hessian) {
+	ValuesAtCell(std::vector<std::pair<double, double>> fun, 
+				std::vector<Tensor<1, dim> > gradient,
+				std::vector<Tensor<2, dim> > hessian) {
 		this->fun = fun;
 		this->gradient = gradient;
 		this->hessian = hessian;
@@ -191,19 +195,20 @@ public:
 			delta_y = point[1] - y_top;
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
-		extrapol.potential = values_at_cells[pos].second.fun[closest]
+		extrapol.potential = values_at_cells[pos].second.fun[closest].first
 				+ values_at_cells[pos].second.gradient[closest][0] * delta_x
 				+ values_at_cells[pos].second.gradient[closest][1] * delta_y
 				+ 0.5*(values_at_cells[pos].second.hessian[closest][0][0] * delta_x * delta_x
 				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y * delta_y)
 				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y * delta_x;
 
+		extrapol.uncertainty = values_at_cells[pos].second.fun[closest].second;
+
 		for(unsigned i = 0; i < dim; i++) {
 			extrapol.electric_field[i] = -(values_at_cells[pos].second.gradient[closest][i]
 					+ values_at_cells[pos].second.hessian[closest][i][0] * delta_x
 					+ values_at_cells[pos].second.hessian[closest][i][1] * delta_y);
 		}
-
 		return extrapol;
 	}
 

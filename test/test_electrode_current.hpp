@@ -25,23 +25,23 @@ void test_electrode_current() {
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	SerratedRect2DDetector *srdd = new SerratedRect2DDetector(nbr_of_strips,
+	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
 			refine_level, max_iter, stop_accuracy);
-	srdd->compute();
-	srdd->compute_weight();
-	srdd->draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
-	srdd->draw_vtk_graph_weight_potential(
+	srdd.compute();
+	srdd.compute_weight();
+	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
+	srdd.draw_vtk_graph_weight_potential(
 			output_dir + "electrode_pot_weight.vtk");
-	srdd->draw_vtk_graph_gradient_of_potential(
+	srdd.draw_vtk_graph_gradient_of_potential(
 			output_dir + "electrode_pot_grad.vtk");
 
-	Solution<2> *solution = new Solution<2>();
+	Solution<2> solution;
 
-	srdd->get_solution(*solution);
-	Solution<2> *weight_solution = new Solution<2>();
-	srdd->get_solution_weight(*weight_solution);
-	MyGeometryInfo *geo_info = srdd->get_geometry_info();
+	srdd.get_solution(solution);
+	Solution<2> weight_solution;
+	srdd.get_solution_weight(weight_solution);
+	MyGeometryInfo *geo_info = srdd.get_geometry_info();
 
 	Point<2> p1(100, 0.0);
 	Point<2> p2(100, 100);
@@ -49,7 +49,7 @@ void test_electrode_current() {
 
 	Line particle_traj(0, 149);
 
-	ElectrodeCurrent<2> ec(strip_potential, geo_info, solution, weight_solution,
+	ElectrodeCurrent<2> ec(strip_potential, geo_info, &solution, &weight_solution,
 			10);
 	//ec.print_charges();
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
@@ -64,11 +64,7 @@ void test_electrode_current() {
 	ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t.txt",
 			current_vs_time);
 
-	std::cout << "detector params: " << srdd->params_to_string() << std::endl;
-
-	delete solution;
-	delete weight_solution;
-	delete srdd;
+	std::cout << "detector params: " << srdd.params_to_string() << std::endl;
 }
 
 void gen_comparison_data() {
