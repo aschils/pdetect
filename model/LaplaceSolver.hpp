@@ -119,7 +119,6 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->stop_accuracy = stop_accuracy;
 
 	quadrature_formula = new QGauss<dim>(2);
-	;
 	fe_values = new FEValues<dim>(fe, *quadrature_formula,
 			update_values | update_gradients | update_quadrature_points
 					| update_JxW_values | update_second_derivatives);
@@ -207,8 +206,6 @@ void LaplaceSolver<dim>::compute_uncertainties() {
 	                                    solution_vec,
 	                                    estimated_error_per_cell);
     uncertainty_per_cell = estimated_error_per_cell;
-    for(int i=0; i < uncertainty_per_cell.size(); i++)
-    	std::cout << uncertainty_per_cell[i] << std::endl;
 }
 
 template<unsigned dim>

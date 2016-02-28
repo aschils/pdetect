@@ -17,7 +17,7 @@ void test_straight_line() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 1;
 	unsigned half_pitch = 150;
-	unsigned refine_level = 4;
+	unsigned refine_level = 7;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 
@@ -34,7 +34,7 @@ void test_straight_line() {
 
 	double x = half_pitch + strip_length / 2;
 	Point<2> pass(x, 0);
-	double precision = 5;
+	double precision = 0.01;
 	StraightLine<2> line(M_PI / 2, pass, &solution, geo_info, precision);
 
 	std::vector<std::pair<double, std::pair<double, double>>> data = line.get_data();

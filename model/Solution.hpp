@@ -129,7 +129,7 @@ public:
 		return pos;
 	}
 
-	std::pair<unsigned, unsigned> get_closest_point(Point<dim> const &point) {
+	/*std::pair<unsigned, unsigned> get_closest_point(Point<dim> const &point) {
 
 		unsigned pos = get_cell(point);
 		std::pair<unsigned, unsigned> closest_point;
@@ -168,13 +168,15 @@ public:
 		closest_point.second = closest;
 
 		return closest_point;
-	}
+	}*/
 
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
-		std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
-		unsigned pos = closest_point.first;
-		unsigned closest = closest_point.second;
+		//std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
+		//unsigned pos = closest_point.first;
+		//unsigned closest = closest_point.second;
+
+		unsigned pos = get_cell(point);
 
 		PhysicalValues<dim> extrapol;
 
@@ -185,29 +187,29 @@ public:
 
 		double delta_x;
 		double delta_y;
-		if (closest == 0 || closest == 2)
+		//if (closest == 0 || closest == 2)
 			delta_x = point[0] - x_left;
-		else
-			delta_x = point[0] - x_right;
-		if (closest == 0 || closest == 1)
+		/*else
+			delta_x = point[0] - x_right;*/
+		//if (closest == 0 || closest == 1)
 			delta_y = point[1] - y_bottom;
-		else
-			delta_y = point[1] - y_top;
+		/*else
+			delta_y = point[1] - y_top;*/
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
-		extrapol.potential = values_at_cells[pos].second.fun[closest].first
-				+ values_at_cells[pos].second.gradient[closest][0] * delta_x
-				+ values_at_cells[pos].second.gradient[closest][1] * delta_y
-				+ 0.5*(values_at_cells[pos].second.hessian[closest][0][0] * delta_x * delta_x
-				+ values_at_cells[pos].second.hessian[closest][1][1] * delta_y * delta_y)
-				+ values_at_cells[pos].second.hessian[closest][0][1] * delta_y * delta_x;
+		extrapol.potential = values_at_cells[pos].second.fun[0].first
+				+ values_at_cells[pos].second.gradient[0][0] * delta_x
+				+ values_at_cells[pos].second.gradient[0][1] * delta_y
+				+ 0.5*(values_at_cells[pos].second.hessian[0][0][0] * delta_x * delta_x
+				+ values_at_cells[pos].second.hessian[0][1][1] * delta_y * delta_y)
+				+ values_at_cells[pos].second.hessian[0][0][1] * delta_y * delta_x;
 
-		extrapol.uncertainty = values_at_cells[pos].second.fun[closest].second;
+		extrapol.uncertainty = values_at_cells[pos].second.fun[0].second;
 
 		for(unsigned i = 0; i < dim; i++) {
-			extrapol.electric_field[i] = -(values_at_cells[pos].second.gradient[closest][i]
-					+ values_at_cells[pos].second.hessian[closest][i][0] * delta_x
-					+ values_at_cells[pos].second.hessian[closest][i][1] * delta_y);
+			extrapol.electric_field[i] = -(values_at_cells[pos].second.gradient[0][i]
+					+ values_at_cells[pos].second.hessian[0][i][0] * delta_x
+					+ values_at_cells[pos].second.hessian[0][i][1] * delta_y);
 		}
 		return extrapol;
 	}
