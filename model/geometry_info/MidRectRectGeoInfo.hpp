@@ -46,8 +46,7 @@ public:
 			return false;
 
 		double x = p[0];
-		unsigned periodic_struct_lgth = 2
-				* (half_strip_width + half_inter_strip_dist);
+		unsigned periodic_struct_lgth = strip_length + 2*half_inter_strip_dist;
 		unsigned nbr_of_periodic_struct_before = x / periodic_struct_lgth;
 
 		//Shift the coordinate system origin at the middle of the periodic
