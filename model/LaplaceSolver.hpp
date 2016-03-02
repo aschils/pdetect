@@ -34,6 +34,7 @@
 #include <deal.II/numerics/data_out_dof_data.h>
 
 #include <deal.II/numerics/error_estimator.h>
+#include <deal.II/grid/grid_refinement.h>
 
 #include <fstream>
 #include <iostream>
@@ -72,7 +73,7 @@ public:
 private:
 
 	bool constraints_are_periodic;
-	unsigned max_iter;
+	unsigned max_iter, refine_level;
 	double stop_accuracy;
 
 	Triangulation<dim> *triangulation;
@@ -94,8 +95,9 @@ private:
 
 	void setup_system();
 	void assemble_system();
-	void compute_uncertainties();
 	void solve();
+	void compute_uncertainties();
+	void refine_grid();
 	void output_results(std::string result_file_path) const;
 	void build_solution(
 			std::vector<
@@ -117,6 +119,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->boundary_conditions = boundary_conditions;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
+	this->refine_level = refine_level;
 
 	quadrature_formula = new QGauss<dim>(2);
 	fe_values = new FEValues<dim>(fe, *quadrature_formula,
@@ -132,7 +135,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 
 		}
 	}
-	this->triangulation->refine_global(refine_level);
+	this->triangulation->refine_global(1);
 }
 
 template<unsigned dim>
@@ -198,6 +201,14 @@ void LaplaceSolver<dim>::assemble_system() {
 }
 
 template<unsigned dim>
+void LaplaceSolver<dim>::solve() {
+	SolverControl solver_control(max_iter, stop_accuracy);
+	SolverCG<> solver(solver_control);
+	solver.solve(system_matrix, solution_vec, system_rhs,
+			PreconditionIdentity());
+}
+
+template<unsigned dim>
 void LaplaceSolver<dim>::compute_uncertainties() {
 	Vector<float> estimated_error_per_cell(triangulation->n_active_cells());
     KellyErrorEstimator<dim>::estimate (dof_handler,
@@ -209,19 +220,23 @@ void LaplaceSolver<dim>::compute_uncertainties() {
 }
 
 template<unsigned dim>
-void LaplaceSolver<dim>::solve() {
-	SolverControl solver_control(max_iter, stop_accuracy);
-	SolverCG<> solver(solver_control);
-	solver.solve(system_matrix, solution_vec, system_rhs,
-			PreconditionIdentity());
+void LaplaceSolver<dim>::refine_grid() {
+	GridRefinement::refine_and_coarsen_fixed_number(*triangulation,
+													uncertainty_per_cell,
+													0.3, 0);
+	triangulation->execute_coarsening_and_refinement();
 }
 
 template<unsigned dim>
 void LaplaceSolver<dim>::compute_solution() {
-	setup_system();
-	assemble_system();
-	solve();
-	compute_uncertainties();
+	for(int i = 0; i < refine_level; i++) {
+		if(i != 0)
+			refine_grid();
+		setup_system();
+		assemble_system();
+		solve();
+		compute_uncertainties();
+	}
 }
 
 template<unsigned dim>

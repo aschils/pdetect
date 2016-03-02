@@ -17,7 +17,7 @@ void test_straight_line() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 1;
 	unsigned half_pitch = 150;
-	unsigned refine_level = 7;
+	unsigned refine_level = 12;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 

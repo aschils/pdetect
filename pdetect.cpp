@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	test_serrated_rectangle_gaussian();*/
 
 	//test_electrode_current();
-	test_electrode_current_mid_rect_rect();
+	//test_electrode_current_mid_rect_rect();
 	//gen_comparison_data();
 	//test_straight_line();
 	//gen_comparison_data();
