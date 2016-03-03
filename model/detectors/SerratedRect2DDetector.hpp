@@ -25,12 +25,12 @@ class SerratedRect2DDetector : public Detector2D {
 public:
 	SerratedRect2DDetector(unsigned nbr_of_strips,
 			unsigned strip_length, unsigned strip_width, unsigned half_pitch,
-			double strip_potential, unsigned refine_level, unsigned max_iter,
+			double strip_potential, double refine_accuracy, unsigned max_iter,
 			double stop_accuracy);
 
 	SerratedRect2DDetector(unsigned nbr_of_strips, unsigned width,
 				unsigned strip_length, unsigned strip_width, unsigned half_pitch,
-				double strip_potential, unsigned refine_level, unsigned max_iter,
+				double strip_potential, double refine_accuracy, unsigned max_iter,
 				double stop_accuracy);
 
 	std::string params_to_string();

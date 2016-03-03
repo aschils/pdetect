@@ -10,11 +10,11 @@
 MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 		unsigned strip_length, unsigned half_strip_width,
 		unsigned half_inter_strip_dist, unsigned nbr_of_strips,
-		double potential, unsigned refine_level, unsigned max_iter,
+		double potential, double refine_accuracy, unsigned max_iter,
 		double stop_accuracy) {
 
 	this->strip_potential = potential;
-	this->refine_level = refine_level;
+	this->refine_accuracy = refine_accuracy;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
@@ -28,7 +28,7 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 
 	boundary_conditions = new MidRectRect2DBoundaryCond<2>(mrr_geo_info,
 			potential);
-	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
+	potential_solver = new LaplaceSolver<2>(triangulation, refine_accuracy,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
@@ -38,7 +38,7 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 			half_width, strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
+			refine_accuracy, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 }
 
@@ -52,8 +52,8 @@ std::string MidRectRect2DDetector::params_to_string() {
 			+ "_strip_width_" + std::to_string(mrr_geo_info->get_strip_width())
 			+ "_half_inter_strip_dist_" +
 			std::to_string(mrr_geo_info->get_half_inter_strip_dist())
-			+ "_potential_" + std::to_string(strip_potential) + "_refine_level_"
-			+ std::to_string(refine_level) + "_max_iter_"
+			+ "_potential_" + std::to_string(strip_potential) + "refine_accuracy_"
+			+ std::to_string(refine_accuracy) + "_max_iter_"
 			+ std::to_string(max_iter) + "_stop_accuracy_"
 			+ std::to_string(stop_accuracy);
 	return str;

@@ -15,15 +15,21 @@ void test_straight_line() {
 	unsigned nbr_of_strips = 1;
 	unsigned width = 300;
 	unsigned strip_length = 100;
-	unsigned strip_width = 1;
+	unsigned strip_width = 50;
 	unsigned half_pitch = 150;
-	unsigned refine_level = 12;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009;
 
 	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
-			refine_level, max_iter, stop_accuracy);
+			refine_accuracy, max_iter, stop_accuracy);
 	srdd.compute_weight();
 	srdd.draw_vtk_graph_weight_potential("weighting_pot.vtk");
 

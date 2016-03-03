@@ -24,21 +24,21 @@ public:
 
 	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			Line particle_trajectory, unsigned refine_level) :
+			Line particle_trajectory, double refine_accuracy) :
 			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 		this->particle_trajectory = particle_trajectory;
 		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_level);
+				refine_accuracy);
 	}
 
 	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			unsigned refine_level) :
+			double refine_accuracy) :
 			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 
 		this->particle_trajectory = geo_info->get_mid_length_vertical_line();
 		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_level);
+				refine_accuracy);
 	}
 
 	void print_charges() {
@@ -91,7 +91,7 @@ public:
 
 private:
 
-	unsigned refine_level;
+	double refine_accuracy;
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line particle_trajectory;
@@ -101,11 +101,11 @@ private:
 
 	void common_constructor(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			unsigned refine_level) {
+			double refine_accuracy) {
 		this->geo_info = geo_info;
 		this->laplace_sol = solution;
 		this->laplace_sol_weight = solution_weight;
-		this->refine_level = refine_level;
+		this->refine_accuracy = refine_accuracy;
 		this->strip_potential = strip_potential;
 
 		std::vector<Point<2>> intersect = get_trajectory_intersect();
@@ -168,7 +168,7 @@ private:
 
 		std::cout << "dist_covered_by_particle " << dist_covered_by_particle << std::endl;
 
-		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
+		unsigned nbr_of_punctual_charges = std::pow(2, 8);
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
 
@@ -297,7 +297,7 @@ private:
 	double compute_delta_t() {
 		double col_time = estimate_collection_time();
 		std::cout << "Predicted collection time: " << col_time << std::endl;
-		return col_time / std::pow(2, refine_level);
+		return col_time / std::pow(2, 8);
 	}
 
 };

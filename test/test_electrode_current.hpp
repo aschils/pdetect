@@ -18,16 +18,22 @@ void test_electrode_current_serrated() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 2;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 6;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
 
 	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
-			refine_level, max_iter, stop_accuracy);
+			refine_accuracy, max_iter, stop_accuracy);
 	srdd.compute();
 	srdd.compute_weight();
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
@@ -75,16 +81,22 @@ void test_electrode_current_mid_rect_rect() {
 	unsigned strip_length = 100;
 	unsigned half_strip_width = 10;
 	unsigned half_inter_strip_dist = 50;
-	unsigned refine_level = 6;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
 
 	MidRectRect2DDetector *mrr = new MidRectRect2DDetector(half_width,
 			strip_length, half_strip_width, half_inter_strip_dist,
-			nbr_of_strips, strip_potential, refine_level,
+			nbr_of_strips, strip_potential, refine_accuracy,
 			max_iter, stop_accuracy);
 	mrr->compute();
 	mrr->compute_weight();
@@ -133,7 +145,7 @@ void test_electrode_current_mid_rect_rect() {
 void gen_comparison_data() {
 
 	unsigned nbr_of_det = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 
 	double strip_potential[5] = {90, 90, 90, 500, 10}; //typiquement 100V
@@ -142,13 +154,20 @@ void gen_comparison_data() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 2;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 6;
 
 	for(unsigned i=0; i<nbr_of_det; i++){
 
+		/*
+		 * refine_level suggested value between:
+		 * 				0.009 => Quick but not precise
+		 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+		 *				0.0025 => Slow but very precise
+		 */
+		double refine_accuracy = 0.009*strip_potential[i];
+
 		SerratedRect2DDetector srdd(nbr_of_strips, width[i], strip_length,
 				strip_width, half_pitch, strip_potential[i],
-				refine_level, max_iter, stop_accuracy);
+				refine_accuracy, max_iter, stop_accuracy);
 		srdd.compute();
 		srdd.compute_weight();
 		Solution<2> solution;

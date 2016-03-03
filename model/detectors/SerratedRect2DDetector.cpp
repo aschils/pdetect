@@ -9,7 +9,7 @@
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		unsigned strip_length, unsigned strip_width, unsigned half_pitch,
-		double strip_potential, unsigned refine_level, unsigned max_iter,
+		double strip_potential, double refine_level, unsigned max_iter,
 		double stop_accuracy) :
 		SerratedRect2DDetector(nbr_of_strips, DEFAULT_RECT_WIDTH, strip_length,
 				strip_width, half_pitch, strip_potential, refine_level,
@@ -18,11 +18,11 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 
 SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 		unsigned width, unsigned strip_length, unsigned strip_width,
-		unsigned half_pitch, double strip_potential, unsigned refine_level,
+		unsigned half_pitch, double strip_potential, double refine_accuracy,
 		unsigned max_iter, double stop_accuracy) {
 
 	this->strip_potential = strip_potential;
-	this->refine_level = refine_level;
+	this->refine_accuracy = refine_accuracy;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
 
@@ -34,7 +34,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 			strip_length, strip_width, half_pitch);
 	boundary_conditions = new SerratedRect2DBoundaryCond<2>(serr_geo_info,
 			strip_potential);
-	potential_solver = new LaplaceSolver<2>(triangulation, refine_level,
+	potential_solver = new LaplaceSolver<2>(triangulation, refine_accuracy,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
@@ -43,7 +43,7 @@ SerratedRect2DDetector::SerratedRect2DDetector(unsigned nbr_of_strips,
 	MyGridGenerator<2>::serrated_rectangle(*triangulation_weight, width,
 			nbr_of_strips, strip_length, strip_width, half_pitch);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_level, max_iter, stop_accuracy, zero_right_hand_side,
+			refine_accuracy, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 
 	//nbr_of_points_along_axes();
@@ -58,7 +58,7 @@ std::string SerratedRect2DDetector::params_to_string() {
 			+ "_strip_width_" + std::to_string(serr_geo_info->get_strip_width())
 			+ "_half-pitch_" + std::to_string(serr_geo_info->get_half_pitch())
 			+ "_strip_potential_" + std::to_string(strip_potential)
-			+ "_refine_level_" + std::to_string(refine_level) + "_max_iter_"
+			+ "refine_accuracy_" + std::to_string(refine_accuracy) + "_max_iter_"
 			+ std::to_string(max_iter) + "_stop_accuracy_"
 			+ std::to_string(stop_accuracy);
 	return str;

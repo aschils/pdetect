@@ -19,7 +19,7 @@ public:
 	MidCircleRect2DDetector(unsigned half_width,
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
 			unsigned half_inter_potential_srcs_dist, double potential,
-			unsigned refine_level, unsigned max_iter,
+			double refine_accuracy, unsigned max_iter,
 			double stop_accuracy);
 
 	MidCircleRect2DDetector(unsigned half_width,

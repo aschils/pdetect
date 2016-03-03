@@ -53,7 +53,7 @@ template<unsigned dim>
 class LaplaceSolver {
 
 public:
-	LaplaceSolver(Triangulation<dim> *triangulation, unsigned refine_level,
+	LaplaceSolver(Triangulation<dim> *triangulation, double refine_accuracy,
 			unsigned max_iter, double stop_accuracy,
 			const Function<dim> *right_hand_side,
 			BoundaryConditions<dim> *boundary_conditions,
@@ -73,8 +73,8 @@ public:
 private:
 
 	bool constraints_are_periodic;
-	unsigned max_iter, refine_level;
-	double stop_accuracy;
+	unsigned max_iter;
+	double refine_accuracy, stop_accuracy, max_uncertainty;
 
 	Triangulation<dim> *triangulation;
 	FE_Q<dim> fe;
@@ -107,7 +107,7 @@ private:
 
 template<unsigned dim>
 LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
-		unsigned refine_level, unsigned max_iter, double stop_accuracy,
+		double refine_accuracy, unsigned max_iter, double stop_accuracy,
 		const Function<dim> *right_hand_side,
 		BoundaryConditions<dim> *boundary_conditions,
 		bool constraints_are_periodic) :
@@ -119,7 +119,7 @@ LaplaceSolver<dim>::LaplaceSolver(Triangulation<dim> *triangulation,
 	this->boundary_conditions = boundary_conditions;
 	this->max_iter = max_iter;
 	this->stop_accuracy = stop_accuracy;
-	this->refine_level = refine_level;
+	this->refine_accuracy = refine_accuracy;
 
 	quadrature_formula = new QGauss<dim>(2);
 	fe_values = new FEValues<dim>(fe, *quadrature_formula,
@@ -217,6 +217,7 @@ void LaplaceSolver<dim>::compute_uncertainties() {
 	                                    solution_vec,
 	                                    estimated_error_per_cell);
     uncertainty_per_cell = estimated_error_per_cell;
+    max_uncertainty = uncertainty_per_cell.linfty_norm();
 }
 
 template<unsigned dim>
@@ -229,13 +230,15 @@ void LaplaceSolver<dim>::refine_grid() {
 
 template<unsigned dim>
 void LaplaceSolver<dim>::compute_solution() {
-	for(int i = 0; i < refine_level; i++) {
-		if(i != 0)
+	bool refine = false;
+	while(max_uncertainty > refine_accuracy || !refine) {
+		if(refine)
 			refine_grid();
 		setup_system();
 		assemble_system();
 		solve();
 		compute_uncertainties();
+		refine = true;
 	}
 }
 

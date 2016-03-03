@@ -41,10 +41,11 @@ public:
 	virtual ~Detector2D();
 
 protected:
-	unsigned refine_level, max_iter = 1;
+	unsigned max_iter = 1;
 	double strip_potential = 1.0;
 	double stop_accuracy = 1.0;
 	double weight_strip_potential = 1.0;
+	double refine_accuracy;
 
 	Triangulation<2> *triangulation = new Triangulation<2>();
 	ZeroRightHandSide<2> *zero_right_hand_side = new ZeroRightHandSide<2>();

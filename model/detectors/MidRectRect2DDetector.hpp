@@ -18,7 +18,7 @@ class MidRectRect2DDetector: public Detector2D {
 public:
 	MidRectRect2DDetector(unsigned half_width, unsigned strip_length,
 			unsigned half_strip_width, unsigned half_inter_strip_dist,
-			unsigned nbr_of_strips, double potential, unsigned refine_level,
+			unsigned nbr_of_strips, double potential, double refine_accuracy,
 			unsigned max_iter, double stop_accuracy);
 
 	std::string params_to_string();

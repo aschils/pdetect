@@ -20,9 +20,15 @@ void test_serrated_2D_potential() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 3;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 7;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -36,7 +42,7 @@ void test_serrated_2D_potential() {
 				+ std::to_string(half_pitch) + "_"
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				half_pitch, strip_potential, refine_level, max_iter,
+				half_pitch, strip_potential, refine_accuracy, max_iter,
 				stop_accuracy);
 		srdd.compute();
 		srdd.draw_vtk_graph_potential(output_file);
@@ -47,9 +53,15 @@ void test_serrated_rect_limit_cases() {
 
 	double strip_potential = 1;
 	unsigned width = 300;
-	unsigned refine_level = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_output_limit_cases/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -68,7 +80,7 @@ void test_serrated_rect_limit_cases() {
 
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
 							strip_length, strip_width, half_pitch,
-							strip_potential, refine_level, max_iter,
+							strip_potential, refine_accuracy, max_iter,
 							stop_accuracy);
 					srdd.compute();
 					std::string output_file = output_dir
@@ -86,11 +98,17 @@ void test_electric_field() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 30;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 3;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	unsigned nbr_of_strips = 4;
 	unsigned width = 300;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_output_electric_field/";
 
@@ -103,7 +121,7 @@ void test_electric_field() {
 			+ std::to_string(half_pitch) + "_" + std::to_string(nbr_of_strips)
 			+ ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
-			half_pitch, strip_potential, refine_level, max_iter, stop_accuracy);
+			half_pitch, strip_potential, refine_accuracy, max_iter, stop_accuracy);
 	srdd.compute();
 	srdd.draw_vtk_graph_potential(output_file);
 	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
@@ -115,9 +133,15 @@ void test_weighting_potential() {
 	unsigned strip_length = 100;
 	unsigned strip_width = 50;
 	unsigned half_pitch = 50;
-	unsigned refine_level = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	std::string output_dir = "tests_output_weighting_potential";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -131,7 +155,7 @@ void test_weighting_potential() {
 				+ std::to_string(half_pitch) + "_"
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-				half_pitch, strip_potential, refine_level, max_iter,
+				half_pitch, strip_potential, refine_accuracy, max_iter,
 				stop_accuracy);
 		srdd.compute_weight();
 
@@ -147,9 +171,15 @@ void test_mid_circle_rect2D_det() {
 	unsigned half_width = 100;
 	unsigned half_inter_potential_srcs_dist = 50;
 	unsigned potential = 10;
-	unsigned refine_level = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double max_error = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*potential;
 
 	for (unsigned nbr_of_potential_src = 1; nbr_of_potential_src <= 3;
 			nbr_of_potential_src++) {
@@ -157,7 +187,7 @@ void test_mid_circle_rect2D_det() {
 				potential_src_radius += 10) {
 			MidCircleRect2DDetector det(half_width, nbr_of_potential_src,
 					potential_src_radius, half_inter_potential_srcs_dist,
-					potential, refine_level, max_iter, max_error);
+					potential, refine_accuracy, max_iter, max_error);
 			det.compute();
 			det.compute_weight();
 			std::string output_dir = "tests_mid_circle_rect2D_det/";
@@ -181,16 +211,22 @@ void test_mid_rect_rect_2D_det() {
 	unsigned half_inter_potential_srcs_dist = 50;
 	unsigned nbr_of_strips = 3;
 	unsigned potential = 10;
-	unsigned refine_level = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double max_error = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*potential;
 
 	std::string output_dir = "tests_mid_rect_rect_det/";
 	Utils::create_directory_if_not_exists(output_dir);
 
 	MidRectRect2DDetector det(half_width, strip_length, half_strip_width,
 			half_inter_potential_srcs_dist, nbr_of_strips, potential,
-			refine_level, max_iter, max_error);
+			refine_accuracy, max_iter, max_error);
 
 	det.compute();
 	det.compute_weight();
@@ -204,12 +240,18 @@ void test_various() {
 	unsigned strip_width = 1;
 	unsigned half_pitch = 300;
 	double strip_potential = 1;
-	unsigned refine_level = 5;
-	unsigned max_iter = 10000;
+	unsigned max_iter = 100000;
 	double max_error = 10e-12;
+	/*
+	 * refine_level suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009*strip_potential;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-			half_pitch, strip_potential, refine_level, max_iter, max_error);
+			half_pitch, strip_potential, refine_accuracy, max_iter, max_error);
 	srdd.compute();
 
 	std::string output_file = "various.vtk";
