@@ -20,13 +20,15 @@ void test_electrode_current_serrated() {
 	unsigned half_pitch = 50;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
+	//Use to define the number of charges along the trajectory => 2^refine_level
+	unsigned refine_level = 10;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.003;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -49,14 +51,15 @@ void test_electrode_current_serrated() {
 	srdd.get_solution_weight(weight_solution);
 	MyGeometryInfo *geo_info = srdd.get_geometry_info();
 
-	Point<2> p1(100, 0.0);
-	Point<2> p2(100, 100);
+	double x = half_pitch + (double)strip_length/2.0;
+	Point<2> p1(x, 0.0);
+	Point<2> p2(x, 100);
 	Segment seg(p1, p2);
 
 	Line particle_traj(0, 149);
 
 	ElectrodeCurrent<2> ec(strip_potential, geo_info, &solution, &weight_solution,
-			10);
+			refine_level);
 	//ec.print_charges();
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
@@ -84,12 +87,12 @@ void test_electrode_current_mid_rect_rect() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -116,7 +119,7 @@ void test_electrode_current_mid_rect_rect() {
 	//Point<2> p1(0.0,half_width*2);
 	//Point<2> p2(nbr_of_strips*(strip_length+2*half_inter_strip_dist), 0);
 	Point<2> p1(0,20);
-	Point<2> p2(20, 20);
+	Point<2> p2(0, 40);
 	Line particle_traj(p1,p2);
 
 	ElectrodeCurrent<2> ec(strip_potential, geo_info, solution, weight_solution,
@@ -125,6 +128,7 @@ void test_electrode_current_mid_rect_rect() {
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(current_vs_time);
+	std::cout << "yo" << std::endl;
 
 	//std::cout << current_vs_time[0].second << " " << std::endl;
 
@@ -158,7 +162,7 @@ void gen_comparison_data() {
 	for(unsigned i=0; i<nbr_of_det; i++){
 
 		/*
-		 * refine_level suggested value between:
+		 * refine_accuracy suggested value between:
 		 * 				0.009 => Quick but not precise
 		 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 		 *				0.0025 => Slow but very precise

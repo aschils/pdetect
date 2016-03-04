@@ -23,12 +23,12 @@ void test_serrated_2D_potential() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -56,12 +56,12 @@ void test_serrated_rect_limit_cases() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_output_limit_cases/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -103,12 +103,12 @@ void test_electric_field() {
 	unsigned nbr_of_strips = 4;
 	unsigned width = 300;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_output_electric_field/";
 
@@ -136,12 +136,12 @@ void test_weighting_potential() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_output_weighting_potential";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -174,12 +174,12 @@ void test_mid_circle_rect2D_det() {
 	unsigned max_iter = 100000;
 	double max_error = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*potential;
+	double refine_accuracy = 0.009;
 
 	for (unsigned nbr_of_potential_src = 1; nbr_of_potential_src <= 3;
 			nbr_of_potential_src++) {
@@ -214,12 +214,12 @@ void test_mid_rect_rect_2D_det() {
 	unsigned max_iter = 100000;
 	double max_error = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*potential;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_mid_rect_rect_det/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -243,12 +243,12 @@ void test_various() {
 	unsigned max_iter = 100000;
 	double max_error = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009*strip_potential;
+	double refine_accuracy = 0.009;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 			half_pitch, strip_potential, refine_accuracy, max_iter, max_error);

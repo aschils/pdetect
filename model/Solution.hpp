@@ -14,6 +14,7 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_dof_data.h>
 #include <algorithm>
+#include <deal.II/numerics/vector_tools.h>
 
 #include "TensorUtils.hpp"
 #include "Utils.hpp"
@@ -37,7 +38,7 @@ public:
 	PhysicalValues() {}
 };
 
-template<unsigned dim>
+/*template<unsigned dim>
 class ValuesAtCell {
 public:
 	std::vector<std::pair<double, double>> fun;
@@ -54,16 +55,18 @@ public:
 
 	ValuesAtCell() {
 	}
-};
+};*/
 
 template<unsigned dim>
 class Solution {
 
 public:
 
-	std::vector<
+	/*std::vector<
 			std::pair<typename DoFHandler<dim>::active_cell_iterator,
-					ValuesAtCell<dim> > > values_at_cells;
+					ValuesAtCell<dim> > > values_at_cells;*/
+	DoFHandler<dim> *dof_handler;
+	Vector<double> solution_vec;
 
 	Solution() {
 	}
@@ -86,7 +89,7 @@ public:
 		derivatives_drawer.write_vtk(output);
 	}
 
-	void sort_cells_by_coord() {
+	/*void sort_cells_by_coord() {
 		Utils::sort_cells_by_coord<dim, ValuesAtCell<dim> >(&values_at_cells);
 	}
 
@@ -129,47 +132,6 @@ public:
 		return pos;
 	}
 
-	/*std::pair<unsigned, unsigned> get_closest_point(Point<dim> const &point) {
-
-		unsigned pos = get_cell(point);
-		std::pair<unsigned, unsigned> closest_point;
-
-		double x_left = values_at_cells[pos].first->vertex(0)[0];
-		double x_right = values_at_cells[pos].first->vertex(3)[0];
-		double y_bottom = values_at_cells[pos].first->vertex(0)[1];
-		double y_top = values_at_cells[pos].first->vertex(3)[1];
-
-		double epsilon = 0.00001;
-
-		bool left = false, bottom = false;
-
-		if (Utils::less_than_or_equals_double(fabs(x_left - point[0]),
-				fabs(x_right - point[0]), epsilon))
-			left = true;
-		if (Utils::less_than_or_equals_double(fabs(y_bottom - point[1]),
-				fabs(y_top - point[1]), epsilon))
-			bottom = true;
-
-		unsigned closest;
-
-		if (left) {
-			if (bottom)
-				closest = 0;
-			else
-				closest = 2;
-		} else {
-			if (bottom)
-				closest = 1;
-			else
-				closest = 3;
-		}
-
-		closest_point.first = pos;
-		closest_point.second = closest;
-
-		return closest_point;
-	}*/
-
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
 		//std::pair<unsigned, unsigned> closest_point = get_closest_point(point);
@@ -189,12 +151,12 @@ public:
 		double delta_y;
 		//if (closest == 0 || closest == 2)
 			delta_x = point[0] - x_left;
-		/*else
-			delta_x = point[0] - x_right;*/
+		else
+			delta_x = point[0] - x_right;
 		//if (closest == 0 || closest == 1)
-			delta_y = point[1] - y_bottom;
-		/*else
-			delta_y = point[1] - y_top;*/
+			//delta_y = point[1] - y_bottom;
+		else
+			delta_y = point[1] - y_top;
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
 		extrapol.potential = values_at_cells[pos].second.fun[0].first
@@ -212,7 +174,7 @@ public:
 					+ values_at_cells[pos].second.hessian[0][i][1] * delta_y);
 		}
 		return extrapol;
-	}
+	}*/
 
 	/**
 	 * Take the coordinates of a point, find the cell in which the point lies
@@ -221,12 +183,13 @@ public:
 	PhysicalValues<dim> get_values(Point<dim> const &point) {
 
 		PhysicalValues<dim> extrapol;
-		extrapol = extrapolate_values(point);
+		extrapol.potential = VectorTools::point_value(*dof_handler, solution_vec, point);
+		extrapol.electric_field = -VectorTools::point_gradient(*dof_handler, solution_vec, point);
 
 		return extrapol;
 	}
 
-	void print() {
+	/*void print() {
 
 		for (unsigned i = 0; i < values_at_cells.size(); i++) {
 			std::cout << "[coord: (";
@@ -241,13 +204,12 @@ public:
 			std::cout << ")] ";
 		}
 		std::cout << std::endl;
-	}
+	}*/
 
 private:
 	//These two structures contain data already available in coord_and_data,
 	//but it is useful to keep them as such to easily output vtk graph file
 	//using deal.ii DataOut class.
-
 	DataOut<dim> fun_drawer;
 	DataOut<dim> derivatives_drawer;
 };

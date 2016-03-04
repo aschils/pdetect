@@ -62,11 +62,11 @@ public:
 	void compute_solution();
 	void get_solution(Solution<dim> &sol);
 
-	ValuesAtCell<dim> extrapolate_data_at_point(
+	/*ValuesAtCell<dim> extrapolate_data_at_point(
 			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data,
 			double pos);
 	ValuesAtCell<dim> get_solution_at_point(Point<dim> &point,
-			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data);
+			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data);*/
 
 	~LaplaceSolver();
 
@@ -99,10 +99,7 @@ private:
 	void compute_uncertainties();
 	void refine_grid();
 	void output_results(std::string result_file_path) const;
-	void build_solution(
-			std::vector<
-					std::pair<typename DoFHandler<dim>::active_cell_iterator,
-							ValuesAtCell<dim> > > &coord_and_data);
+	void build_solution(Solution<dim> &sol);
 };
 
 template<unsigned dim>
@@ -243,19 +240,18 @@ void LaplaceSolver<dim>::compute_solution() {
 }
 
 template<unsigned dim>
-void LaplaceSolver<dim>::build_solution(
-		std::vector<
-				std::pair<typename DoFHandler<dim>::active_cell_iterator,
-						ValuesAtCell<dim> > > &values_at_cells) {
+void LaplaceSolver<dim>::build_solution(Solution<dim> &sol) {
 
-	const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+	//std::vector<std::pair<typename DoFHandler<dim>::active_cell_iterator,
+	//			ValuesAtCell<dim> > > values_at_cells;
+	/*const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
 	std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
 	std::vector<Tensor<2, dim> > hessian_at_pts_of_one_cell(vertices_per_cell);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
-	unsigned pos = 0;
+	//unsigned pos = 0;
 	for (; cell != endc; cell++) {
 
 		fe_values->reinit(cell);
@@ -279,7 +275,10 @@ void LaplaceSolver<dim>::build_solution(
 		values_at_cell.second = values;
 		values_at_cells.push_back(values_at_cell);
 		pos++;
-	}
+	}*/
+	//sol.values_at_cells = values_at_cells;
+	sol.solution_vec = solution_vec;
+	sol.dof_handler = &dof_handler;
 }
 
 template<unsigned dim>
@@ -300,7 +299,7 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	sol.set_fun_drawer(fun_drawer);
 	sol.set_derivatives_drawer(derivatives_drawer);
 
-	build_solution(sol.values_at_cells);
+	build_solution(sol);
 }
 
 template<unsigned dim>

@@ -20,7 +20,7 @@ void test_straight_line() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	/*
-	 * refine_level suggested value between:
+	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
@@ -43,11 +43,11 @@ void test_straight_line() {
 	double precision = 0.01;
 	StraightLine<2> line(M_PI / 2, pass, &solution, geo_info, precision);
 
-	std::vector<std::pair<double, std::pair<double, double>>> data = line.get_data();
+	std::vector<std::pair<double, double>> data = line.get_data();
 	std::vector<std::pair<double, double>> exact_data = line.get_exact_data();
-	std::vector<std::pair<double, double>> ratio = line.get_ratio();
+	//std::vector<std::pair<double, double>> ratio = line.get_ratio();
 
-	Utils::write_gnu_error_data_file<2>("sol_on_line", data);
+	Utils::write_gnu_data_file<2>("sol_on_line", data);
 	Utils::write_gnu_data_file<2>("exact_sol_on_line", exact_data);
-	Utils::write_gnu_data_file<2>("ratio_on_line", ratio);
+	//Utils::write_gnu_data_file<2>("ratio_on_line", ratio);
 }

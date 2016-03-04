@@ -24,21 +24,21 @@ public:
 
 	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			Line particle_trajectory, double refine_accuracy) :
+			Line particle_trajectory, unsigned refine_level) :
 			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 		this->particle_trajectory = particle_trajectory;
 		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_accuracy);
+				refine_level);
 	}
 
 	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			double refine_accuracy) :
+			unsigned refine_level) :
 			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
 
 		this->particle_trajectory = geo_info->get_mid_length_vertical_line();
 		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_accuracy);
+				refine_level);
 	}
 
 	void print_charges() {
@@ -91,7 +91,7 @@ public:
 
 private:
 
-	double refine_accuracy;
+	unsigned refine_level;
 	MyGeometryInfo *geo_info;
 	Solution<dim> *laplace_sol, *laplace_sol_weight;
 	Line particle_trajectory;
@@ -101,11 +101,11 @@ private:
 
 	void common_constructor(unsigned strip_potential, MyGeometryInfo *geo_info,
 			Solution<dim> *solution, Solution<dim> *solution_weight,
-			double refine_accuracy) {
+			unsigned refine_level) {
 		this->geo_info = geo_info;
 		this->laplace_sol = solution;
 		this->laplace_sol_weight = solution_weight;
-		this->refine_accuracy = refine_accuracy;
+		this->refine_level = refine_level;
 		this->strip_potential = strip_potential;
 
 		std::vector<Point<2>> intersect = get_trajectory_intersect();
@@ -168,7 +168,7 @@ private:
 
 		std::cout << "dist_covered_by_particle " << dist_covered_by_particle << std::endl;
 
-		unsigned nbr_of_punctual_charges = std::pow(2, 8);
+		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
 
@@ -262,7 +262,6 @@ private:
 		double current_tot = 0.0;
 		unsigned init_nbr_punctual_charges = punctual_charges.size();
 		no_moves = true;
-
 		for (unsigned i = 0; i < init_nbr_punctual_charges; i++) {
 
 			std::pair<Point<2>, Charge*> punct_charge =
@@ -271,7 +270,6 @@ private:
 			Point<2> pos = punct_charge.first;
 			Charge *charge = punct_charge.second;
 			Tensor<1, 2> speed = puncutal_charge_speed(pos, charge);
-
 			if (!TensorUtils::is_zero_tensor<2>(speed))
 				no_moves = false;
 
@@ -297,7 +295,6 @@ private:
 	double compute_delta_t() {
 		double col_time = estimate_collection_time();
 		std::cout << "Predicted collection time: " << col_time << std::endl;
-		return col_time / std::pow(2, 8);
+		return col_time / std::pow(2, refine_level);
 	}
-
 };
