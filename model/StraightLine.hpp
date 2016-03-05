@@ -45,7 +45,7 @@ public:
 	Point<dim> get_beginning(double alpha, Point<dim> const &pass);
 	PhysicalValues<dim> exact_solution(Point<dim> const &point);
 	void construct_line(double alpha, Point<dim> const &pass);
-	std::vector<std::pair<double, double>> get_data();
+	std::vector<std::pair<double, std::pair<double, double>>> get_data();
 	std::vector<std::pair<double, double>> get_exact_data();
 	std::vector<std::pair<double, double>> get_ratio();
 
@@ -55,7 +55,7 @@ private:
 	Solution<dim> *sol;
 	SerratedRectGeoInfo *geo_info;
 	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> values_on_line;
-	std::vector<std::pair<double, double>> solution_data;
+	std::vector<std::pair<double, std::pair<double, double>>> solution_data;
 	std::vector<std::pair<PhysicalValues<dim>, Point<dim>>> exact_values_on_line;
 	std::vector<std::pair<double, double>> exact_solution_data;
 
@@ -144,8 +144,9 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 
 			values_on_line.push_back(std::pair<PhysicalValues<dim>, Point<dim>>
 										(value, point));
-			solution_data.push_back(std::pair<double, double>
-									(point[1], value.potential));
+			solution_data.push_back(std::pair<double, std::pair<double, double>>
+									(point[1], std::pair<double, double>
+										(value.potential, value.uncertainty)));
 
 
 			PhysicalValues<dim> exact_value = exact_solution(point);
@@ -161,7 +162,7 @@ void StraightLine<dim>::construct_line(double alpha, Point<dim> const &pass) {
 }
 
 template<unsigned dim>
-std::vector<std::pair<double, double>> StraightLine<dim>::get_data() {
+std::vector<std::pair<double, std::pair<double, double>>> StraightLine<dim>::get_data() {
 
 	return solution_data;
 }
@@ -172,7 +173,7 @@ std::vector<std::pair<double, double>> StraightLine<dim>::get_exact_data() {
 	return exact_solution_data;
 }
 
-/*template<unsigned dim>
+template<unsigned dim>
 std::vector<std::pair<double, double>> StraightLine<dim>::get_ratio() {
 
 	std::vector<std::pair<double, double>> ratio;
@@ -190,4 +191,4 @@ std::vector<std::pair<double, double>> StraightLine<dim>::get_ratio() {
 	}
 
 	return ratio;
-}*/
+}
