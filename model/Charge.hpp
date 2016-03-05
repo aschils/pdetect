@@ -45,7 +45,7 @@ public:
 protected:
 
 	double mobility_300K;
-	double SILICON_MOBILITY;
+	double SILICON_MOBILITY, HELIUM_MOBILITY;
 	unsigned type_material;
 	double beta_0;
 	double saturation_velocity_300K;
@@ -60,6 +60,9 @@ protected:
 		switch (type_material) {
 		case TYPE_SILICIUM:
 			mobility_300K = SILICON_MOBILITY;
+			break;
+		case TYPE_HELIUM:
+			mobility_300K = HELIUM_MOBILITY;
 			break;
 		default:
 			mobility_300K = SILICON_MOBILITY;
@@ -77,6 +80,7 @@ public:
 	Hole(unsigned type) :
 			Charge(type) {
 		this->SILICON_MOBILITY = 4.5e10; //(microm)^2/(Vs)
+		this->HELIUM_MOBILITY = 1e7;
 		this->beta_0 = 1.213;
 		this->saturation_velocity_300K = 8.37e10;
 		set_mobility();
@@ -96,6 +100,7 @@ public:
 	Electron(unsigned type) :
 			Charge(type) {
 		this->SILICON_MOBILITY = 1.35e11; //(microm)^2/(Vs)
+		this->HELIUM_MOBILITY = 1e10;
 		this->beta_0 = 1.109;
 		this->saturation_velocity_300K = 1.07e11;
 		set_mobility();

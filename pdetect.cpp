@@ -27,7 +27,8 @@ int main(int argc, char* argv[]) {
 	//gen_comparison_data();
 	//test_straight_line();
 
-	test_case_silicium();
+	//test_case_silicium();
+	test_case_helium();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();

@@ -33,9 +33,9 @@ void test_electrode_current_serrated() {
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	SerratedRect2DDetector srdd(nbr_of_strips,
-			width, strip_length, strip_width, half_pitch, strip_potential,
-			refine_accuracy, max_iter, stop_accuracy);
+	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
+			half_pitch, strip_potential, refine_accuracy, max_iter,
+			stop_accuracy);
 	srdd.comp_potential();
 	srdd.comp_weight_potential();
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
@@ -50,7 +50,7 @@ void test_electrode_current_serrated() {
 	Solution<2> weight_solution;
 	srdd.get_solution_weight(weight_solution);
 
-	double x = half_pitch + (double)strip_length/2.0;
+	double x = half_pitch + (double) strip_length / 2.0;
 	Point<2> p1(x, 0.0);
 	Point<2> p2(x, 100);
 	Segment seg(p1, p2);
@@ -97,11 +97,12 @@ void test_electrode_current_mid_rect_rect() {
 
 	MidRectRect2DDetector *mrr = new MidRectRect2DDetector(half_width,
 			strip_length, half_strip_width, half_inter_strip_dist,
-			nbr_of_strips, strip_potential, refine_accuracy,
-			max_iter, stop_accuracy, TYPE_SILICIUM);
+			nbr_of_strips, strip_potential, refine_accuracy, max_iter,
+			stop_accuracy, TYPE_SILICIUM);
 	mrr->comp_potential();
 	mrr->comp_weight_potential();
-	mrr->draw_vtk_graph_potential(output_dir + "electrode_pot_mid_rect_rect.vtk");
+	mrr->draw_vtk_graph_potential(
+			output_dir + "electrode_pot_mid_rect_rect.vtk");
 	mrr->draw_vtk_graph_weight_potential(
 			output_dir + "electrode_pot_weight_mid_rect_rect.vtk");
 	mrr->draw_vtk_graph_gradient_of_potential(
@@ -109,9 +110,9 @@ void test_electrode_current_mid_rect_rect() {
 
 	//Point<2> p1(0.0,half_width*2);
 	//Point<2> p2(nbr_of_strips*(strip_length+2*half_inter_strip_dist), 0);
-	Point<2> p1(0,20);
+	Point<2> p1(0, 20);
 	Point<2> p2(0, 40);
-	Line particle_traj(p1,p2);
+	Line particle_traj(p1, p2);
 
 	ElectrodeCurrent<2> ec(mrr, particle_traj, 13);
 	//ec.print_charges();
@@ -133,45 +134,45 @@ void test_electrode_current_mid_rect_rect() {
 	delete mrr;
 }
 
-
 void gen_comparison_data() {
 
 	unsigned nbr_of_det = 5;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 
-	double strip_potential[5] = {90, 90, 90, 500, 10}; //typiquement 100V
+	double strip_potential[5] = { 90, 90, 90, 500, 10 }; //typiquement 100V
 	unsigned nbr_of_strips = 1;
-	unsigned width[5] = {300, 500, 100, 300, 300};
+	unsigned width[5] = { 300, 500, 100, 300, 300 };
 	unsigned strip_length = 100;
 	unsigned strip_width = 2;
 	unsigned half_pitch = 50;
 
-	for(unsigned i=0; i<nbr_of_det; i++){
+	/*
+	 * refine_accuracy suggested value between:
+	 * 				0.009 => Quick but not precise
+	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
+	 *				0.0025 => Slow but very precise
+	 */
+	double refine_accuracy = 0.009;
 
-		/*
-		 * refine_accuracy suggested value between:
-		 * 				0.009 => Quick but not precise
-		 *				0.008 ; 0.005 ; 0.0045 ; 0.003
-		 *				0.0025 => Slow but very precise
-		 */
-		double refine_accuracy = 0.009*strip_potential[i];
+	for (unsigned i = 0; i < nbr_of_det; i++) {
 
 		SerratedRect2DDetector srdd(nbr_of_strips, width[i], strip_length,
-				strip_width, half_pitch, strip_potential[i],
-				refine_accuracy, max_iter, stop_accuracy);
+				strip_width, half_pitch, strip_potential[i], refine_accuracy,
+				max_iter, stop_accuracy);
 		srdd.comp_potential();
 		srdd.comp_weight_potential();
 		ElectrodeCurrent<2> ec(&srdd, 10);
 		std::vector<std::pair<double, double> > current_vs_time;
 		ec.compute_current(current_vs_time);
 
-		std::string output_dir = "../src/plots/"+srdd.params_to_string()+"/";
+		std::string output_dir = "../src/plots/" + srdd.params_to_string()
+				+ "/";
 		Utils::create_directory_if_not_exists(output_dir);
 
-		ResultsOut::write_current_vs_time(output_dir+"pdetect_I_vs_t.txt",
+		ResultsOut::write_current_vs_time(output_dir + "pdetect_I_vs_t.txt",
 				current_vs_time);
-	//std::cout << "detector params: " << srdd->params_to_string() << std::endl;
+		//std::cout << "detector params: " << srdd->params_to_string() << std::endl;
 	}
 }
 

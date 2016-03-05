@@ -57,7 +57,6 @@ protected:
 	double strip_potential = 1.0;
 	double stop_accuracy = 1.0;
 	double refine_accuracy;
-	double refine_accuracy_weight;
 	unsigned material_id = 0; //Silicium, gaz,...
 
 	Hole hole;

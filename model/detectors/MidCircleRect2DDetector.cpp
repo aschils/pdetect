@@ -49,7 +49,7 @@ MidCircleRect2DDetector::MidCircleRect2DDetector(unsigned half_width,
 			half_width, WEIGHT_STRIP_POTENTIAL, nbr_of_potential_src, potential_src_radius,
 			half_inter_potential_srcs_dist);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_accuracy_weight, max_iter, stop_accuracy, zero_right_hand_side,
+			refine_accuracy, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 }
 

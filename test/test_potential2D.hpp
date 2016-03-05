@@ -182,7 +182,7 @@ void test_mid_circle_rect2D_det() {
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = potential/100;
+	double refine_accuracy = 0.01;
 
 	for (unsigned nbr_of_potential_src = 1; nbr_of_potential_src <= 3;
 			nbr_of_potential_src++) {

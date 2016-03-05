@@ -14,7 +14,6 @@ Detector2D::Detector2D(unsigned max_iter, double strip_potential,
 	this->strip_potential = strip_potential;
 	this->stop_accuracy = stop_accuracy;
 	this->refine_accuracy = refine_accuracy;
-	this->refine_accuracy_weight = refine_accuracy/strip_potential;
 	this->material_id = material_id;
 }
 

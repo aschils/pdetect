@@ -35,7 +35,7 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 			half_width, strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_accuracy_weight, max_iter, stop_accuracy, zero_right_hand_side,
+			refine_accuracy, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 }
 
