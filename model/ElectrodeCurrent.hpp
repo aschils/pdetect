@@ -29,7 +29,8 @@ public:
 	}
 
 	ElectrodeCurrent(Detector2D *det, unsigned refine_level) {
-		this->particle_trajectory = geo_info->get_mid_length_vertical_line();
+		this->particle_trajectory =
+				det->get_geometry_info()->get_mid_length_vertical_line();
 		common_constructor(det, refine_level);
 	}
 
