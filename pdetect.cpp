@@ -22,14 +22,14 @@ int main(int argc, char* argv[]) {
 //	test_rectangle_width_rectangular_holes();
 	//test_serrated_rectangle_gaussian();
 
-	//test_electrode_current_serrated();
+	test_electrode_current_serrated();
 	//test_electrode_current_mid_rect_rect();
 	//gen_comparison_data();
 	//test_straight_line();
 
 	//test_case_silicium();
 	//test_case_helium();
-	test_case_helium_scd();
+	//test_case_helium_scd();
 
 	//Cli cli(argc, argv);
 	//cli.parse_cmd();

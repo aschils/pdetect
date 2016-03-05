@@ -44,12 +44,6 @@ void test_electrode_current_serrated() {
 	srdd.draw_vtk_graph_gradient_of_potential(
 			output_dir + "electrode_pot_grad.vtk");
 
-	Solution<2> solution;
-
-	srdd.get_solution(solution);
-	Solution<2> weight_solution;
-	srdd.get_solution_weight(weight_solution);
-
 	double x = half_pitch + (double) strip_length / 2.0;
 	Point<2> p1(x, 0.0);
 	Point<2> p2(x, 100);
