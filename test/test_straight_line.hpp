@@ -30,7 +30,7 @@ void test_straight_line() {
 	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
 			refine_accuracy, max_iter, stop_accuracy);
-	srdd.compute_weight();
+	srdd.comp_weight_potential();
 	srdd.draw_vtk_graph_weight_potential("weighting_pot.vtk");
 
 	Solution<2> solution;

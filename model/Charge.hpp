@@ -7,7 +7,7 @@
 
 #pragma once
 
-#define TYPE_SILICIUM 1
+#include "Constants.hpp"
 
 class Charge {
 
@@ -25,6 +25,14 @@ public:
 		double mobility = mobility_300K
 				/ pow((1 + pow((mob_over_velocity * electric_field_y), beta)),
 						inv_beta);
+
+		/*
+		 *
+		 * mu = mu_300K / (1+ (mu * |E_y|/saturation_velocity)^beta)^(1/beta)
+		 *
+		 */
+
+
 		return mobility;
 	}
 
@@ -42,6 +50,7 @@ protected:
 	double beta_0;
 	double saturation_velocity_300K;
 
+	Charge(){}
 
 	Charge(unsigned type_material) {
 		this->type_material = type_material;
@@ -62,6 +71,9 @@ class Hole: public Charge {
 
 	//static const double MASS = 1;
 public:
+
+	Hole(){}
+
 	Hole(unsigned type) :
 			Charge(type) {
 		this->SILICON_MOBILITY = 4.5e10; //(microm)^2/(Vs)
@@ -78,6 +90,9 @@ public:
 class Electron: public Charge {
 
 public:
+
+	Electron(){}
+
 	Electron(unsigned type) :
 			Charge(type) {
 		this->SILICON_MOBILITY = 1.35e11; //(microm)^2/(Vs)

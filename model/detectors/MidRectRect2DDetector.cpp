@@ -11,12 +11,9 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 		unsigned strip_length, unsigned half_strip_width,
 		unsigned half_inter_strip_dist, unsigned nbr_of_strips,
 		double potential, double refine_accuracy, unsigned max_iter,
-		double stop_accuracy) {
-
-	this->strip_potential = potential;
-	this->refine_accuracy = refine_accuracy;
-	this->max_iter = max_iter;
-	this->stop_accuracy = stop_accuracy;
+		double stop_accuracy, unsigned material_id):
+		Detector2D(max_iter, strip_potential, stop_accuracy, refine_accuracy,
+				material_id) {
 
 	this->mrr_geo_info = new MidRectRectGeoInfo(half_width, half_strip_width,
 			strip_length, nbr_of_strips, half_inter_strip_dist);
@@ -33,12 +30,12 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 			true);
 
 	boundary_conditions_weight = new MidRectRect2DBoundaryCondWeight<2>(mrr_geo_info,
-			weight_strip_potential);
+			WEIGHT_STRIP_POTENTIAL);
 	MyGridGenerator<2>::rectangle_with_rectangular_holes(*triangulation_weight,
 			half_width, strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips);
 	potential_solver_weight = new LaplaceSolver<2>(triangulation_weight,
-			refine_accuracy, max_iter, stop_accuracy, zero_right_hand_side,
+			refine_accuracy_weight, max_iter, stop_accuracy, zero_right_hand_side,
 			boundary_conditions_weight, true);
 }
 

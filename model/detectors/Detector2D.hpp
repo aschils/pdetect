@@ -14,13 +14,14 @@
 #include "../ZeroRightHandSide.hpp"
 #include "../boundary_conditions/BoundaryConditions.hpp"
 #include "../geometry_info/MyGeometryInfo.hpp"
+#include "../Charge.hpp"
 
 class Detector2D {
 
 public:
-	void compute();
+	void comp_potential();
 
-	void compute_weight();
+	void comp_weight_potential();
 
 	void draw_vtk_graph_potential(std::string output_file);
 
@@ -36,16 +37,34 @@ public:
 
 	void get_solution_weight(Solution<2> &sol);
 
+	Hole get_hole();
+
+	Electron get_electron();
+
+	double get_hole_pairs_nbr_per_lgth();
+
+	double get_strip_potential();
+
 	virtual std::string params_to_string() = 0;
 
 	virtual ~Detector2D();
 
 protected:
+
+	const double WEIGHT_STRIP_POTENTIAL = 1.0;
+
 	unsigned max_iter = 1;
 	double strip_potential = 1.0;
 	double stop_accuracy = 1.0;
-	double weight_strip_potential = 1.0;
 	double refine_accuracy;
+	double refine_accuracy_weight;
+	unsigned material_id = 0; //Silicium, gaz,...
+
+	Hole hole;
+	Electron electron;
+
+	Detector2D(unsigned max_iter, double strip_potential, double stop_accuracy,
+			double refine_accuracy, unsigned material_id);
 
 	Triangulation<2> *triangulation = new Triangulation<2>();
 	ZeroRightHandSide<2> *zero_right_hand_side = new ZeroRightHandSide<2>();

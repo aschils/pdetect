@@ -36,8 +36,8 @@ void test_electrode_current_serrated() {
 	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
 			refine_accuracy, max_iter, stop_accuracy);
-	srdd.compute();
-	srdd.compute_weight();
+	srdd.comp_potential();
+	srdd.comp_weight_potential();
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
 	srdd.draw_vtk_graph_weight_potential(
 			output_dir + "electrode_pot_weight.vtk");
@@ -49,7 +49,6 @@ void test_electrode_current_serrated() {
 	srdd.get_solution(solution);
 	Solution<2> weight_solution;
 	srdd.get_solution_weight(weight_solution);
-	MyGeometryInfo *geo_info = srdd.get_geometry_info();
 
 	double x = half_pitch + (double)strip_length/2.0;
 	Point<2> p1(x, 0.0);
@@ -58,8 +57,7 @@ void test_electrode_current_serrated() {
 
 	Line particle_traj(0, 149);
 
-	ElectrodeCurrent<2> ec(strip_potential, geo_info, &solution, &weight_solution,
-			refine_level);
+	ElectrodeCurrent<2> ec(&srdd, refine_level);
 	//ec.print_charges();
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
@@ -100,21 +98,14 @@ void test_electrode_current_mid_rect_rect() {
 	MidRectRect2DDetector *mrr = new MidRectRect2DDetector(half_width,
 			strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips, strip_potential, refine_accuracy,
-			max_iter, stop_accuracy);
-	mrr->compute();
-	mrr->compute_weight();
+			max_iter, stop_accuracy, TYPE_SILICIUM);
+	mrr->comp_potential();
+	mrr->comp_weight_potential();
 	mrr->draw_vtk_graph_potential(output_dir + "electrode_pot_mid_rect_rect.vtk");
 	mrr->draw_vtk_graph_weight_potential(
 			output_dir + "electrode_pot_weight_mid_rect_rect.vtk");
 	mrr->draw_vtk_graph_gradient_of_potential(
 			output_dir + "electrode_pot_grad_mid_rect_rect.vtk");
-
-	Solution<2> *solution = new Solution<2>();
-
-	mrr->get_solution(*solution);
-	Solution<2> *weight_solution = new Solution<2>();
-	mrr->get_solution_weight(*weight_solution);
-	MyGeometryInfo *geo_info = mrr->get_geometry_info();
 
 	//Point<2> p1(0.0,half_width*2);
 	//Point<2> p2(nbr_of_strips*(strip_length+2*half_inter_strip_dist), 0);
@@ -122,8 +113,7 @@ void test_electrode_current_mid_rect_rect() {
 	Point<2> p2(0, 40);
 	Line particle_traj(p1,p2);
 
-	ElectrodeCurrent<2> ec(strip_potential, geo_info, solution, weight_solution,
-			particle_traj, 13);
+	ElectrodeCurrent<2> ec(mrr, particle_traj, 13);
 	//ec.print_charges();
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
@@ -140,8 +130,6 @@ void test_electrode_current_mid_rect_rect() {
 
 	std::cout << "detector params: " << mrr->params_to_string() << std::endl;
 
-	delete solution;
-	delete weight_solution;
 	delete mrr;
 }
 
@@ -172,15 +160,9 @@ void gen_comparison_data() {
 		SerratedRect2DDetector srdd(nbr_of_strips, width[i], strip_length,
 				strip_width, half_pitch, strip_potential[i],
 				refine_accuracy, max_iter, stop_accuracy);
-		srdd.compute();
-		srdd.compute_weight();
-		Solution<2> solution;
-		srdd.get_solution(solution);
-		Solution<2> weight_solution;
-		srdd.get_solution_weight(weight_solution);
-		MyGeometryInfo *geo_info = srdd.get_geometry_info();
-		ElectrodeCurrent<2> ec(strip_potential[i], geo_info, &solution, &weight_solution,
-				10);
+		srdd.comp_potential();
+		srdd.comp_weight_potential();
+		ElectrodeCurrent<2> ec(&srdd, 10);
 		std::vector<std::pair<double, double> > current_vs_time;
 		ec.compute_current(current_vs_time);
 

@@ -22,23 +22,15 @@ class ElectrodeCurrent {
 
 public:
 
-	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
-			Solution<dim> *solution, Solution<dim> *solution_weight,
-			Line particle_trajectory, unsigned refine_level) :
-			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
+	ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
+			unsigned refine_level) {
 		this->particle_trajectory = particle_trajectory;
-		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_level);
+		common_constructor(det, refine_level);
 	}
 
-	ElectrodeCurrent(unsigned strip_potential, MyGeometryInfo *geo_info,
-			Solution<dim> *solution, Solution<dim> *solution_weight,
-			unsigned refine_level) :
-			e(TYPE_SILICIUM), h(TYPE_SILICIUM) {
-
+	ElectrodeCurrent(Detector2D *det, unsigned refine_level) {
 		this->particle_trajectory = geo_info->get_mid_length_vertical_line();
-		common_constructor(strip_potential, geo_info, solution, solution_weight,
-				refine_level);
+		common_constructor(det, refine_level);
 	}
 
 	void print_charges() {
@@ -93,20 +85,23 @@ private:
 
 	unsigned refine_level;
 	MyGeometryInfo *geo_info;
-	Solution<dim> *laplace_sol, *laplace_sol_weight;
+	Solution<dim> laplace_sol, laplace_sol_weight;
 	Line particle_trajectory;
-	double hole_pairs_nbr_per_lgth = 75; //per microm
+	double hole_pairs_nbr_per_lgth; //per microm
 	double strip_potential;
 	double covered_dist;
+	Electron electron;
+	Hole hole;
 
-	void common_constructor(unsigned strip_potential, MyGeometryInfo *geo_info,
-			Solution<dim> *solution, Solution<dim> *solution_weight,
-			unsigned refine_level) {
-		this->geo_info = geo_info;
-		this->laplace_sol = solution;
-		this->laplace_sol_weight = solution_weight;
+	void common_constructor(Detector2D *det, unsigned refine_level) {
+		this->geo_info = det->get_geometry_info();
+		det->get_solution(laplace_sol);
+		det->get_solution_weight(laplace_sol_weight);
 		this->refine_level = refine_level;
-		this->strip_potential = strip_potential;
+		this->strip_potential = det->get_strip_potential();
+		electron = det->get_electron();
+		hole = det->get_hole();
+		this->hole_pairs_nbr_per_lgth = det->get_hole_pairs_nbr_per_lgth();
 
 		std::vector<Point<2>> intersect = get_trajectory_intersect();
 		covered_dist = dist_covered_inside_det(intersect);
@@ -123,8 +118,6 @@ private:
 	 */
 	std::queue<std::pair<Point<2>, Charge*>> punctual_charges;
 	double punctual_electric_charge; // electric charge at each punctual charge (C/e)
-	Electron e;
-	Hole h;
 
 	/**
 	 * Compute total distance covered by the particle INSIDE the detector.
@@ -219,8 +212,8 @@ private:
 
 		for (unsigned i = 0; i < nbr_of_punctual_charges_on_seg; i++) {
 			Point<2> p(x_coord, y_coord);
-			std::pair<Point<2>, Charge*> holes(p, &h);
-			std::pair<Point<2>, Charge*> electrons(p, &e);
+			std::pair<Point<2>, Charge*> holes(p, &hole);
+			std::pair<Point<2>, Charge*> electrons(p, &electron);
 			punctual_charges.push(holes);
 			punctual_charges.push(electrons);
 			x_coord += delta_x;
@@ -230,7 +223,7 @@ private:
 
 	Tensor<1, 2> puncutal_charge_speed(Point<2> pos, Charge *charge) {
 		//Formula in latex: \vec{v} = \mu \vec{E}
-		PhysicalValues<2> val = laplace_sol->get_values(pos);
+		PhysicalValues<2> val = laplace_sol.get_values(pos);
 		Tensor<1, 2> electric_field = val.electric_field;
 		//std::cout << "electric_field (" << electric_field[0] << "," << electric_field[1] << ") ";
 		int electric_charge_sign = charge->get_charge_sign();
@@ -240,7 +233,7 @@ private:
 
 	double current(Point<2> pos, Tensor<1, 2> speed, Charge *charge) {
 		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
-		PhysicalValues<2> val = laplace_sol_weight->get_values(pos);
+		PhysicalValues<2> val = laplace_sol_weight.get_values(pos);
 		Tensor<1, 2> weighting_electric_field = val.electric_field;
 		//std::cout << "WF (" << weighting_electric_field[0] << "," << weighting_electric_field[1] << ") " << std::endl;
 		int electric_charge_sign = charge->get_charge_sign();
@@ -262,6 +255,9 @@ private:
 		double current_tot = 0.0;
 		unsigned init_nbr_punctual_charges = punctual_charges.size();
 		no_moves = true;
+
+		//std::cout << "init_nbr_punctual_charges: " << init_nbr_punctual_charges << std::endl;
+
 		for (unsigned i = 0; i < init_nbr_punctual_charges; i++) {
 
 			std::pair<Point<2>, Charge*> punct_charge =
@@ -287,7 +283,7 @@ private:
 
 	double estimate_collection_time() {
 		//t = d^2/(mu V)
-		double max_mobility = h.get_mobility_300K();
+		double max_mobility = hole.get_mobility_300K();
 		double dist_to_strip = geo_info->get_width()-geo_info->get_strip_width();
 		return std::pow(dist_to_strip,2) / (max_mobility * strip_potential);
 	}

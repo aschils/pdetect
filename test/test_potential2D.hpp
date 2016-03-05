@@ -33,7 +33,7 @@ void test_serrated_2D_potential() {
 	std::string output_dir = "tests_output";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 1; nbr_of_strips++) {
+	for (unsigned nbr_of_strips = 1; nbr_of_strips <= 10; nbr_of_strips++) {
 
 		std::cout << "Computing potential for " << nbr_of_strips << " strips"
 				<< std::endl;
@@ -43,8 +43,8 @@ void test_serrated_2D_potential() {
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				half_pitch, strip_potential, refine_accuracy, max_iter,
-				stop_accuracy);
-		srdd.compute();
+				stop_accuracy, TYPE_SILICIUM);
+		srdd.comp_potential();
 		srdd.draw_vtk_graph_potential(output_file);
 	}
 }
@@ -53,7 +53,7 @@ void test_serrated_rect_limit_cases() {
 
 	double strip_potential = 1;
 	unsigned width = 300;
-	unsigned max_iter = 100000;
+	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	/*
 	 * refine_accuracy suggested value between:
@@ -81,8 +81,8 @@ void test_serrated_rect_limit_cases() {
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
 							strip_length, strip_width, half_pitch,
 							strip_potential, refine_accuracy, max_iter,
-							stop_accuracy);
-					srdd.compute();
+							stop_accuracy, TYPE_SILICIUM);
+					srdd.comp_potential();
 					std::string output_file = output_dir
 							+ srdd.params_to_string() + ".vtk";
 					srdd.draw_vtk_graph_potential(output_file);
@@ -122,7 +122,7 @@ void test_electric_field() {
 			+ ".vtk";
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, strip_potential, refine_accuracy, max_iter, stop_accuracy);
-	srdd.compute();
+	srdd.comp_potential();
 	srdd.draw_vtk_graph_potential(output_file);
 	srdd.draw_vtk_graph_gradient_of_potential(output_dir + "gradient.vtk");
 }
@@ -141,7 +141,7 @@ void test_weighting_potential() {
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009;
+	double refine_accuracy = 0.015;
 
 	std::string output_dir = "tests_output_weighting_potential";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -156,8 +156,8 @@ void test_weighting_potential() {
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				half_pitch, strip_potential, refine_accuracy, max_iter,
-				stop_accuracy);
-		srdd.compute_weight();
+				stop_accuracy, TYPE_SILICIUM);
+		srdd.comp_weight_potential();
 
 		srdd.draw_vtk_graph_weight_potential(output_file);
 		srdd.draw_vtk_graph_gradient_of_weight_potential(
@@ -168,9 +168,12 @@ void test_weighting_potential() {
 
 void test_mid_circle_rect2D_det() {
 
+	std::string output_dir = "tests_mid_circle_rect2D_det/";
+	Utils::create_directory_if_not_exists(output_dir);
+
 	unsigned half_width = 100;
 	unsigned half_inter_potential_srcs_dist = 50;
-	unsigned potential = 10;
+	double potential = 10;
 	unsigned max_iter = 100000;
 	double max_error = 10e-12;
 	/*
@@ -179,19 +182,20 @@ void test_mid_circle_rect2D_det() {
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009;
+	double refine_accuracy = potential/100;
 
 	for (unsigned nbr_of_potential_src = 1; nbr_of_potential_src <= 3;
 			nbr_of_potential_src++) {
 		for (unsigned potential_src_radius = 1; potential_src_radius < 40;
 				potential_src_radius += 10) {
+
 			MidCircleRect2DDetector det(half_width, nbr_of_potential_src,
 					potential_src_radius, half_inter_potential_srcs_dist,
-					potential, refine_accuracy, max_iter, max_error);
-			det.compute();
-			det.compute_weight();
-			std::string output_dir = "tests_mid_circle_rect2D_det/";
-			Utils::create_directory_if_not_exists(output_dir);
+					potential, refine_accuracy, max_iter, max_error,
+					TYPE_SILICIUM);
+			std::cout << "number of strips: " << nbr_of_potential_src << std::endl;
+			det.comp_potential();
+			det.comp_weight_potential();
 			det.draw_vtk_graph_potential(
 					output_dir + det.params_to_string() + ".vtk");
 			det.draw_vtk_graph_gradient_of_potential(
@@ -226,10 +230,10 @@ void test_mid_rect_rect_2D_det() {
 
 	MidRectRect2DDetector det(half_width, strip_length, half_strip_width,
 			half_inter_potential_srcs_dist, nbr_of_strips, potential,
-			refine_accuracy, max_iter, max_error);
+			refine_accuracy, max_iter, max_error, TYPE_SILICIUM);
 
-	det.compute();
-	det.compute_weight();
+	det.comp_potential();
+	det.comp_weight_potential();
 	det.draw_vtk_graph_potential(output_dir+"out.vtk");
 	det.draw_vtk_graph_weight_potential(output_dir+"out_weight.vtk");
 }
@@ -251,8 +255,9 @@ void test_various() {
 	double refine_accuracy = 0.009;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
-			half_pitch, strip_potential, refine_accuracy, max_iter, max_error);
-	srdd.compute();
+			half_pitch, strip_potential, refine_accuracy, max_iter, max_error,
+			TYPE_SILICIUM);
+	srdd.comp_potential();
 
 	std::string output_file = "various.vtk";
 	srdd.draw_vtk_graph_potential(output_file);

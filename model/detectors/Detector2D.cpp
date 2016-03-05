@@ -7,11 +7,22 @@
 
 #include "Detector2D.hpp"
 
-void Detector2D::compute() {
+Detector2D::Detector2D(unsigned max_iter, double strip_potential,
+		double stop_accuracy, double refine_accuracy, unsigned material_id) :
+		hole(material_id), electron(material_id) {
+	this->max_iter = max_iter;
+	this->strip_potential = strip_potential;
+	this->stop_accuracy = stop_accuracy;
+	this->refine_accuracy = refine_accuracy;
+	this->refine_accuracy_weight = refine_accuracy/strip_potential;
+	this->material_id = material_id;
+}
+
+void Detector2D::comp_potential() {
 	compute_solution(potential_solver, *solution_potential);
 }
 
-void Detector2D::compute_weight() {
+void Detector2D::comp_weight_potential() {
 	compute_solution(potential_solver_weight, *solution_weight_potential);
 }
 
@@ -49,6 +60,37 @@ void Detector2D::get_solution(Solution<2> &sol) {
 
 void Detector2D::get_solution_weight(Solution<2> &sol) {
 	sol = *solution_weight_potential;
+}
+
+Hole Detector2D::get_hole(){
+	return this->hole;
+}
+
+Electron Detector2D::get_electron(){
+	return this->electron;
+}
+
+double Detector2D::get_strip_potential(){
+	return strip_potential;
+}
+
+/**
+ * Return the number of hole-electron pairs per microm created by
+ * the traversal of a particle.
+ */
+double Detector2D::get_hole_pairs_nbr_per_lgth(){
+
+	switch(material_id){
+	{case TYPE_SILICIUM:
+		return 75;}
+	{case TYPE_HELIUM:
+		double energy_per_surface = 1.60217656535e-4; //microJ
+		double temperature = 300; //°K
+		return energy_per_surface*ATMOSPHERIC_PRESSURE*MOLAR_MASS_HELIUM/
+				(GAS_CONSTANT*temperature);}
+	default:
+		return 75;
+	}
 }
 
 Detector2D::~Detector2D() {

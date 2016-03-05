@@ -20,11 +20,12 @@ public:
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
 			unsigned half_inter_potential_srcs_dist, double potential,
 			double refine_accuracy, unsigned max_iter,
-			double stop_accuracy);
+			double stop_accuracy, unsigned material_id);
 
 	MidCircleRect2DDetector(unsigned half_width,
 			unsigned nbr_of_potential_src, unsigned potential_src_radius,
-			unsigned half_inter_potential_srcs_dist, double potential);
+			unsigned half_inter_potential_srcs_dist, double potential,
+			unsigned material_id);
 
 	std::string params_to_string();
 
