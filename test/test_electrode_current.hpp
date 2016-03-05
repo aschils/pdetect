@@ -35,7 +35,7 @@ void test_electrode_current_serrated() {
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, strip_potential, refine_accuracy, max_iter,
-			stop_accuracy);
+			stop_accuracy, TYPE_SILICIUM);
 	srdd.comp_potential();
 	srdd.comp_weight_potential();
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
