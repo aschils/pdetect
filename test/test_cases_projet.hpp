@@ -26,7 +26,7 @@ void test_case_silicium() {
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	double refine_accuracy = 0.01;
-	unsigned ec_refine_level = 7;
+	unsigned ec_refine_level = 10;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,
@@ -67,7 +67,7 @@ void test_case_helium() {
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	double refine_accuracy = 0.01;
-	unsigned ec_refine_level = 6;
+	unsigned ec_refine_level = 10;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,
@@ -109,7 +109,7 @@ void test_case_helium_scd() {
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
 	double refine_accuracy = 0.01;
-	unsigned ec_refine_level = 6;
+	unsigned ec_refine_level = 10;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,

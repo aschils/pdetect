@@ -28,7 +28,7 @@ void test_electrode_current_serrated() {
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.003;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
@@ -108,7 +108,7 @@ void test_electrode_current_mid_rect_rect() {
 	Point<2> p2(0, 40);
 	Line particle_traj(p1, p2);
 
-	ElectrodeCurrent<2> ec(mrr, particle_traj, 13);
+	ElectrodeCurrent<2> ec(mrr, particle_traj, 10);
 	//ec.print_charges();
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;

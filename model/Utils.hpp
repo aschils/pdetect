@@ -65,28 +65,79 @@ public:
 	 *
 	 */
 
+	/*
+	 template<unsigned dim, typename T>
+	 static void sort_cells_by_coord(
+	 std::vector<
+	 std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > *v) {
+	 auto cmp =
+	 [](std::pair<typename DoFHandler<dim>::active_cell_iterator,
+	 T> const & a,
+	 std::pair<typename DoFHandler<dim>::active_cell_iterator,
+	 T> const & b) {
+
+	 Point<dim> bottom_left_point_a = a.first->vertex(0);
+	 Point<dim> bottom_left_point_b = b.first->vertex(0);
+
+	 double epsilon = 0.00001;
+	 for(int i=dim-1; i>=0; i--) {
+	 if(bottom_left_point_a[i] - bottom_left_point_b[i] < -epsilon)
+	 return true;
+	 else if(bottom_left_point_a[i] - bottom_left_point_b[i] > epsilon)
+	 return false;
+	 }
+	 return false;
+	 };
+	 std::sort(v->begin(), v->end(), cmp);
+	 }
+	 */
+
 	template<unsigned dim, typename T>
 	static void sort_cells_by_coord(
 			std::vector<
 					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > *v) {
+
+		int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+
 		auto cmp =
-				[](std::pair<typename DoFHandler<dim>::active_cell_iterator,
+				[&vertices_per_cell](
+						std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						T> const & a,
 						std::pair<typename DoFHandler<dim>::active_cell_iterator,
 						T> const & b) {
 
-					Point<dim> bottom_left_point_a = a.first->vertex(0);
-					Point<dim> bottom_left_point_b = b.first->vertex(0);
+					Point<dim> bot_left_a = a.first->vertex(0);
+					Point<dim> top_right_a = a.first->vertex(vertices_per_cell-1);
+					Point<dim> bot_left_b = b.first->vertex(0);
+					Point<dim> top_right_b = b.first->vertex(vertices_per_cell-1);
 
-					double epsilon = 0.00001;
-					for(int i=dim-1; i>=0; i--) {
-						if(bottom_left_point_a[i] - bottom_left_point_b[i] < -epsilon)
-						return true;
-						else if(bottom_left_point_a[i] - bottom_left_point_b[i] > epsilon)
-						return false;
-					}
-					return false;
+					std::cout << "before bool" << std::endl;
+
+					bool A =  bot_left_a[0] <= bot_left_b[0];
+					bool B = top_right_b[0] <= top_right_a[0];
+					bool C = bot_left_a[1] <= bot_left_b[1];
+					bool D = top_right_b[1] <= top_right_a[1];
+					return !(A^B^C^D);
 				};
+		std::sort(v->begin(), v->end(), cmp);
+		std::cout << "AFTER THE BIG SORT" << std::endl;
+	}
+
+	template<unsigned dim, typename T>
+	static void sort_cells_by_one_coord(
+			std::vector<
+					std::pair<typename DoFHandler<dim>::active_cell_iterator, T> > *v,
+			unsigned vertex_idx, unsigned coord_idx) {
+
+		auto cmp = [&coord_idx, &vertex_idx](
+				std::pair<typename DoFHandler<dim>::active_cell_iterator,
+				T> const & a,
+				std::pair<typename DoFHandler<dim>::active_cell_iterator,
+				T> const & b) {
+			Point<dim> top_right_a = a.first->vertex(vertex_idx);
+			Point<dim> top_right_b = b.first->vertex(vertex_idx);
+			return top_right_a[coord_idx] < top_right_b[coord_idx];
+		};
 		std::sort(v->begin(), v->end(), cmp);
 	}
 
@@ -96,9 +147,9 @@ public:
 		auto cmp = [](Point<dim> & a, Point<dim> & b) {
 			for(unsigned i = 0; i < dim; i++) {
 				if(a[i] < b[i])
-					return true;
+				return true;
 				else if(a[i] > b[i])
-					return false;
+				return false;
 			}
 			return false;
 		};
@@ -142,12 +193,12 @@ public:
 		return v;
 	}
 
-	template <unsigned dim>
-	static void print_point(Point<dim> p){
+	template<unsigned dim>
+	static void print_point(Point<dim> p) {
 		std::cout << "(";
-		for(unsigned i=0; i<dim; i++){
+		for (unsigned i = 0; i < dim; i++) {
 			std::cout << p[i];
-			if(i != dim-1)
+			if (i != dim - 1)
 				std::cout << ",";
 		}
 		std::cout << ")";
@@ -159,73 +210,76 @@ public:
 	 * The ordinate are the second element of the pair.
 	 */
 	template<unsigned dim>
-	static void write_gnu_data_file(std::string file, std::vector<std::pair<double, double>> data) {
+	static void write_gnu_data_file(std::string file,
+			std::vector<std::pair<double, double>> data) {
 
 		std::ofstream gnu_graph;
-		gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
+		gnu_graph.open(file,
+				std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-		if(gnu_graph.is_open()){
+		if (gnu_graph.is_open()) {
 
 			gnu_graph << "# X\tY" << std::endl;
-			for(unsigned i = 0; i < data.size(); i++){
-				
-				gnu_graph << data[i].first << "\t"
-						  << data[i].second << std::endl;;
+			for (unsigned i = 0; i < data.size(); i++) {
+
+				gnu_graph << data[i].first << "\t" << data[i].second
+						<< std::endl;
+				;
 			}
 		}
 		gnu_graph.close();
 	}
 
 	template<unsigned dim>
-	static void write_gnu_error_data_file(std::string file, std::vector<std::pair
-											<double, std::pair<double, double>>> data) {
+	static void write_gnu_error_data_file(std::string file,
+			std::vector<std::pair<double, std::pair<double, double>>>data) {
 
-		std::ofstream gnu_graph;
-		gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
+				std::ofstream gnu_graph;
+				gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-		if(gnu_graph.is_open()){
+				if(gnu_graph.is_open()) {
 
-			gnu_graph << "# X\tY\tZ" << std::endl;
-			for(unsigned i = 0; i < data.size(); i++){
-				
-				gnu_graph << data[i].first << "\t"
-						  << data[i].second.first << "\t"
-						  << data[i].second.second << std::endl;;
+					gnu_graph << "# X\tY\tZ" << std::endl;
+					for(unsigned i = 0; i < data.size(); i++) {
+
+						gnu_graph << data[i].first << "\t"
+						<< data[i].second.first << "\t"
+						<< data[i].second.second << std::endl;;
+					}
+				}
+				gnu_graph.close();
 			}
-		}
-		gnu_graph.close();
-	}
 
-	static bool is_even(int nbr){
-		return nbr%2 == 0;
-	}
+			static bool is_even(int nbr) {
+				return nbr%2 == 0;
+			}
 
-	static bool is_odd(int nbr){
-		return !is_even(nbr);
-	}
+			static bool is_odd(int nbr) {
+				return !is_even(nbr);
+			}
 
-	template <typename T1, typename T2>
-	static void write_vector_of_pair(std::string out_file_path,
+			template <typename T1, typename T2>
+			static void write_vector_of_pair(std::string out_file_path,
 			std::vector<std::pair<T1, T2> > &vec_of_pair,
-			bool header, std::string var_name1, std::string var_name2){
+			bool header, std::string var_name1, std::string var_name2) {
 
-		std::ofstream out_file;
-		out_file.open(out_file_path, std::fstream::trunc);
+				std::ofstream out_file;
+				out_file.open(out_file_path, std::fstream::trunc);
 
-		if (out_file.is_open()) {
+				if (out_file.is_open()) {
 
-			if(header)
-				out_file << var_name1 << "    " << var_name2 << std::endl;
+					if(header)
+					out_file << var_name1 << "    " << var_name2 << std::endl;
 
-			for(unsigned i=0; i<vec_of_pair.size(); i++){
-				out_file << vec_of_pair[i].first << "    ";
-				out_file << vec_of_pair[i].second << std::endl;
+					for(unsigned i=0; i<vec_of_pair.size(); i++) {
+						out_file << vec_of_pair[i].first << "    ";
+						out_file << vec_of_pair[i].second << std::endl;
+					}
+				}
+				else {
+					std::cout << "Error, unable to open file: " << out_file_path << std::endl;
+				}
+
+				out_file.close();
 			}
-		}
-		else{
-			std::cout << "Error, unable to open file: " << out_file_path << std::endl;
-		}
-
-		out_file.close();
-	}
-};
+		};

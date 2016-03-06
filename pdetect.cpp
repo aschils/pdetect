@@ -22,10 +22,10 @@ int main(int argc, char* argv[]) {
 //	test_rectangle_width_rectangular_holes();
 	//test_serrated_rectangle_gaussian();
 
-	//test_electrode_current_serrated();
+	test_electrode_current_serrated();
 	//test_electrode_current_mid_rect_rect();
 	//gen_comparison_data();
-	test_straight_line();
+	//test_straight_line();
 
 	//test_case_silicium();
 	//test_case_helium();
