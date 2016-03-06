@@ -113,7 +113,6 @@ void test_electrode_current_mid_rect_rect() {
 	//double delta_t = 0.0000000000001; //100ps p.76, V_b = 100V, v_d = 30V
 	std::vector<std::pair<double, double> > current_vs_time;
 	ec.compute_current(current_vs_time);
-	std::cout << "yo" << std::endl;
 
 	//std::cout << current_vs_time[0].second << " " << std::endl;
 

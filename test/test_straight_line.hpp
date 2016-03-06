@@ -25,7 +25,7 @@ void test_straight_line() {
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009;
+	double refine_accuracy = 0.003;
 
 	SerratedRect2DDetector srdd(nbr_of_strips,
 			width, strip_length, strip_width, half_pitch, strip_potential,
