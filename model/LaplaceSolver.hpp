@@ -49,6 +49,9 @@
 
 using namespace dealii;
 
+namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
+
 template<unsigned dim>
 class LaplaceSolver {
 
@@ -62,15 +65,13 @@ public:
 	void compute_solution();
 	void get_solution(Solution<dim> &sol);
 
-	/*ValuesAtCell<dim> extrapolate_data_at_point(
-			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data,
-			double pos);
-	ValuesAtCell<dim> get_solution_at_point(Point<dim> &point,
-			std::vector<std::pair<std::vector<double>, ValuesAtCell<dim> > > &coord_and_data);*/
-
 	~LaplaceSolver();
 
 private:
+
+	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
+	typedef bg::model::box<bpoint> box;
+	typedef std::pair<box, ValuesAtCell<dim>> value;
 
 	bool constraints_are_periodic;
 	unsigned max_iter;
@@ -99,9 +100,7 @@ private:
 	void compute_uncertainties();
 	void refine_grid();
 	void output_results(std::string result_file_path) const;
-	void build_solution(std::vector<std::pair
-						<typename DoFHandler<dim>::active_cell_iterator,
-						ValuesAtCell<dim>>> &values_at_cells);
+	void build_solution(bgi::rtree<value, bgi::quadratic<16> > &values_at_cells);
 };
 
 template<unsigned dim>
@@ -210,28 +209,25 @@ void LaplaceSolver<dim>::solve() {
 template<unsigned dim>
 void LaplaceSolver<dim>::compute_uncertainties() {
 	Vector<float> estimated_error_per_cell(triangulation->n_active_cells());
-    KellyErrorEstimator<dim>::estimate (dof_handler,
-	                                    QGauss<dim-1>(3),
-	                                    typename FunctionMap<dim>::type(),
-	                                    solution_vec,
-	                                    estimated_error_per_cell);
-    uncertainty_per_cell = estimated_error_per_cell;
-    max_uncertainty = uncertainty_per_cell.linfty_norm();
+	KellyErrorEstimator<dim>::estimate(dof_handler, QGauss<dim - 1>(3),
+			typename FunctionMap<dim>::type(), solution_vec,
+			estimated_error_per_cell);
+	uncertainty_per_cell = estimated_error_per_cell;
+	max_uncertainty = uncertainty_per_cell.linfty_norm();
 }
 
 template<unsigned dim>
 void LaplaceSolver<dim>::refine_grid() {
 	GridRefinement::refine_and_coarsen_fixed_number(*triangulation,
-													uncertainty_per_cell,
-													0.3, 0);
+			uncertainty_per_cell, 0.3, 0);
 	triangulation->execute_coarsening_and_refinement();
 }
 
 template<unsigned dim>
 void LaplaceSolver<dim>::compute_solution() {
 	bool refine = false;
-	while(max_uncertainty > refine_accuracy || !refine) {
-		if(refine)
+	while (max_uncertainty > refine_accuracy || !refine) {
+		if (refine)
 			refine_grid();
 		setup_system();
 		assemble_system();
@@ -242,9 +238,8 @@ void LaplaceSolver<dim>::compute_solution() {
 }
 
 template<unsigned dim>
-void LaplaceSolver<dim>::build_solution(std::vector<std::pair
-									<typename DoFHandler<dim>::active_cell_iterator,
-									ValuesAtCell<dim>>> &values_at_cells) {
+void LaplaceSolver<dim>::build_solution(
+		bgi::rtree<value, bgi::quadratic<16> > &values_at_cells) {
 
 	const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
@@ -264,18 +259,23 @@ void LaplaceSolver<dim>::build_solution(std::vector<std::pair
 				hessian_at_pts_of_one_cell);
 
 		std::vector<std::pair<double, double>> fun_at_cell;
-		for(int i=0; i < vertices_per_cell; i++) {
-			fun_at_cell.push_back(std::pair<double, double>
-						(fun_at_pts_of_one_cell[i], uncertainty_per_cell[pos]));
+		for (int i = 0; i < vertices_per_cell; i++) {
+			fun_at_cell.push_back(
+					std::pair<double, double>(fun_at_pts_of_one_cell[i],
+							uncertainty_per_cell[pos]));
 		}
 
-		ValuesAtCell<dim> values(fun_at_cell,
-				gradient_at_pts_of_one_cell, hessian_at_pts_of_one_cell);
-		std::pair<typename DoFHandler<dim>::active_cell_iterator,
-				ValuesAtCell<dim> > values_at_cell;
-		values_at_cell.first = cell;
-		values_at_cell.second = values;
-		values_at_cells.push_back(values_at_cell);
+		ValuesAtCell<dim> values(fun_at_cell, gradient_at_pts_of_one_cell,
+				hessian_at_pts_of_one_cell);
+
+		Point<dim> bottom_left_dealii = cell->vertex(0);
+		Point<dim> top_right_dealii = cell->vertex(vertices_per_cell - 1);
+
+		bpoint bottom_left(bottom_left_dealii[0], bottom_left_dealii[1]);
+		bpoint top_right(top_right_dealii[0], top_right_dealii[1]);
+
+		box rect(bottom_left, top_right);
+		values_at_cells.insert(std::make_pair(rect, values));
 		pos++;
 	}
 }
