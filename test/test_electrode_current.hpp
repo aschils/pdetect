@@ -21,14 +21,14 @@ void test_electrode_current_serrated() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	//Use to define the number of charges along the trajectory => 2^refine_level
-	unsigned refine_level = 10;
+	unsigned refine_level = 11;
 	/*
 	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.009;
+	double refine_accuracy = 0.0045;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
