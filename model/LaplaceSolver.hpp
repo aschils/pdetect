@@ -71,7 +71,10 @@ private:
 
 	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
-	typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
+	//typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
+	typedef std::pair<box, std::pair<
+			typename DoFHandler<dim>::active_cell_iterator, float>>
+	cell_coord_pair;
 
 	bool constraints_are_periodic;
 	unsigned max_iter;
@@ -242,31 +245,31 @@ void LaplaceSolver<dim>::build_solution(
 		bgi::rtree<cell_coord_pair, bgi::quadratic<16> > &values_at_cells) {
 
 	const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
-	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
-	std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
-	std::vector<Tensor<2, dim> > hessian_at_pts_of_one_cell(vertices_per_cell);
+	//std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
+	//std::vector<Tensor<1, dim> > gradient_at_pts_of_one_cell(vertices_per_cell);
+	//std::vector<Tensor<2, dim> > hessian_at_pts_of_one_cell(vertices_per_cell);
 
 	typename DoFHandler<dim>::active_cell_iterator cell =
 			dof_handler.begin_active(), endc = dof_handler.end();
 	unsigned pos = 0;
 	for (; cell != endc; cell++) {
 
-		fe_values->reinit(cell);
+		/*fe_values->reinit(cell);
 		fe_values->get_function_values(solution_vec, fun_at_pts_of_one_cell);
 		fe_values->get_function_gradients(solution_vec,
 				gradient_at_pts_of_one_cell);
 		fe_values->get_function_hessians(solution_vec,
-				hessian_at_pts_of_one_cell);
+				hessian_at_pts_of_one_cell);*/
 
-		std::vector<std::pair<double, double>> fun_at_cell;
+		/*std::vector<std::pair<double, double>> fun_at_cell;
 		for (int i = 0; i < vertices_per_cell; i++) {
 			fun_at_cell.push_back(
 					std::pair<double, double>(fun_at_pts_of_one_cell[i],
 							uncertainty_per_cell[pos]));
-		}
+		}*/
 
-		ValuesAtCell<dim> values(fun_at_cell, gradient_at_pts_of_one_cell,
-				hessian_at_pts_of_one_cell);
+		//ValuesAtCell<dim> values(fun_at_cell, gradient_at_pts_of_one_cell,
+		//		hessian_at_pts_of_one_cell);
 
 		Point<dim> bottom_left_dealii = cell->vertex(0);
 		Point<dim> top_right_dealii = cell->vertex(vertices_per_cell - 1);
@@ -275,7 +278,11 @@ void LaplaceSolver<dim>::build_solution(
 		bpoint top_right(top_right_dealii[0], top_right_dealii[1]);
 
 		box rect(bottom_left, top_right);
-		values_at_cells.insert(std::make_pair(rect, values));
+		//values_at_cells.insert(std::make_pair(rect, values));
+
+		values_at_cells.insert(
+				std::make_pair(rect,
+				std::make_pair(cell, uncertainty_per_cell[pos])));
 		pos++;
 	}
 }
@@ -294,6 +301,10 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	derivatives_drawer.attach_dof_handler(dof_handler);
 	derivatives_drawer.add_data_vector(solution_vec, derivatives);
 	derivatives_drawer.build_patches();
+
+	sol.dof_handler = &dof_handler;
+	sol.solution_vec = solution_vec;
+	sol.uncertainty_per_cell = uncertainty_per_cell;
 
 	sol.set_fun_drawer(fun_drawer);
 	sol.set_derivatives_drawer(derivatives_drawer);

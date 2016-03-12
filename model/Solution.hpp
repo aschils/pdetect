@@ -77,9 +77,15 @@ public:
 
 	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
-	typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
-
+	//typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
+	typedef std::pair<box, std::pair<
+				typename DoFHandler<dim>::active_cell_iterator, float>>
+		cell_coord_pair;
 	bgi::rtree<cell_coord_pair, bgi::quadratic<16> > values_at_cells;
+
+	DoFHandler<dim> *dof_handler;
+	Vector<double> solution_vec;
+	Vector<float> uncertainty_per_cell;
 
 	Solution() {
 	}
@@ -109,14 +115,16 @@ public:
 		values_at_cells.query(bgi::intersects(query_point),
 				std::back_inserter(result_s));
 
-		cell_coord_pair values_at_cell = result_s[0];
+		cell_coord_pair cell_containing_point = result_s[0];
 		//value values_at_cell = get_closest_cell(result_s, point);
-		bpoint bottom_left = values_at_cell.first.min_corner();
+		//bpoint bottom_left = cell_containing_point.first.min_corner();
 
-		double x_left = bottom_left.get<0>();
+
+		/*double x_left = bottom_left.get<0>();
 		double y_bottom = bottom_left.get<1>();
-		double delta_x = point[0] - x_left;
-		double delta_y = point[1] - y_bottom;
+		 double delta_x = point[0] - x_left;
+		 double delta_y = point[1] - y_bottom;*/
+
 		/*
 		 double x = point[0];
 		 double y = point[1];
@@ -139,23 +147,53 @@ public:
 		PhysicalValues<dim> extrapol;
 
 		//We use the Taylor expansion to calculate the values of the function and the gradient
-		extrapol.potential = values_at_cell.second.fun[0].first
-				+ values_at_cell.second.gradient[0][0] * delta_x
-				+ values_at_cell.second.gradient[0][1] * delta_y
-				+ 0.5
-						* (values_at_cell.second.hessian[0][0][0] * delta_x
-								* delta_x
-								+ values_at_cell.second.hessian[0][1][1]
-										* delta_y * delta_y)
-				+ values_at_cell.second.hessian[0][0][1] * delta_y * delta_x;
+//		extrapol.potential = values_at_cell.second.fun[0].first
+//				+ values_at_cell.second.gradient[0][0] * delta_x
+//				+ values_at_cell.second.gradient[0][1] * delta_y
+//				+ 0.5
+//						* (values_at_cell.second.hessian[0][0][0] * delta_x
+//								* delta_x
+//								+ values_at_cell.second.hessian[0][1][1]
+//										* delta_y * delta_y)
+//				+ values_at_cell.second.hessian[0][0][1] * delta_y * delta_x;
+//
+//		extrapol.uncertainty = values_at_cell.second.fun[0].second;
+//
+//		for (unsigned i = 0; i < dim; i++) {
+//			extrapol.electric_field[i] = -(values_at_cell.second.gradient[0][i]
+//					+ values_at_cell.second.hessian[0][i][0] * delta_x
+//					+ values_at_cell.second.hessian[0][i][1] * delta_y);
+//		}
 
-		extrapol.uncertainty = values_at_cell.second.fun[0].second;
+		FE_Q<dim> fe(1);
+		MappingQ1<dim> mapping;
+		//const std::pair<typename DoFHandler<dim, dim>::active_cell_iterator,
+		//		Point<dim> > cell_point = cell_containing_point.second;
 
-		for (unsigned i = 0; i < dim; i++) {
-			extrapol.electric_field[i] = -(values_at_cell.second.gradient[0][i]
-					+ values_at_cell.second.hessian[0][i][0] * delta_x
-					+ values_at_cell.second.hessian[0][i][1] * delta_y);
-		}
+		const Point<dim> p_cell = mapping.transform_real_to_unit_cell(
+				cell_containing_point.second.first, point);
+
+		const Quadrature<dim> quadrature(
+				GeometryInfo<dim>::project_to_unit_cell(p_cell));
+		FEValues<dim> fe_values(mapping, fe, quadrature,
+				update_values | update_gradients);
+		fe_values.reinit(cell_containing_point.second.first);
+
+		std::vector<double> potential_v(1);
+		std::vector<Tensor<1, dim> > gradient_v(1);
+		fe_values.get_function_values(solution_vec, potential_v);
+		fe_values.get_function_gradients(solution_vec, gradient_v);
+		extrapol.potential = potential_v[0];
+		extrapol.uncertainty = cell_containing_point.second.second;
+		extrapol.electric_field = -gradient_v[0];
+
+		/*std::vector<std::pair<double, double>> fun_at_cell;
+				for (int i = 0; i < vertices_per_cell; i++) {
+					fun_at_cell.push_back(
+							std::pair<double, double>(fun_at_pts_of_one_cell[i],
+									uncertainty_per_cell[pos]));
+				}*/
+
 		return extrapol;
 	}
 
@@ -177,28 +215,28 @@ private:
 	DataOut<dim> derivatives_drawer;
 
 	/*
-	value get_closest_cell(std::vector<value> &result_s,
-			Point<dim> const &point) {
+	 value get_closest_cell(std::vector<value> &result_s,
+	 Point<dim> const &point) {
 
-		double min_dist = std::numeric_limits<double>::max();
-		value closest;
+	 double min_dist = std::numeric_limits<double>::max();
+	 value closest;
 
-		for (unsigned i = 0; i < result_s.size(); i++) {
+	 for (unsigned i = 0; i < result_s.size(); i++) {
 
-			bpoint bottom_left = result_s[i].first.min_corner();
-			double x = bottom_left.get<0>();
-			double y = bottom_left.get<1>();
-			double dist = std::pow(x - point[0], 2) + std::pow(y - point[1], 2);
+	 bpoint bottom_left = result_s[i].first.min_corner();
+	 double x = bottom_left.get<0>();
+	 double y = bottom_left.get<1>();
+	 double dist = std::pow(x - point[0], 2) + std::pow(y - point[1], 2);
 
-			if (dist <= min_dist) {
-				min_dist = dist;
-				closest = result_s[i];
-			}
-		}
+	 if (dist <= min_dist) {
+	 min_dist = dist;
+	 closest = result_s[i];
+	 }
+	 }
 
-		return closest;
+	 return closest;
 
-	}*/
+	 }*/
 
 };
 
