@@ -77,9 +77,9 @@ public:
 
 	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
-	typedef std::pair<box, ValuesAtCell<dim>> value;
+	typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
 
-	bgi::rtree<value, bgi::quadratic<16> > values_at_cells;
+	bgi::rtree<cell_coord_pair, bgi::quadratic<16> > values_at_cells;
 
 	Solution() {
 	}
@@ -105,15 +105,36 @@ public:
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
 		bpoint query_point(point[0], point[1]);
-		std::vector<value> result_s;
-		values_at_cells.query(bgi::intersects(query_point), std::back_inserter(result_s));
-		value values_at_cell = result_s[0];
+		std::vector<cell_coord_pair> result_s;
+		values_at_cells.query(bgi::intersects(query_point),
+				std::back_inserter(result_s));
+
+		cell_coord_pair values_at_cell = result_s[0];
+		//value values_at_cell = get_closest_cell(result_s, point);
 		bpoint bottom_left = values_at_cell.first.min_corner();
 
 		double x_left = bottom_left.get<0>();
 		double y_bottom = bottom_left.get<1>();
 		double delta_x = point[0] - x_left;
 		double delta_y = point[1] - y_bottom;
+		/*
+		 double x = point[0];
+		 double y = point[1];
+		 bpoint top_right = values_at_cell.first.max_corner();
+		 double x_right = top_right.get<0>();
+		 double y_top = top_right.get<1>();
+
+		 if (x < x_left || x > x_right || y < y_bottom || y > y_top) {
+
+		 std::cout << "Point: (" << point[0] << "," << point[1] << ")"
+		 << std::endl;
+
+		 std::cout << "bot_left: (" << x_left << "," << y_bottom
+		 << ") bot_right: (" << x_right << "," << y_bottom
+		 << ") top_left: (" << x_left << "," << y_top
+		 << ") top_right: (" << x_right << "," << y_top << ")"
+		 << std::endl;
+		 }*/
 
 		PhysicalValues<dim> extrapol;
 
@@ -154,5 +175,30 @@ private:
 	//using deal.ii DataOut class.
 	DataOut<dim> fun_drawer;
 	DataOut<dim> derivatives_drawer;
+
+	/*
+	value get_closest_cell(std::vector<value> &result_s,
+			Point<dim> const &point) {
+
+		double min_dist = std::numeric_limits<double>::max();
+		value closest;
+
+		for (unsigned i = 0; i < result_s.size(); i++) {
+
+			bpoint bottom_left = result_s[i].first.min_corner();
+			double x = bottom_left.get<0>();
+			double y = bottom_left.get<1>();
+			double dist = std::pow(x - point[0], 2) + std::pow(y - point[1], 2);
+
+			if (dist <= min_dist) {
+				min_dist = dist;
+				closest = result_s[i];
+			}
+		}
+
+		return closest;
+
+	}*/
+
 };
 

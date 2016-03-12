@@ -71,7 +71,7 @@ private:
 
 	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
-	typedef std::pair<box, ValuesAtCell<dim>> value;
+	typedef std::pair<box, ValuesAtCell<dim>> cell_coord_pair;
 
 	bool constraints_are_periodic;
 	unsigned max_iter;
@@ -100,7 +100,7 @@ private:
 	void compute_uncertainties();
 	void refine_grid();
 	void output_results(std::string result_file_path) const;
-	void build_solution(bgi::rtree<value, bgi::quadratic<16> > &values_at_cells);
+	void build_solution(bgi::rtree<cell_coord_pair, bgi::quadratic<16> > &values_at_cells);
 };
 
 template<unsigned dim>
@@ -239,7 +239,7 @@ void LaplaceSolver<dim>::compute_solution() {
 
 template<unsigned dim>
 void LaplaceSolver<dim>::build_solution(
-		bgi::rtree<value, bgi::quadratic<16> > &values_at_cells) {
+		bgi::rtree<cell_coord_pair, bgi::quadratic<16> > &values_at_cells) {
 
 	const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 	std::vector<double> fun_at_pts_of_one_cell(vertices_per_cell);
