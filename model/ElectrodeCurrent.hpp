@@ -50,36 +50,22 @@ public:
 	 * @pre: delta_t > 0
 	 *
 	 * @return:
-	 * - true if all charges have left the detector at the end of simultion.
+	 * - true if all charges have left the detector at the end of simulation.
 	 * - false if the simulation has stopped because the speed of every
-	 * charges with zero. It may happen, for example, if the detector potential
+	 * charges is zero. It may happen, for example, if the detector potential
 	 * difference is 0V.
 	 *
 	 */
 	bool compute_current(double delta_t,
 			std::vector<std::pair<double, double> > &current_vs_time) {
-
 		if (delta_t <= 0.0)
 			throw PRECONDITIONS_VIOLATED;
-
-		std::cout << "Delta time: " << delta_t << "s" << std::endl;
-
-		double time = 0.0;
-		bool no_moves = false;
-
-		while (!punctual_charges.empty() && !no_moves) {
-			double current = move_charges(delta_t, no_moves);
-			std::pair<double, double> point(time, current);
-			current_vs_time.push_back(point);
-			time += delta_t;
-		}
-		return no_moves;
+		return compute_current(true, delta_t, current_vs_time);
 	}
 
 	bool compute_current(
 			std::vector<std::pair<double, double> > &current_vs_time) {
-		double delta_t = compute_delta_t();
-		return compute_current(delta_t, current_vs_time);
+		return compute_current(false, 0.0, current_vs_time);
 	}
 
 private:
@@ -91,11 +77,14 @@ private:
 	double hole_pairs_nbr_per_lgth; //per microm
 	double strip_potential;
 	double covered_dist;
+	double dist_to_strip;
+
 	Electron electron;
 	Hole hole;
 
 	void common_constructor(Detector2D *det, unsigned refine_level) {
 		this->geo_info = det->get_geometry_info();
+		dist_to_strip = geo_info->get_width() - geo_info->get_strip_width();
 		det->get_solution(laplace_sol);
 		det->get_solution_weight(laplace_sol_weight);
 		this->refine_level = refine_level;
@@ -119,6 +108,28 @@ private:
 	 */
 	std::queue<std::pair<Point<2>, Charge*>> punctual_charges;
 	double punctual_electric_charge; // electric charge at each punctual charge (C/e)
+
+	bool compute_current(bool user_delta_t_on, double user_delta_t,
+			std::vector<std::pair<double, double> > &current_vs_time) {
+
+		bool no_moves = false;
+		double time = 0.0;
+		double delta_t = (user_delta_t_on) ? user_delta_t : adaptive_delta_t(LIGHT_SPEED);
+
+		while (!punctual_charges.empty() && !no_moves) {
+
+			double max_speed_y = 0.0;
+			double current = move_charges(delta_t, no_moves, max_speed_y);
+			std::pair<double, double> point(time, current);
+			current_vs_time.push_back(point);
+
+			time += delta_t;
+			if (!user_delta_t_on)
+				delta_t = adaptive_delta_t(max_speed_y);
+		}
+
+		return no_moves;
+	}
 
 	/**
 	 * Compute total distance covered by the particle INSIDE the detector.
@@ -160,13 +171,15 @@ private:
 	void place_initial_charges(std::vector<Point<2>> intersect,
 			double dist_covered_by_particle) {
 
-		std::cout << "dist_covered_by_particle " << dist_covered_by_particle << std::endl;
+		std::cout << "dist_covered_by_particle " << dist_covered_by_particle
+				<< std::endl;
 
 		unsigned nbr_of_punctual_charges = std::pow(2, refine_level);
 		double dist_between_punctual_charges = dist_covered_by_particle
 				/ (nbr_of_punctual_charges + 1);
 
-		std::cout << "dist_between_punctual_charges: " << dist_between_punctual_charges << std::endl;
+		std::cout << "dist_between_punctual_charges: "
+				<< dist_between_punctual_charges << std::endl;
 
 		double total_hole_pairs_nbr = dist_covered_by_particle
 				* hole_pairs_nbr_per_lgth;
@@ -174,7 +187,8 @@ private:
 		punctual_electric_charge = total_hole_pairs_nbr
 				/ nbr_of_punctual_charges;
 
-		std::cout << "punctual_electric_charge: " << punctual_electric_charge << std::endl;
+		std::cout << "punctual_electric_charge: " << punctual_electric_charge
+				<< std::endl;
 
 		for (unsigned i = 0; i < intersect.size(); i += 2) {
 			Point<2> particle_entry = intersect[i];
@@ -193,7 +207,8 @@ private:
 				seg.compute_length() / dist_covered_by_particle
 						* nbr_of_punctual_charges);
 
-		std::cout << "nbr_of_charges_on_seg " << nbr_of_punctual_charges_on_seg << std::endl;
+		std::cout << "nbr_of_charges_on_seg " << nbr_of_punctual_charges_on_seg
+				<< std::endl;
 
 		double delta_x;
 		double delta_y;
@@ -222,7 +237,11 @@ private:
 		}
 	}
 
-	Tensor<1, 2> puncutal_charge_speed(Point<2> pos, Charge *charge) {
+	double adaptive_delta_t(const double &max_speed_y) {
+		return dist_to_strip / max_speed_y / std::pow(2, refine_level);
+	}
+
+	Tensor<1, 2> puncutal_charge_speed(Point<2> &pos, Charge *charge) {
 		//Formula in latex: \vec{v} = \mu \vec{E}
 		PhysicalValues<2> val = laplace_sol.get_values(pos);
 		Tensor<1, 2> electric_field = val.electric_field;
@@ -232,7 +251,7 @@ private:
 		return electric_charge_sign * electric_field * mobility;		//*0.86;
 	}
 
-	double current(Point<2> pos, Tensor<1, 2> speed, Charge *charge) {
+	double current(Point<2> &pos, Tensor<1, 2> &speed, Charge *charge) {
 		//Formula in latex: \vec{i} = -q \vec{v} \cdot \vec{E_w}
 		PhysicalValues<2> val = laplace_sol_weight.get_values(pos);
 		Tensor<1, 2> weighting_electric_field = val.electric_field;
@@ -243,19 +262,20 @@ private:
 		return current;
 	}
 
-	Point<2> compute_new_pos(Point<2> prev_pos, Tensor<1, 2> speed,
-			double delta_t) {
+	Point<2> compute_new_pos(Point<2> &prev_pos, Tensor<1, 2> &speed,
+			double &delta_t) {
 		double new_x = prev_pos[0] + speed[0] * delta_t;
 		double new_y = prev_pos[1] + speed[1] * delta_t;
 		Point<2> new_pos(new_x, new_y);
 		return new_pos;
 	}
 
-	double move_charges(double delta_t, bool &no_moves) {
+	double move_charges(double &delta_t, bool &no_moves, double &max_speed_y) {
 
 		double current_tot = 0.0;
 		unsigned init_nbr_punctual_charges = punctual_charges.size();
 		no_moves = true;
+		max_speed_y = 0.0;
 
 		//std::cout << "init_nbr_punctual_charges: " << init_nbr_punctual_charges << std::endl;
 
@@ -264,11 +284,16 @@ private:
 			std::pair<Point<2>, Charge*> punct_charge =
 					punctual_charges.front();
 			punctual_charges.pop();
+
 			Point<2> pos = punct_charge.first;
 			Charge *charge = punct_charge.second;
 			Tensor<1, 2> speed = puncutal_charge_speed(pos, charge);
-			if (!TensorUtils::is_zero_tensor<2>(speed))
+			if (no_moves && !TensorUtils::is_zero_tensor<2>(speed))
 				no_moves = false;
+
+			double speed_y = speed[1];
+			if (speed_y > max_speed_y)
+				max_speed_y = speed_y;
 
 			current_tot += current(pos, speed, charge);
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
@@ -282,16 +307,16 @@ private:
 		return current_tot * ELECTRON_CHARGE;
 	}
 
-	double estimate_collection_time() {
-		//t = d^2/(mu V)
-		double max_mobility = hole.get_mobility_300K();
-		double dist_to_strip = geo_info->get_width()-geo_info->get_strip_width();
-		return std::pow(dist_to_strip,2) / (max_mobility * strip_potential);
-	}
+	/*
+	 double estimate_collection_time() {
+	 //t = d^2/(mu V)
+	 double max_mobility = hole.get_mobility_300K();
+	 return std::pow(dist_to_strip, 2) / (max_mobility * strip_potential);
+	 }
 
-	double compute_delta_t() {
-		double col_time = estimate_collection_time();
-		std::cout << "Predicted collection time: " << col_time << std::endl;
-		return col_time / std::pow(2, refine_level);
-	}
+	 double initial_delta_t() {
+	 double col_time = estimate_collection_time();
+	 std::cout << "Predicted collection time: " << col_time << std::endl;
+	 return col_time / std::pow(2, refine_level);
+	 }*/
 };
