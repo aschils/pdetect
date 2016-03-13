@@ -79,15 +79,31 @@ double Detector2D::get_strip_potential(){
 double Detector2D::get_hole_pairs_nbr_per_lgth(){
 
 	switch(material_id){
-	{case TYPE_SILICIUM:
+	{case TYPE_SILICON:
 		return 75;}
 	{case TYPE_HELIUM:
-		double energy_per_surface = 1.60217656535e-4; //microJ
+		/*double energy_per_surface = 1.60217656535e-4; //microJ
 		double temperature = 300; //°K
-		return energy_per_surface*ATMOSPHERIC_PRESSURE*MOLAR_MASS_HELIUM/
-				(GAS_CONSTANT*temperature);}
+		double hp = energy_per_surface*ATMOSPHERIC_PRESSURE*MOLAR_MASS_HELIUM/
+						(GAS_CONSTANT*temperature);*/
+
+		double hp = HELIUM_DE_DX/HELIUM_ION_PAIR_E;
+		std::cout << "hole_pairs_nbr_per_lgth: " << hp << std::endl;
+		return hp;}
+	//+/- 10 fois moins d'électrons que dans cas silicium pour helium
 	default:
 		return 75;
+		//LPHY2236
+		//kayelaby.npl
+		//atomic_and_nuclear_physics
+
+		//a partir de 10^6V/m on aura un gain pour HE: multiplication nombre électrons
+		//Equation de Townsend N = N_0 exp(apllha X)
+
+		//A PARTR DE 10^6V/m ajouté la multiplication, Diethorn formula
+
+		//Gaz: multipliation intervient électrons proche de leur arrivée
+
 	}
 }
 
