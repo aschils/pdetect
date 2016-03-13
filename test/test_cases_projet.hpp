@@ -25,12 +25,12 @@ void test_case_silicium() {
 
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
-	double refine_accuracy = 0.01;
+	double refine_accuracy = 0.009;
 	unsigned ec_refine_level = 10;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,
-			TYPE_SILICIUM);
+			TYPE_SILICON);
 	std::cout << "detector params: " << srdd.params_to_string() << std::endl;
 	srdd.comp_potential();
 	srdd.comp_weight_potential();
@@ -66,7 +66,7 @@ void test_case_helium() {
 
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
-	double refine_accuracy = 0.01;
+	double refine_accuracy = 0.007;
 	unsigned ec_refine_level = 10;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
@@ -108,8 +108,8 @@ void test_case_helium_scd() {
 
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
-	double refine_accuracy = 0.01;
-	unsigned ec_refine_level = 10;
+	double refine_accuracy = 0.009;
+	unsigned ec_refine_level = 9;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,
