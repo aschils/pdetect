@@ -46,6 +46,7 @@ protected:
 
 	double mobility_300K;
 	double SILICON_MOBILITY, HELIUM_MOBILITY;
+	double SILICON_SATURATION_VELOCITY_300K, HELIUM_SATURATION_VELOCITY_300K;
 	unsigned type_material;
 	double beta_0;
 	double saturation_velocity_300K;
@@ -58,14 +59,17 @@ protected:
 
 	void set_mobility() {
 		switch (type_material) {
-		case TYPE_SILICIUM:
+		case TYPE_SILICON:
 			mobility_300K = SILICON_MOBILITY;
+			saturation_velocity_300K = SILICON_SATURATION_VELOCITY_300K;
 			break;
 		case TYPE_HELIUM:
 			mobility_300K = HELIUM_MOBILITY;
+			saturation_velocity_300K = HELIUM_SATURATION_VELOCITY_300K;
 			break;
 		default:
 			mobility_300K = SILICON_MOBILITY;
+			saturation_velocity_300K = SILICON_SATURATION_VELOCITY_300K;
 		}
 	}
 };
@@ -82,7 +86,11 @@ public:
 		this->SILICON_MOBILITY = 4.5e10; //(microm)^2/(Vs)
 		this->HELIUM_MOBILITY = 1e7;
 		this->beta_0 = 1.213;
-		this->saturation_velocity_300K = 8.37e10;
+		this->SILICON_SATURATION_VELOCITY_300K = 8.37e10;
+		this->HELIUM_SATURATION_VELOCITY_300K = 5e7; //microm/s
+		//Vitesse de sat de 5cm / micros
+		//E/N 10 V/m^2
+		//mob: 10^-4 m2 atm /(Vs)
 		set_mobility();
 	}
 
@@ -102,7 +110,8 @@ public:
 		this->SILICON_MOBILITY = 1.35e11; //(microm)^2/(Vs)
 		this->HELIUM_MOBILITY = 1e10;
 		this->beta_0 = 1.109;
-		this->saturation_velocity_300K = 1.07e11;
+		this->SILICON_SATURATION_VELOCITY_300K = 1.07e11; //Vitesse 10^5 m/s pr Helium
+		this->HELIUM_SATURATION_VELOCITY_300K = 1e11;
 		set_mobility();
 	}
 
