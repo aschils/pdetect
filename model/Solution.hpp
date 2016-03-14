@@ -116,7 +116,7 @@ public:
 	}
 
 private:
-	//These two structures contain data already available in coord_and_data,
+	//These two structures contain data already available in values_at_cells,
 	//but it is useful to keep them as such to easily output vtk graph file
 	//using deal.ii DataOut class.
 	DataOut<dim> fun_drawer;
