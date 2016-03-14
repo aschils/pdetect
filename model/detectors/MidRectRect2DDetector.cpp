@@ -12,7 +12,7 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 		unsigned half_inter_strip_dist, unsigned nbr_of_strips,
 		double potential, double refine_accuracy, unsigned max_iter,
 		double stop_accuracy, unsigned material_id):
-		Detector2D(max_iter, strip_potential, stop_accuracy, refine_accuracy,
+		Detector2D(max_iter, potential, stop_accuracy, refine_accuracy,
 				material_id) {
 
 	this->mrr_geo_info = new MidRectRectGeoInfo(half_width, half_strip_width,
@@ -25,7 +25,8 @@ MidRectRect2DDetector::MidRectRect2DDetector(unsigned half_width,
 
 	boundary_conditions = new MidRectRect2DBoundaryCond<2>(mrr_geo_info,
 			potential);
-	potential_solver = new LaplaceSolver<2>(triangulation, refine_accuracy,
+	potential_solver = new LaplaceSolver<2>(triangulation,
+			refine_accuracy*potential,
 			max_iter, stop_accuracy, zero_right_hand_side, boundary_conditions,
 			true);
 
