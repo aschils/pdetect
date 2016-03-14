@@ -77,14 +77,14 @@ private:
 	double hole_pairs_nbr_per_lgth; //per microm
 	double strip_potential;
 	double covered_dist;
-	double dist_to_strip;
+	double coll_t_to_delta_t_div;
 
 	Electron electron;
 	Hole hole;
 
 	void common_constructor(Detector2D *det, unsigned refine_level) {
+		coll_t_to_delta_t_div = std::pow(2, refine_level);
 		this->geo_info = det->get_geometry_info();
-		dist_to_strip = geo_info->get_width() - geo_info->get_strip_width();
 		det->get_solution(laplace_sol);
 		det->get_solution_weight(laplace_sol_weight);
 		this->refine_level = refine_level;
@@ -238,7 +238,7 @@ private:
 	}
 
 	double adaptive_delta_t(const double &max_speed_y) {
-		return dist_to_strip / max_speed_y / std::pow(2, refine_level);
+		return geo_info->get_width() / max_speed_y / coll_t_to_delta_t_div;
 	}
 
 	Tensor<1, 2> puncutal_charge_speed(Point<2> &pos, Charge *charge) {
@@ -287,13 +287,14 @@ private:
 
 			Point<2> pos = punct_charge.first;
 			Charge *charge = punct_charge.second;
+
 			Tensor<1, 2> speed = puncutal_charge_speed(pos, charge);
 			if (no_moves && !TensorUtils::is_zero_tensor<2>(speed))
 				no_moves = false;
 
-			double speed_y = speed[1];
-			if (speed_y > max_speed_y)
-				max_speed_y = speed_y;
+			double abs_speed_y = fabs(speed[1]);
+			if (abs_speed_y > max_speed_y)
+				max_speed_y = abs_speed_y;
 
 			current_tot += current(pos, speed, charge);
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);

@@ -21,4 +21,4 @@ const double LIGHT_SPEED = 299792458e6; //microm/s
 const double HELIUM_DE_DX = 0.032; //eV/microm
 
 //Average energy to produce an ion pair
-const double HELIUM_ION_PAIR_E = 24.5; //eV
+const double HELIUM_ION_PAIR_E = 41.3; //eV
