@@ -45,6 +45,11 @@ public:
 
 	double get_strip_potential();
 
+	unsigned electric_charge_multiplicator(Point<2> &pos,
+			Charge *charge,
+			PhysicalValues<2> &values_at_pos,
+			double &displacement);
+
 	virtual std::string params_to_string() = 0;
 
 	virtual ~Detector2D();
@@ -81,4 +86,10 @@ protected:
 
 	void compute_solution(LaplaceSolver<2> *potential_solver,
 			Solution<2> &solution_potential);
+
+	unsigned diethorn(Point<2> &pos, PhysicalValues<2> &values_at_pos, double &displacement);
+
+	unsigned townsend_electron_mult(Point<2> &pos, Charge *charge,
+			PhysicalValues<2> &values_at_pos, double &displacement);
+
 };

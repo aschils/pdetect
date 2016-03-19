@@ -14,6 +14,8 @@ const double ATMOSPHERIC_PRESSURE = 1.01325e5; // Pascal
 const double MOLAR_MASS_HELIUM = 0.0040026; // kg/mol
 const double LIGHT_SPEED = 299792458e6; //microm/s
 
+const double TOWNSEND_AVALANCHE_THRESHOLD = 1; //Volt/microm
+
 #define TYPE_SILICON 1
 #define TYPE_HELIUM 2
 

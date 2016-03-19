@@ -13,7 +13,7 @@ class Charge {
 
 public:
 
-	double get_mobility_saturation(Tensor<1, 2> electric_field) {
+	double get_mobility_saturation(Tensor<1, 2> &electric_field) {
 
 		double electric_field_y = fabs(electric_field[1]);
 		//double beta_e = beta_0_e * pow((Temp / 300), beta_exp_e);
@@ -38,6 +38,14 @@ public:
 
 	double get_mobility_300K(){
 		return mobility_300K;
+	}
+
+	bool is_hole(){
+		return get_charge_sign() > 0;
+	}
+
+	bool is_electron(){
+		return get_charge_sign() < 0;
 	}
 
 	virtual int get_charge_sign() = 0;
