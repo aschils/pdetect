@@ -21,21 +21,21 @@ void test_electrode_current_serrated() {
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
 	//Use to define the number of charges along the trajectory => 2^refine_level
-	unsigned refine_level = 11;
+	unsigned refine_level = 9;
 	/*
 	 * refine_accuracy suggested value between:
 	 * 				0.009 => Quick but not precise
 	 *				0.008 ; 0.005 ; 0.0045 ; 0.003
 	 *				0.0025 => Slow but very precise
 	 */
-	double refine_accuracy = 0.0045;
+	double refine_accuracy = 0.009;
 
 	std::string output_dir = "tests_electrode_current/";
 	Utils::create_directory_if_not_exists(output_dir);
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, strip_potential, refine_accuracy, max_iter,
-			stop_accuracy, TYPE_SILICIUM);
+			stop_accuracy, TYPE_SILICON);
 	srdd.comp_potential();
 	srdd.comp_weight_potential();
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
@@ -92,7 +92,7 @@ void test_electrode_current_mid_rect_rect() {
 	MidRectRect2DDetector *mrr = new MidRectRect2DDetector(half_width,
 			strip_length, half_strip_width, half_inter_strip_dist,
 			nbr_of_strips, strip_potential, refine_accuracy, max_iter,
-			stop_accuracy, TYPE_SILICIUM);
+			stop_accuracy, TYPE_SILICON);
 	mrr->comp_potential();
 	mrr->comp_weight_potential();
 	mrr->draw_vtk_graph_potential(

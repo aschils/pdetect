@@ -43,7 +43,7 @@ void test_serrated_2D_potential() {
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				half_pitch, strip_potential, refine_accuracy, max_iter,
-				stop_accuracy, TYPE_SILICIUM);
+				stop_accuracy, TYPE_SILICON);
 		srdd.comp_potential();
 		srdd.draw_vtk_graph_potential(output_file);
 	}
@@ -81,7 +81,7 @@ void test_serrated_rect_limit_cases() {
 					SerratedRect2DDetector srdd(nbr_of_strips, width,
 							strip_length, strip_width, half_pitch,
 							strip_potential, refine_accuracy, max_iter,
-							stop_accuracy, TYPE_SILICIUM);
+							stop_accuracy, TYPE_SILICON);
 					srdd.comp_potential();
 					std::string output_file = output_dir
 							+ srdd.params_to_string() + ".vtk";
@@ -156,7 +156,7 @@ void test_weighting_potential() {
 				+ std::to_string(nbr_of_strips) + ".vtk";
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				half_pitch, strip_potential, refine_accuracy, max_iter,
-				stop_accuracy, TYPE_SILICIUM);
+				stop_accuracy, TYPE_SILICON);
 		srdd.comp_weight_potential();
 
 		srdd.draw_vtk_graph_weight_potential(output_file);
@@ -192,7 +192,7 @@ void test_mid_circle_rect2D_det() {
 			MidCircleRect2DDetector det(half_width, nbr_of_potential_src,
 					potential_src_radius, half_inter_potential_srcs_dist,
 					potential, refine_accuracy, max_iter, max_error,
-					TYPE_SILICIUM);
+					TYPE_SILICON);
 			std::cout << "number of strips: " << nbr_of_potential_src << std::endl;
 			det.comp_potential();
 			det.comp_weight_potential();
@@ -230,7 +230,7 @@ void test_mid_rect_rect_2D_det() {
 
 	MidRectRect2DDetector det(half_width, strip_length, half_strip_width,
 			half_inter_potential_srcs_dist, nbr_of_strips, potential,
-			refine_accuracy, max_iter, max_error, TYPE_SILICIUM);
+			refine_accuracy, max_iter, max_error, TYPE_SILICON);
 
 	det.comp_potential();
 	det.comp_weight_potential();
@@ -256,7 +256,7 @@ void test_various() {
 
 	SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 			half_pitch, strip_potential, refine_accuracy, max_iter, max_error,
-			TYPE_SILICIUM);
+			TYPE_SILICON);
 	srdd.comp_potential();
 
 	std::string output_file = "various.vtk";

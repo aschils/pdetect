@@ -62,12 +62,13 @@ void test_case_helium() {
 	unsigned half_pitch = 5000;
 	unsigned strip_length = 9000;
 	unsigned strip_width = 0;
+	//double potential = 10000;
 	double potential = 10000;
 
 	unsigned max_iter = 10000;
 	double stop_accuracy = 10e-12;
-	double refine_accuracy = 0.007;
-	unsigned ec_refine_level = 10;
+	double refine_accuracy = 0.009;
+	unsigned ec_refine_level = 9;
 
 	SerratedRect2DDetector srdd(nbr_of_strips, width, strip_length, strip_width,
 			half_pitch, potential, refine_accuracy, max_iter, stop_accuracy,
