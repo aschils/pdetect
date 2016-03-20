@@ -135,6 +135,7 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 
 	double V = strip_potential;	//values_at_pos.potential;
 	double delta_V = 27.6;
+	//double delta_V = 276000;
 
 	/*double b = 34.0/133.3223684; //1/(Pa cm)
 	 double a = 3.0/133.3223684; //1/(Pa cm)
@@ -148,22 +149,25 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 	 double M = ceil(std::exp(term1 * term2))*1e-4; // 1/microm
 	 std::cout << "M is " << M << std::endl;
 	 */
-/*
-	double b = geo_info->get_width(); //V/(Torr cm)
-	double a = b/4.0; //V/(Torr cm)
+
+	double b = geo_info->get_width(); //microm
+	double a = 25; //microm
 	double ln_b_div_a = std::log(b / a);
-	double p = ATMOSPHERIC_PRESSURE/133.3223684; //Torr
-	double K = 1.48/1e4; //V/(microm * Torr)
+
+	std::cout << " ln_b_div_a " << ln_b_div_a << std::endl;
+
+	double p = ATMOSPHERIC_PRESSURE; //Pa
+	double K = 1.48/101325; //V/(microm * Pa)
 
 	double term1 = V / ln_b_div_a * std::log(2) / delta_V;
-	double term2 = std::log(V / (p * a * ln_b_div_a)) - std::log(K);
+	double term2 = std::log(V / (p * a * ln_b_div_a*K));
 
-	double M = ceil(std::exp(term1 * term2)) * 1e-4; // 1/microm
-	std::cout << "M is " << M << std::endl;
+	double M = ceil(std::exp(term1 * term2));
+	std::cout << "M is " << M << " term1: " << term1 << " term2: " << term2 << std::endl;
 	return M;
-*/
 
 
+/*
 	double E = values_at_pos.electric_field.norm(); //V/microm
 	double r = pos[1]; //microm
 	double p = ATMOSPHERIC_PRESSURE/133.3223684;//Torr
@@ -176,7 +180,7 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 	double ln_M = E*displacement*std::log(2)/delta_V*(std::log(E*r/(p*a*K)));
 	double M = ceil(std::exp(ln_M)); // 1/microm
 	std::cout << "M is " << M << std::endl;
-	return M;
+	return M;*/
 }
 
 unsigned Detector2D::townsend_electron_mult(Point<2> &pos, Charge *charge,
