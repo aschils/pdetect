@@ -112,7 +112,25 @@ default:
 	}
 }
 
-unsigned Detector2D::electric_charge_multiplicator(Point<2> &pos, Charge *charge,
+double Detector2D::get_first_townsend_coefficient(Point<2> &pos,
+		PhysicalValues<2> &values_at_pos) {
+
+	double p = ATMOSPHERIC_PRESSURE; //Pa
+	double a = 3.0/(133.3223684e4); //1/(Pa*µm)
+	double b = 34.0/(133.3223684e4); //V/(Pa*µm)
+	double E = values_at_pos.electric_field.norm(); //V/cm
+	double alpha = 0;
+
+	//10^6 V/m is the threshold value of the electric field to have townsend avalanche
+	if(E > 1) 
+		alpha = a*p*exp(b*p/E);
+
+	//std::cout << "E : " << E << std::endl << "alpha : " << alpha << std::endl;
+
+	return alpha;
+}
+
+/*unsigned Detector2D::electric_charge_multiplicator(Point<2> &pos, Charge *charge,
 		PhysicalValues<2> &values_at_pos, double &displacement) {
 
 	if (charge->is_hole())
@@ -127,9 +145,9 @@ unsigned Detector2D::electric_charge_multiplicator(Point<2> &pos, Charge *charge
 		return 1;
 	}
 
-}
+}*/
 
-unsigned Detector2D::diethorn(Point<2> &pos,
+/*unsigned Detector2D::diethorn(Point<2> &pos,
 		PhysicalValues<2> &values_at_pos,
 		double &displacement) {
 
@@ -137,7 +155,7 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 	double delta_V = 27.6;
 	//double delta_V = 276000;
 
-	/*double b = 34.0/133.3223684; //1/(Pa cm)
+	double b = 34.0/133.3223684; //1/(Pa cm)
 	 double a = 3.0/133.3223684; //1/(Pa cm)
 	 double ln_b_div_a = std::log(b / a);
 	 double p = ATMOSPHERIC_PRESSURE; //Pascal
@@ -148,7 +166,7 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 
 	 double M = ceil(std::exp(term1 * term2))*1e-4; // 1/microm
 	 std::cout << "M is " << M << std::endl;
-	 */
+	 
 
 	double b = geo_info->get_width(); //microm
 	double a = 25; //microm
@@ -167,7 +185,7 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 	return M;
 
 
-/*
+
 	double E = values_at_pos.electric_field.norm(); //V/microm
 	double r = pos[1]; //microm
 	double p = ATMOSPHERIC_PRESSURE/133.3223684;//Torr
@@ -180,10 +198,10 @@ unsigned Detector2D::diethorn(Point<2> &pos,
 	double ln_M = E*displacement*std::log(2)/delta_V*(std::log(E*r/(p*a*K)));
 	double M = ceil(std::exp(ln_M)); // 1/microm
 	std::cout << "M is " << M << std::endl;
-	return M;*/
-}
+	return M;
+}*/
 
-unsigned Detector2D::townsend_electron_mult(Point<2> &pos, Charge *charge,
+/*unsigned Detector2D::townsend_electron_mult(Point<2> &pos, Charge *charge,
 		PhysicalValues<2> &values_at_pos, double &displacement) {
 
 	if (values_at_pos.electric_field.norm() <= TOWNSEND_AVALANCHE_THRESHOLD) {
@@ -194,7 +212,7 @@ unsigned Detector2D::townsend_electron_mult(Point<2> &pos, Charge *charge,
 		return diethorn(pos, values_at_pos, displacement);
 	}
 
-}
+}*/
 
 Detector2D::~Detector2D() {
 	delete zero_right_hand_side;

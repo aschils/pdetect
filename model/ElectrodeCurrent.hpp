@@ -37,7 +37,7 @@ public:
 	void print_charges() {
 		unsigned nbr_of_charges = punctual_charges.size();
 		for (unsigned i = 0; i < nbr_of_charges; i++) {
-			std::tuple<Point<2>, Charge*, double, bool> el = punctual_charges.front();
+			std::tuple<Point<2>, Charge*, double> el = punctual_charges.front();
 			punctual_charges.pop();
 			Point<2> p = std::get<0>(el);
 			std::cout << "(" << p[0] << "," << p[1] << ") ";
@@ -109,7 +109,7 @@ private:
 	 *
 	 */
 	//std::queue<std::pair<Point<2>, Charge*>> punctual_charges;
-	std::queue<std::tuple<Point<2>, Charge*, double, bool>> punctual_charges;
+	std::queue<std::tuple<Point<2>, Charge*, double>> punctual_charges;
 	//double punctual_electric_charge; // electric charge at each punctual charge (C/e)
 
 	bool compute_current(bool user_delta_t_on, double user_delta_t,
@@ -233,10 +233,10 @@ private:
 
 		for (unsigned i = 0; i < nbr_of_punctual_charges_on_seg; i++) {
 			Point<2> p(x_coord, y_coord);
-			std::tuple<Point<2>, Charge*, double, bool> holes(p, &hole,
-					init_punctual_electric_charge, false);
-			std::tuple<Point<2>, Charge*, double, bool> electrons(p, &electron,
-					init_punctual_electric_charge, false);
+			std::tuple<Point<2>, Charge*, double> holes(p, &hole,
+					init_punctual_electric_charge);
+			std::tuple<Point<2>, Charge*, double> electrons(p, &electron,
+					init_punctual_electric_charge);
 			punctual_charges.push(holes);
 			punctual_charges.push(electrons);
 			x_coord += delta_x;
@@ -281,19 +281,21 @@ private:
 			Point<2> &pos,
 			Point<2> &new_pos,
 			PhysicalValues<2> &values_at_pos,
-			double &electric_charge,
-			bool &townsend_avalanche_done){
+			double &electric_charge){
 
 		double displacement = (new_pos-pos).norm();
-		unsigned electric_charge_mul = (townsend_avalanche_done)? 1: det->electric_charge_multiplicator(
+		double first_townsend_coefficient = det->get_first_townsend_coefficient(pos,
+																				values_at_pos);
+		double new_electric_charge = electric_charge*exp(first_townsend_coefficient*displacement);
+		/*unsigned electric_charge_mul = (townsend_avalanche_done)? 1: det->electric_charge_multiplicator(
 				pos,
-				charge, values_at_pos, displacement);
-		double new_electric_charge = electric_charge*electric_charge_mul;
-		bool new_townsend_avalanche_done = electric_charge_mul != 1;
-		std::tuple<Point<2>, Charge*, double, bool> new_charge(new_pos, charge,
-				new_electric_charge, new_townsend_avalanche_done);
-		punctual_charges.push(new_charge);
+				charge, values_at_pos, displacement);*/
+		//double new_electric_charge = electric_charge*electric_charge_mul;
+		//bool new_townsend_avalanche_done = electric_charge_mul != 1;
 
+		std::tuple<Point<2>, Charge*, double> new_charge(new_pos, charge,
+				new_electric_charge);
+		punctual_charges.push(new_charge);
 	}
 
 	double move_charges(double &delta_t, bool &no_moves, double &max_speed_y) {
@@ -307,14 +309,14 @@ private:
 
 		for (unsigned i = 0; i < init_nbr_punctual_charges; i++) {
 
-			std::tuple<Point<2>, Charge*, double, bool> punct_charge =
+			std::tuple<Point<2>, Charge*, double> punct_charge =
 					punctual_charges.front();
 			punctual_charges.pop();
 
 			Point<2> pos = std::get<0>(punct_charge);
 			Charge *charge = std::get<1>(punct_charge);
 			double electric_charge = std::get<2>(punct_charge);
-			bool townsend_avalanche_done = std::get<3>(punct_charge);
+			//bool townsend_avalanche_done = std::get<3>(punct_charge);
 
 			PhysicalValues<2> values_at_pos = laplace_sol.get_values(pos);
 			Tensor<1, 2> electric_field = values_at_pos.electric_field;
@@ -331,8 +333,17 @@ private:
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
 
 			if (geo_info->is_point_inside_geometry(new_pos)) {
-				generate_new_charges(charge, pos, new_pos, values_at_pos,
-						electric_charge, townsend_avalanche_done);
+
+				int charge_sign = charge->get_charge_sign();
+				if(charge_sign < 0) { //if electron, townsend avalanche
+					generate_new_charges(charge, pos, new_pos, values_at_pos,
+							electric_charge);
+				}
+				else { //if hole
+					std::tuple<Point<2>, Charge*, double> new_charge(new_pos, charge,
+										electric_charge);
+					punctual_charges.push(new_charge);
+				}			
 			}
 		}
 

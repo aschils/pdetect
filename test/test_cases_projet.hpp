@@ -57,8 +57,8 @@ void test_case_helium() {
 	std::string output_dir = "tests_cases/";
 	Utils::create_directory_if_not_exists(output_dir);
 
-	unsigned nbr_of_strips = 3;
-	unsigned width = 5000;
+	unsigned nbr_of_strips = 1;
+	unsigned width = 10000;
 	unsigned half_pitch = 5000;
 	unsigned strip_length = 9000;
 	unsigned strip_width = 0;
@@ -90,8 +90,8 @@ void test_case_helium() {
 	std::string output_graph = output_dir + "helium_current";
 	//gnuplot --persist -e 'set terminal png; plot "current" with dots;' > out.png
 	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
-	ResultsOut::write_current_vs_time(
-			"../src/plots/helium_current_vs_time.txt", current_vs_time);
+	//ResultsOut::write_current_vs_time(
+			//"../src/plots/helium_current_vs_time.txt", current_vs_time);
 
 }
 

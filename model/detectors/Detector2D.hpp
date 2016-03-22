@@ -45,10 +45,13 @@ public:
 
 	double get_strip_potential();
 
-	unsigned electric_charge_multiplicator(Point<2> &pos,
+	double get_first_townsend_coefficient(Point<2> &pos,
+			PhysicalValues<2> &values_at_pos);
+	
+	/*unsigned electric_charge_multiplicator(Point<2> &pos,
 			Charge *charge,
 			PhysicalValues<2> &values_at_pos,
-			double &displacement);
+			double &displacement);*/
 
 	virtual std::string params_to_string() = 0;
 
@@ -87,9 +90,9 @@ protected:
 	void compute_solution(LaplaceSolver<2> *potential_solver,
 			Solution<2> &solution_potential);
 
-	unsigned diethorn(Point<2> &pos, PhysicalValues<2> &values_at_pos, double &displacement);
+	/*unsigned diethorn(Point<2> &pos, PhysicalValues<2> &values_at_pos, double &displacement);
 
 	unsigned townsend_electron_mult(Point<2> &pos, Charge *charge,
-			PhysicalValues<2> &values_at_pos, double &displacement);
+			PhysicalValues<2> &values_at_pos, double &displacement);*/
 
 };
