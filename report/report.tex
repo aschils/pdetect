@@ -1,4 +1,4 @@
-\documentclass[11pt]{report}
+\documentclass[11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -12,10 +12,38 @@
 \begin{document}
 
 \maketitle
-
-\renewcommand{\contentsname}{Sommaire}
+\newpage
+\renewcommand{\contentsname}{Table of contents}
 \tableofcontents
 
-\section*{Introduction}
+\newpage
+\section{Introduction}
+	
+	\hspace{0.6cm}In the context of our lesson LPHY1300 personal project, we 
+	had to simulate a particle detector using the finite elements method. We 
+	thus develop our program "pdetect" which simulates the electric potential 
+	and electric field inside a pixel detector. It also computes the electric 
+	current induce by an incident particle with a given trajectory.
+
+	In this paper we will first introduce briefly what the finite elements 
+	method is, and then a library we used in our program, "deal.II".
+	Afterwhat we will explain properly our program, the way it works, and 
+	also comparing our results with the results of "weightfield", another 
+	simulator of a particle detector, already use in many experiences.
+	To finish this paper we will talk about two specific cases of detector,
+	a silicon detector, and a helium detector.
+
+	\subsection*{Finite elements method}
+
+		\hspace{0.6cm}The finite element method is a numerical technique for 
+		finding approximate solutions to boundary value problems for partial 
+		differential equations. The finite elements method subdivides a large 
+		problem into smaller, simpler, parts, called finite elements. The 
+		simple equations that model these finite elements are then assembled 
+		into a larger system of equations that models the entire problem. It 
+		then uses variational methods from the calculus of variations to 
+		approximate a solution by minimizing an associated error function.
+
+	\subsection*{Deal.II library}
 
 \end{document}
