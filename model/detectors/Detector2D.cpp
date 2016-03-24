@@ -115,19 +115,35 @@ default:
 double Detector2D::get_first_townsend_coefficient(Point<2> &pos,
 		PhysicalValues<2> &values_at_pos) {
 
-	double p = ATMOSPHERIC_PRESSURE; //Pa
-	double a = 3.0/(133.3223684e4); //1/(Pa*µm)
-	double b = 34.0/(133.3223684e4); //V/(Pa*µm)
-	double E = values_at_pos.electric_field.norm(); //V/cm
-	double alpha = 0;
+	switch(material_id){
+		case TYPE_SILICON:
+			return 0;
+		case TYPE_HELIUM: {
+			double p = ATMOSPHERIC_PRESSURE; //Pa
+			double a = 3.0/(133.3223684e4); //1/(Pa*µm)
+			double b = 34.0/(133.3223684e4); //V/(Pa*µm)
 
-	//10^6 V/m is the threshold value of the electric field to have townsend avalanche
-	if(E > 1) 
-		alpha = a*p*exp(b*p/E);
+			// /!\ http://onlinelibrary.wiley.com/doi/10.1002/ctpp.200710025/pdf
+			//double a = 2.1e-6; //1/(Pa*µm)
+			//double b = 25.5e-6; //V/(Pa*µm)
+			//double y = 0.263;
+			//double E_threshold = b*p/(log(a*p*d)-log(log(1+1/y)));
 
-	//std::cout << "E : " << E << std::endl << "alpha : " << alpha << std::endl;
+			//double d = width;
+			double E = values_at_pos.electric_field.norm(); //V/µm
+			double alpha = 0; //1/µm
 
-	return alpha;
+			//10^6 V/m is the threshold value of the electric field to have townsend avalanche
+			if(E > 1 && pos[1] > width-25) 
+				alpha = a*p*exp(-b*p/E);
+
+			//std::cout << "E : " << E << std::endl << "alpha : " << alpha << std::endl;
+			//std::cout << E_threshold << std::endl;
+			return alpha;
+		}
+		default:
+			return 0;
+	}
 }
 
 /*unsigned Detector2D::electric_charge_multiplicator(Point<2> &pos, Charge *charge,
