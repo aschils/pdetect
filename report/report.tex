@@ -23,25 +23,68 @@
 \newpage
 \section*{Introduction}
 
-	In the context of our lesson LPHY1300 personal project, we
-	had to simulate a particle detector using the finite elements method. We
-	thus develop our program "pdetect" which simulates the electric potential
-	and electric field inside a pixel detector. It also computes the electric
-	current induce by an incident particle with a given trajectory.
+Nowadays, the huge amount of computing power offered by modern computer systems allows
+to solve complex scientific problems numerically. The art of solving physics problems using
+computers is referred as \textit{computational physics}. This modern field
+is multidisciplinary: it brings together applied mathematics,
+computer science and physics. If offers a third way to do physics
+that supplements theory and experiment.
 
-	In this paper we will first introduce briefly what the finite elements
-	method is, and then a library we used in our program, "deal.II".
-	After what we will explain properly our program, the way it works, and
-	also comparing our results with the results of "weightfield", another
-	simulator of a particle detector, already use in many experiences.
-	To finish this paper we will talk about two specific cases of detector,
-	a silicon detector, and a helium detector.
+In this thesis, such numerical techniques are used to compute the current measured
+by a particle detector due to the passage of a particle. A new software performing this task,
+\textit{pdetect}, has been developed. This software has then been used to study
+silicon and gas particle detectors.
 
-	\subsection*{Goals}
+	% In the context of our lesson LPHY1300 personal project, we
+	% had to simulate a particle detector using the finite elements method. We
+	% thus develop our program "pdetect" which simulates the electric potential
+	% and electric field inside a pixel detector. It also computes the electric
+	% current induce by an incident particle with a given trajectory.
 
-	\subsection*{Overview of the Contributions}
+	\subsection*{Overview of the contributions}
 
-	\subsection*{Organization of the Thesis}
+	The primary contribution of this thesis is the development of a C++ numerical software performing the
+	following tasks.
+
+	Firstly, it computes the potential and the electric field
+	at each point of a particle detector solving the Laplace equation for non-trivial
+	two-dimensions geometries. Three types of 2D detector geometries are supported.
+	The Laplace equation is solved using the Finite Elements Methods with an adaptive
+	grid refinement strategy. The software supports multithreading and therefore
+	uses all available CPUs to quickly solve this equation.
+
+	Secondly, the software computes the current resulting from the passage of a particle
+	in the detector using the \textit{Shockley–Ramo theorem} and the solution of the
+	computed electric field. It handles effects such as the \textit{mobility}
+	difference between holes and electrons, the \textit{saturation} phenomena and the
+	\textit{Townsend Avalanche}.
+
+	This software has been developed following the object-oriented
+	programming paradigm and with the \textit{model-view-controller}
+	software engineering pattern in mind. Thanks to the quality of the software
+	architecture further extensions such as 3D geometries, additional physical effects or
+	detector types and the support of distributed computations on clusters are possible
+	without the burden of reimplementing an entire new software.
+
+	The secondary contribution of this thesis is the use of this software to study
+	the gas and silicon detectors.
+
+	%To perform this task, the software places charges
+	%resulting from the ionization of the molecules inside the detector. Then, these
+	%charges drift following the applied potential at the anode and cathode of the detector
+
+	\subsection*{Organization of the thesis}
+
+	TODO
+
+	% In this paper we will first introduce briefly what the finite elements
+	% method is, and then a library we used in our program, "deal.II".
+	% After what we will explain properly our program, the way it works, and
+	% also comparing our results with the results of "weightfield", another
+	% simulator of a particle detector, already use in many experiences.
+	% To finish this paper we will talk about two specific cases of detector,
+	% a silicon detector, and a helium detector.
+
 
 \section{Background and related work}
 
