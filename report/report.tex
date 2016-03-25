@@ -116,6 +116,29 @@ This section is composed of three parts. Firstly,
 
 	\subsection{Deal.II library}
 
+	In order to avoid to reinvent the wheel, it has been decided to use the deal.ii library
+	to solve the Laplace equation~\cite{Bangerth:2007:DGO:1268776.1268779}. This decision allows to rely on the optimized
+	and robust code of deal.ii and to benefit from the state of
+	the art numerical methods it offers.
+
+	deal.II is a C++ library allowing to solve partial differential equations
+	using the finite element method. It is a very powerful but low-level library.
+	It offers several features such as adaptive meshes, grid handling
+and refinement, handling of degrees of freedom, input of meshes and output of results in
+graphics formats. Furthermore, deal.ii allows to easily write code that works
+for any dimensions because code using deal.ii is written independently of the space
+dimension. Thanks to this design choice, the code of our software is quite easily
+extensible to 3D.
+
+Finally, deal.ii supports multithreading as well as \textit{MPI~\footnote{Message
+Passing Interface. MPI is used to develop distributed softwares running on top of
+clusters of computers.}}. Therefore,
+deal.ii is able to hardness the power of multithreaded CPUs as well as
+clusters composed of hundreds of computers. Consequently,
+the software developed in this thesis is multithreaded and could be extended to
+exploit the resources offered by clusters.
+
+
 	\subsection{Weightfield}
 
 \section{Introduction to the physics of particle detectors}
