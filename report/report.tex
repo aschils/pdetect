@@ -30,10 +30,16 @@ is multidisciplinary: it brings together applied mathematics,
 computer science and physics. If offers a third way to do physics
 that supplements theory and experiment.
 
-In this thesis, such numerical techniques are used to compute the current measured
-by a particle detector due to the passage of a particle. A new software performing this task,
-\textit{pdetect}, has been developed. This software has then been used to study
-silicon and gas particle detectors.
+In this thesis, these numerical techniques are applied to the field of particle
+detectors physics. In order to design the best detectors,
+physicists have to know the measured signal resulting from the passage of a particle
+in the detector. Unfortunately, due to the complex geometries of these detectors
+and the various physical phenomena to handle, this signal is not easy
+to compute analytically.
+
+It is why, in the context of this thesis, a software  to compute the current measured
+by a particle detector due to the passage of a particle has been developed.
+This software has then been used to study silicon and gas particle detectors.
 
 	% In the context of our lesson LPHY1300 personal project, we
 	% had to simulate a particle detector using the finite elements method. We
@@ -49,15 +55,16 @@ silicon and gas particle detectors.
 	Firstly, it computes the potential and the electric field
 	at each point of a particle detector solving the Laplace equation for non-trivial
 	two-dimensions geometries. Three types of 2D detector geometries are supported.
-	The Laplace equation is solved using the Finite Elements Methods with an adaptive
+	The Laplace equation is solved using the \textit{finite element method} with an adaptive
 	grid refinement strategy. The software supports multithreading and therefore
 	uses all available CPUs to quickly solve this equation.
 
 	Secondly, the software computes the current resulting from the passage of a particle
 	in the detector using the \textit{Shockley–Ramo theorem} and the solution of the
-	computed electric field. It handles effects such as the \textit{mobility}
-	difference between holes and electrons, the \textit{saturation} phenomena and the
-	\textit{Townsend Avalanche}.
+	computed electric field. Every possible particle trajectories in the detector
+	are suppoted. Effects such as the \textit{mobility} difference between holes and
+	electrons, the \textit{saturation} phenomena and the \textit{Townsend Avalanche}
+	are handled.
 
 	This software has been developed following the object-oriented
 	programming paradigm and with the \textit{model-view-controller}
@@ -67,7 +74,9 @@ silicon and gas particle detectors.
 	without the burden of reimplementing an entire new software.
 
 	The secondary contribution of this thesis is the use of this software to study
-	the gas and silicon detectors.
+	the gas and silicon detectors. Finally, the results provided by the
+	software have been compared with the results of \textit{Weightfield}~\cite{Cenna2015}, a
+	software performing similar computations.
 
 	%To perform this task, the software places charges
 	%resulting from the ionization of the molecules inside the detector. Then, these
@@ -88,11 +97,17 @@ silicon and gas particle detectors.
 
 \section{Background and related work}
 
-	\subsection{Finite elements method}
+This section is composed of three parts. Firstly,
+ the finite element method is briefly explained. Then \textit{deal.ii},
+ a C++ library implementing the finite element method is introduced. Finally,
+ \textit{Weightfield}, another software performing particle detector simulation,
+ is presented.
+
+	\subsection{Finite element method}
 
 		The finite element method is a numerical technique for
 		finding approximate solutions to boundary value problems for partial
-		differential equations. The finite elements method subdivides a large
+		differential equations. The finite element method subdivides a large
 		problem into smaller, simpler, parts, called finite elements. The
 		simple equations that model these finite elements are then assembled
 		into a larger system of equations that models the entire problem. It
@@ -103,7 +118,7 @@ silicon and gas particle detectors.
 
 	\subsection{Weightfield}
 
-\section{Introduction to particle detector physics}
+\section{Introduction to the physics of particle detectors}
 
 \section{Software architecture}
 
@@ -112,5 +127,10 @@ silicon and gas particle detectors.
 \section{Future work}
 
 \section{Conclusion}
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{report.bib}
 
 \end{document}
