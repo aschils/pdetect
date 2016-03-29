@@ -154,6 +154,9 @@ obtained with our own software.
 
 \section{Introduction to the physics of particle detectors}
 
+In this section, the concepts of particle detectors physics used in this project
+are introduced.
+
 A particle detector is composed of a cathode, an anode and an active media
 between them (gas,...). A potential difference is applied between the cathode
 and the anode~\cite{lphy2236}.
@@ -162,14 +165,27 @@ When a particle pass through the active media, the radiation ionizes the media
 molecules along the particle trajectory.
 Because of the applied potential difference,
 produced ion-electron pairs drift inside the detector until they reach the anode
-(for the ions) or the cathode (for the electrons).
+(for the ions) or the cathode (for the electrons). These ions and electrons
+are moving and charge and therefore produce a current.
 
-The number of ion-pairs per length $n_{eff}$ is given by the following formula:
+The number of ion-pairs per length $n_{eff}$ produced in the media by the
+particle passage is given by the following formula:
 
 \[n_{eff} = \frac{dE/dx}{w} \]
 
 where $dE/dx$ is the energy deposited by the particle in the media by
 unit of length, and $w$ is the average energy to produce one ion-pair.
+
+The charges drift in the detector media with a velocity function of the electric
+field only~\cite{spieler2005semiconductor}:
+
+\[\vec{v} = \mu \vec{E}\]
+
+where $\mu$ is the \textit{mobility}. Electrons and holes (or ions) have different
+mobilities. For example, in Silicon, mobilities are 1350 and 450 $cm^2V^{-1}s^{-1}$
+respectively. In gas, the mobility difference between electrons and holes is
+much larger, electrons are typically a thousand times faster (100 $cm^2V^{-1}s^{-1}$
+for electrons and 0.1 $cm^2V^{-1}s^{-1}$ for holes).
 
 \section{Software architecture}
 
