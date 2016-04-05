@@ -238,7 +238,49 @@ where $a, b$ are constants depending on the gas media, $p$ the pressure in
 the detector (the atmospheric pressure is commonly used) and $E$ the norm
 of the electric field at the charges position.
 
-\section{Software architecture}
+\section{Software architecture and Flow of Execution}
+
+\subsection{Software architecture}
+
+This software is developed in C++ with the object-oriented programming paradigm.
+This section presents how the software is divided in several modules. Each module
+is composed of different classes.
+
+The program main function calls functions from the \texttt{test} folder. These functions
+assemble the different objects to perform the required computation. In the
+final version of the program, functions of the test folder should be replaced
+by a graphic user interface: a \texttt{view} and a \texttt{controller} following
+the model-view-controller software engineering pattern. In this pattern code
+related to core of the program functionality (the \texttt{model}: mathematical computations, file access,...)
+is separated from the code related to the user interface (the \texttt{view}).
+The \texttt{view} and the
+\texttt{model} are connected by the \texttt{controller} module.
+
+The main advantage of this design pattern is to be able to change the user interface without
+performing any modification to the code of the \texttt{model} module. Furthermore,
+mixing model and graphic interface related code should be avoided because it leads to
+less readable and not modular code.
+
+The graphic user interface would allow the user the specify
+parameters of the simulation at runtime rather than hardcoding parameters
+directly in the program source code.
+The development of the \texttt{controller} and \texttt{view} modules
+is left for future work.
+
+The \texttt{model} module includes the following classes.
+
+The \texttt{Detector2D} class is an abstract class that models a detector
+represented by a two-dimensional geometry (a section of a detector).
+
+
+\subsection{Flow of Execution}
+
+This section presents the actions performed by the program in chronological
+order.
+
+
+
+%Functions from the \texttt{test} folder first instatiates an object of
 
 \section{Results for silicon and gas detectors}
 
