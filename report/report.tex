@@ -5,6 +5,10 @@
 \usepackage{graphicx}
 \usepackage[margin=1in]{geometry}
 \usepackage[parfill]{parskip}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{float}
+
 
 \title{LPHY1300 Personal project report :\\ Simulation of a particle detector}
 \author{\textsc{Schils} Arnaud\\ \textsc{Lardinois} Simon}
@@ -12,6 +16,13 @@
 
 \begin{document}
 
+	\lstset{language=C++,
+	                basicstyle=\ttfamily,
+	                keywordstyle=\color{blue}\ttfamily,
+	                stringstyle=\color{red}\ttfamily,
+	                commentstyle=\color{green}\ttfamily,
+	                morecomment=[l][\color{magenta}]{\#}
+	}
 \maketitle
 \newpage
 \renewcommand{\contentsname}{Table of contents}
@@ -238,6 +249,61 @@ where $a, b$ are constants depending on the gas media, $p$ the pressure in
 the detector (the atmospheric pressure is commonly used) and $E$ the norm
 of the electric field at the charges position.
 
+\section{Software features}
+
+The software handles three types of 2D geometries.
+
+\begin{enumerate}
+\item \texttt{Middle circular holes rectangle}: this geometry is a rectangle with circular
+holes vertically centered and uniformly distributed along the horizontal axis (see
+Figure~\ref{fig:mid_circle_geometry}). The configurable values of the geometry
+are the rectangle width,
+the hole radius, the inter holes centers distance and the number of holes.
+The potential is set to $0V$ at the top and bottom boundaries. Left and right
+boundaries have free boundary conditions.
+
+\begin{figure}[H]
+  \center
+  \includegraphics[scale=0.2]{images/mid_circle_geometry.png}
+  \label{fig:mid_circle_geometry}
+  \caption{Middle circular holes rectangle geometry.}
+\end{figure}
+
+
+\item \texttt{Middle rectangular holes rectangle}: this geometry is a rectangle with rectangular
+holes vertically centered and uniformly distributed along the horizontal axis
+(see Figure~\ref{fig:mid_rect_geometry}).
+The configurable values of the geometry are the rectangle width, the number of
+holes, the inter holes distance, the hole width and the hole length.
+The potential is set to $0V$ at the top and bottom boundaries. Left and right
+boundaries have free boundary conditions.
+
+\begin{figure}[H]
+  \center
+  \includegraphics[scale=0.2]{images/mid_rect_geometry.png}
+  \label{fig:mid_rect_geometry}
+  \caption{Middle rectangular holes rectangle geometry.}
+\end{figure}
+
+
+\item \texttt{Serrated rectangle}: this geometry is a rectangle with periodic
+holes inserted near the top boundary, along the horizontal axis
+(see Figure~\ref{fig:serrated_rect_geometry}).
+The configurable values of the geometry are the rectangle width, the number
+of holes, the hole length (i.e. the length of the side parallel to the top
+rectangle boundary), the hole width and the inter holes space.
+These holes are the potential sources, the boundary value at their borders is therefore
+the strip potential. The holes inter-spaces have free boundary conditions.
+The right and left boundaries of the rectangle have free boundary conditions as well.
+Finally, the value at the bottom boundary is 0V.
+
+\begin{figure}[H]
+  \center
+  \includegraphics[scale=0.2]{images/serrated_rect_geometry.png}
+  \label{fig:serrated_rect_geometry}
+  \caption{Serrated rectangle geometry.}
+\end{figure}
+
 \section{Software architecture and Flow of Execution}
 
 \subsection{Software architecture}
@@ -263,14 +329,59 @@ less readable and not modular code.
 
 The graphic user interface would allow the user the specify
 parameters of the simulation at runtime rather than hardcoding parameters
-directly in the program source code.
+directly in the functions of the \texttt{test} folder.
 The development of the \texttt{controller} and \texttt{view} modules
-is left for future work.
+is left for future work. The reminder of this section presents the most important classes
+included in the \texttt{model} module.
 
-The \texttt{model} module includes the following classes.
+The \texttt{MyGeometryInfo} abstract class contains (and provides) informations
+related to the
+geometry of the detector as well as methods to compute the intersections of a
+line with the boundaries of the geometry and to check if a point is inside
+the geometry. This abstract class has three implementations:
+
+\end{enumerate}
+
+
+
+
 
 The \texttt{Detector2D} class is an abstract class that models a detector
-represented by a two-dimensional geometry (a section of a detector).
+represented by a two-dimensional geometry (a section of a detector). Classes
+implementing this abstract class must implement the following methods:
+% \begin{itemize}
+% 	\item \lstinline{void comp_potential()}: this method computes the potential
+% 	at each point of the detector.
+% 	\item \lstinline{void comp_weight_potential()}: this method computes the
+% 	weighting potential	at each point of the detector.
+% 	\item \lstinline{MyGeometryInfo* get_geometry_info()}
+%
+% 	\item \lstinline{void get_solution(Solution<2> &sol)}
+%
+% 	\item \lstinline{void get_solution_weight(Solution<2> &sol)}
+%
+% 	\item \lstinline{Hole get_hole()}
+%
+% 	\item \lstinline{Electron get_electron()}
+%
+% 	\item \lstinline{double get_hole_pairs_nbr_per_lgth()}
+%
+% 	\item \lstinline{double get_strip_potential()}
+%
+% 	\item \lstinline{double get_first_townsend_coefficient(Point<2> &pos, PhysicalValues<2> &values_at_pos)}
+%
+% 	\item \lstinline{unsigned electric_charge_multiplicator(}
+%
+% 	\lstinline{Point<2> &pos,Charge *charge,PhysicalValues<2> &values_at_pos,double &displacement)}
+%
+% 	\item \lstinline{virtual std::string params_to_string()}
+%
+% 	\item \lstinline{draw_vtk_graph_*}: this set of methods output some \texttt{vtk}
+% 	files. These files contain a graphic representation of the potential and
+% 	electric field. These files can be read by the \texttt{Paraview} software.
+%
+%
+% \end{itemize}
 
 
 \subsection{Flow of Execution}
