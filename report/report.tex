@@ -303,10 +303,46 @@ Finally, the value at the bottom boundary is 0V.
   \label{fig:serrated_rect_geometry}
   \caption{Serrated rectangle geometry.}
 \end{figure}
+\end{enumerate}
 
-\section{Software architecture and Flow of Execution}
 
-\subsection{Software architecture}
+For each one of these geometries, a coarse grid (or mesh) is generated using
+functions of the \texttt{deal.ii} library.
+
+Once the grid is generated, the Laplace equation is solved for the considered
+geometry. This is achieved using all available CPU cores and in several iterations.
+At the first one, the
+grid is coarse and the error on the computed results is high. Then, the grid is
+refined only at cells with the largest errors and the Laplace equation is
+solved on this denser grid. This process continues until
+the error is smaller than a relative error provided by the user at each cell of
+the grid. This is adaptive grid refinement. It allows to achieve good precision
+everywhere in the grid without losing time refining cells where the error is already small
+enough.
+
+The result of the Laplace equation is of course the potential at each point of
+the grid. The gradient of the potential is available as well at
+the end of this process. A graphical representation of both the potential and
+its gradient can be written in a \texttt{vtk} file.
+These files can be read by the \texttt{Paraview} software.
+
+The same process is performed with different boundary conditions in order
+to compute the weighting potential and the weighting electric field.
+
+For each cell of the grid, the values of the potential, the error of the
+potential and the electric field are stored in a \texttt{rtree} data structure.
+In the algorithm computing the current measured by the detector, these three
+values have to be retrieved from the coordinates of a point. In order to retrieve the proper
+values, it is required to know to which cell the point belong. Since the grid
+is not uniformly refined, it is not easy to efficiently find this cell.
+Iterating through each cell of the grid is far too slow especially when 3D
+geometries will be introduced in the software. The \texttt{rtree} data structure
+allows to find to which subspace a given point belong with a $\mathcal{O}(log(n))$ time complexity.
+
+The software then uses these results to compute the current measured by the
+detector. The first 
+
+\section{Software architecture}
 
 This software is developed in C++ with the object-oriented programming paradigm.
 This section presents how the software is divided in several modules. Each module
@@ -339,8 +375,6 @@ related to the
 geometry of the detector as well as methods to compute the intersections of a
 line with the boundaries of the geometry and to check if a point is inside
 the geometry. This abstract class has three implementations:
-
-\end{enumerate}
 
 
 
