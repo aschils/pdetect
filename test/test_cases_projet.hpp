@@ -48,8 +48,7 @@ void test_case_silicium() {
 	std::string output_graph = output_dir + "silicium_current";
 	//gnuplot --persist -e 'set terminal png; plot "current" with dots;' > out.png
 	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
-	ResultsOut::write_current_vs_time(
-			"../src/plots/silicium_current_vs_time.txt", current_vs_time);
+	ResultsOut::write_current_vs_time(output_dir + "current.txt", current_vs_time);
 }
 
 void test_case_helium() {
