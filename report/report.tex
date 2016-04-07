@@ -336,11 +336,13 @@ values have to be retrieved from the coordinates of a point. In order to retriev
 values, it is required to know to which cell the point belong. Since the grid
 is not uniformly refined, it is not easy to efficiently find this cell.
 Iterating through each cell of the grid is far too slow especially when 3D
-geometries will be introduced in the software. The \texttt{rtree} data structure
-allows to find to which subspace a given point belong with a $\mathcal{O}(log(n))$ time complexity.
+geometries will be introduced in the software. The algorithm finding the cell
+to which a point belong would have a $\mathcal{O}(n)$ time complexity, where $n$
+is the number of cells in the grid. The \texttt{rtree} data structure
+performs this search with a $\mathcal{O}(log(n))$ time complexity.
 
 The software then uses these results to compute the current measured by the
-detector. The first 
+detector. The first
 
 \section{Software architecture}
 
