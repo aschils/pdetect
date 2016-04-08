@@ -9,6 +9,7 @@
 \usepackage{color}
 \usepackage{float}
 \usepackage{tocloft}
+\usepackage{url}
 
 
 \title{LPHY1300 Personal project report :\\ Simulation of a particle detector}
@@ -18,6 +19,8 @@
 \begin{document}
 
 	\lstset{language=C++,
+	captionpos=b,
+	frame=single,
 	                basicstyle=\ttfamily,
 	                keywordstyle=\color{blue}\ttfamily,
 	                stringstyle=\color{red}\ttfamily,
@@ -271,6 +274,7 @@
 	of the electric field at the charges position.
 
 \section{Software features}
+\label{sec:features}
 
 	This section first presents the features of the software. Firstly,
 	the implemented detector geometries are presented. Secondly, some details
@@ -447,8 +451,11 @@ Notice that this effect happens only for gas detectors.
 \section{Software architecture}
 
 	This software is developed in C++ with the object-oriented programming paradigm.
-	This section presents how the software is divided in several modules. Each module
-	is composed of different classes.
+	This section firstly presents how the final software should be organized in several
+	modules. Secondly, the most important classes and their responsibilities are
+	presented. Relevant implementation details are also mentioned.
+
+\subsection{Model–view–controller (MVC) software architectural pattern}
 
 	The program main function calls functions from the \texttt{test} folder. These functions
 	assemble the different objects to perform the required computation. In the
@@ -469,62 +476,185 @@ Notice that this effect happens only for gas detectors.
 	parameters of the simulation at runtime rather than hardcoding parameters
 	directly in the functions of the \texttt{test} folder.
 	The development of the \texttt{controller} and \texttt{view} modules
-	is left for future work. The reminder of this section presents the most important classes
+	is left for future work.
+
+\subsection{The model module}
+
+	The reminder of this section presents the most important classes
 	included in the \texttt{model} module.
 
-	The \texttt{MyGeometryInfo} abstract class contains (and provides) informations
+
+
+The \texttt{MyGridGenerator} class provides functions to generate \texttt{deal.ii}
+grids (i.e. objects of type \texttt{Triangulation} handled by \texttt{deal.ii}) for supported
+geometries. This class heavily relies on functions of the \texttt{deal.ii}
+library. A common strategy is to first generate
+little rectangles using the \lstinline{hyper_rectangle} method from the
+\texttt{deal.ii GridGenerator} class and assemble them using the \lstinline{merge_triangulations}
+method from the same class to obtain the desired grid. Developers led to build
+methods to generate
+new geometries must be aware that the \lstinline{merge_triangulations} method
+requires the merged triangulations to have common vertices at the boundaries
+where the two triangulations are adjacent, otherwise
+the boundaries of the geometry may not be well defined, leading to strange behavior
+when solving the Laplace equation.
+
+	The \texttt{MyGeometryInfo} abstract class and provides informations
 	related to the
 	geometry of the detector as well as methods to compute the intersections of a
 	line with the boundaries of the geometry and to check if a point is inside
-	the geometry. This abstract class has three implementations:
+	the geometry. This abstract class has three implementations: one for each
+	geometry introduced at Section~\ref{sec:features}.
 
+The \texttt{LaplaceSolver} class responsibility is to solve the Laplace equation.
+The whole code related to finite element method resides in this class.
+Its constructor is presented at Listing~\ref{lst:laplace_solv_constructor}.
+\newline
 
+\begin{lstlisting}[
+	label=lst:laplace_solv_constructor,
+	caption=Constructor of the \texttt{LaplaceSolver} class.]
+LaplaceSolver(Triangulation<dim> *triangulation,
+double refine_accuracy, unsigned max_iter, double stop_accuracy,
+const Function<dim> *right_hand_side,
+BoundaryConditions<dim> *boundary_conditions,
+bool constraints_are_periodic)
+\end{lstlisting}
 
+The \texttt{triangulation} parameter is a pointer to a grid generated using methods of
+the \texttt{MyGridGenerator} class. The \texttt{refine\_accuracy} is the maximum
+error tolerated at each cell. For a given grid (fixed refinement level),
+the \texttt{stop\_accuracy}  is a stop criteria that indicates if the solver has
+reached convergence. If the error difference between two successive iterations
+of the solver is less than \texttt{stop\_accuracy} the solver stopped iterating
+on the current grid. Notice that it does not mean that the computation of the
+Laplace solution is over: the solver may solve the equation on finer grids
+afterwards until the error is less than \texttt{refine\_accuracy} everywhere
+in the grid. The solver also stopped when the number of iteration on a given
+grid is equel to \texttt{max\_iter}. The \texttt{right\_hand\_side} parameter
+is the function $f$ at the right side of the Poisson equation:
 
+\[\nabla^2 \phi(x,y) = f(x,y)\]
+
+Since in this project the Laplace equation is solved, \texttt{right\_hand\_side}
+simply refers to the trivial constant function $f(x,y) = 0$ for all $(x,y) \in R^2$.
+The \texttt{boundary\_conditions} parameter is a function called by the Laplace
+equation solver on each point of the domain boundary for which the free
+boundary conditions are not enabled. Boundary values are encoded in this function.
+
+The functions that dictates the boundary values are stored in the
+\texttt{boundary\_conditions} folder. There are two functions for each
+type of geometry: one provides boundary values fore the potential and the electric
+field computation, the other one for the weighting potential and the weighting
+electric field computation.
+
+Finally, the \texttt{constraints\_are\_periodic} variable may be used to
+enable or disable the free boundary conditions.
+
+The core of the \texttt{LaplaceSolver} has been implemented based on the
+\texttt{deal.ii} tutorial. The developer interested to extend the code of this
+class (for example to enable computation on cluster) should refer to this
+useful resource~\cite{deal.iituto}.
+
+The results are retrieved from a \texttt{LaplaceSolver} object
+ calling the \lstinline{void get_solution(Solution<dim> &sol)}
+method with a properly allocated \texttt{Solution} object as parameter.
+The results are encapsulated in a \texttt{Solution} object. Thanks to this
+abstraction layer, it is possible to modify code in the class \texttt{LaplaceSolver}
+or in the class \texttt{Solution} without having to change code in other
+places in the program (as long as the interfaces of these classes are not
+changed). For example it may be useful if one decides not to use \texttt{deal.ii}
+anymore or if the data structure containing the results is changed.
+
+The \texttt{Solution} class provides a method to access efficiently physical
+quantities at any location in the grid as well as methods to output graphs
+of the potential or the gradient of the potential. The physical quantities
+are accessed efficiently thanks to the \texttt{rtree} data structure already
+introduced in Section~\ref{sec:features}. The \texttt{rtree} implementation
+used in this class is provided by the famous \texttt{boost} C++ library~\cite{boost.rtree}.
+This implementation also supports 3D search spaces.
 
 	The \texttt{Detector2D} class is an abstract class that models a detector
-	represented by a two-dimensional geometry (a section of a detector). Classes
-	implementing this abstract class must implement the following methods:
-	%\begin{itemize}
-	% 	\item \lstinline{void comp_potential()}: this method computes the potential
-	% 	at each point of the detector.
-	% 	\item \lstinline{void comp_weight_potential()}: this method computes the
-	% 	weighting potential	at each point of the detector.
-	% 	\item \lstinline{MyGeometryInfo* get_geometry_info()}
-	%
-	% 	\item \lstinline{void get_solution(Solution<2> &sol)}
-	%
-	% 	\item \lstinline{void get_solution_weight(Solution<2> &sol)}
-	%
-	% 	\item \lstinline{Hole get_hole()}
-	%
-	% 	\item \lstinline{Electron get_electron()}
-	%
-	% 	\item \lstinline{double get_hole_pairs_nbr_per_lgth()}
-	%
-	% 	\item \lstinline{double get_strip_potential()}
-	%
-	% 	\item \lstinline{double get_first_townsend_coefficient(Point<2> &pos, PhysicalValues<2> &values_at_pos)}
-	%
-	% 	\item \lstinline{unsigned electric_charge_multiplicator(}
-	%
-	% 	\lstinline{Point<2> &pos,Charge *charge,PhysicalValues<2> &values_at_pos,double &displacement)}
-	%
-	% 	\item \lstinline{virtual std::string params_to_string()}
-	%
-	% 	\item \lstinline{draw_vtk_graph_*}: this set of methods output some \texttt{vtk}
-	% 	files. These files contain a graphic representation of the potential and
-	% 	electric field. These files can be read by the \texttt{Paraview} software.
-	%
-	%
-	% \end{itemize}
+	represented by a two-dimensional geometry (a section of a detector). Implementation
+	of this abstract class composes instances of the previously presented classes
+	(\texttt{MyGeometryInfo}, \texttt{LaplaceSolver}, \texttt{BoundaryConditions}
+	,...).
 
+	Classes	implementing the \texttt{Detector2D} abstract class must implement the
+	 following methods (much of them are already implemented in the \texttt{Detector2D}
+	 class and are therefore common to all types of detector):
+	\begin{itemize}
+		\item \lstinline{void comp_potential()}: this method computes the potential
+		at each point of the detector.
+		\item \lstinline{void comp_weight_potential()}: this method computes the
+		weighting potential	at each point of the detector.
+		\item \lstinline{MyGeometryInfo* get_geometry_info()}: returns a pointer
+		to a MyGeometryInfo containing all useful informations about the geometry
+		of the detector.
 
-	\subsection{Flow of Execution}
+		\item \lstinline{void get_solution(Solution<2> &sol)}: provides
+		a \lstinline{Solution<2>} object allowing to retrieve the potential
+		and the electric field at any point of the grid. Must be called
+		after one call to \lstinline{void comp_potential()} with a properly instantiated
+		\lstinline{Solution<2>} object as parameter.
 
-		This section presents the actions performed by the program in chronological
-		order.
+		\item \lstinline{void get_solution_weight(Solution<2> &sol)}: provides
+		a \lstinline{Solution<2>} object allowing to retrieve the weighting potential
+		and the weighting electric field at any point of the grid. Must be called
+		after one call to \lstinline{void comp_weight_potential()} with a properly instantiated
+		\lstinline{Solution<2>} object as parameter.
 
+		\item \lstinline{Hole get_hole()}: returns a \texttt{Hole} object having
+		properties (mobility,...) corresponding to the type of the detector (helium, silicon).
+
+		\item \lstinline{Electron get_electron()}: returns an \texttt{Electron} object having
+		properties (mobility,...) corresponding to the type of the detector (helium, silicon).
+
+		\item \lstinline{double get_hole_pairs_nbr_per_lgth()}: returns the number
+		of ion-pairs per length generated by the particle pass in this
+		type of detector (helium or silicon).
+
+		\item \lstinline{double get_strip_potential()}: return the potential of
+		the potential sources in the detector.
+
+		\item \lstinline{double get_first_townsend_coefficient(Point<2> &pos, PhysicalValues<2> &values_at_pos)}:
+		returns the first Townsend coefficient required to generate new ion-pairs due
+		to the Townsend avalanche effect. For silicon detectors for which this effect
+		does not apply, 0 is returned.
+
+		\item \lstinline{virtual std::string params_to_string()}: returns a string
+		containing the values of the most important parameters of the detector.
+
+		\item \lstinline{void draw_vtk_graph_*}: this set of methods output some \texttt{vtk}
+		files. These files contain a graphic representation of the potential and
+		electric field. These files can be opened by the \texttt{Paraview} software.
+	\end{itemize}
+
+The last important class is the class \texttt{ElectrodeCurrent}. This class
+is responsible of the computation of the current measured by the detector. Its
+constructor is presented at Listing~\ref{lst:electrode_current_constructor}.
+\newline
+
+\begin{lstlisting}[
+	label=lst:electrode_current_constructor,
+	caption=Constructor of the \texttt{ElectrodeCurrent} class.]
+ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
+                 unsigned refine_level)
+\end{lstlisting}
+
+The first parameter \texttt{Detector2D *det} is a pointer to a detector of
+any kind (any geometry, gas, silicon), implementing the abstract class \texttt{Detector2D}.
+The second parameter is the particle trajectory. The last parameter \texttt{refine\_level}
+controls the granularity of the current computation. A higher \texttt{refine\_level}
+implies smaller time intervals ($\Delta t$) and a spread of the ion-pairs among
+more punctual charges along the particle trajectory.
+
+The current computation starts once the method \texttt{compute\_current} is called.
+The user can chose to impose a $\Delta t$ himself. It it choses to do so, the
+same $\Delta t$ is used throughout the entire computation. Otherwise,
+the adaptive $\Delta t$ strategy is used: the program computes himself an
+appropriate $\Delta t$ at each iteration depending on the maximum charge velocity
+of the previous iteration.
 
 
 		%Functions from the \texttt{test} folder first instatiates an object of
