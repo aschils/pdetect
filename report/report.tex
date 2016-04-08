@@ -675,6 +675,37 @@ of the previous iteration.
 
 		%Functions from the \texttt{test} folder first instatiates an object of
 
+\section{Boundary conditions}
+
+	In finite elements problems, it is very important to specify good boundary conditions.
+	Depending on the boundary conditions used, the results of the computation can be very
+	different to one another.
+
+	Of course, \textit{Pdetect} doesn't derogate to this rule. We will, in this part, talk
+	about three different boundary conditions that can be used to simulate a serrated and 
+	rectangular particle detector (Figure~\ref{fig:serrated_rect_geometry}) and compare it 
+	to a well known analytic expression and to Weightfield.
+
+	This theoretical analytic expression of the weighing potential has been calculated for
+	this geometry : 
+
+	\begin{figure}[H]
+		\center
+		\includegraphics[scale=0.5]{images/boundary_conditions/analytic.png}
+		\caption{Detector geometry for the calculation of the weighting 
+			potential~\cite{pixeldetector}}
+		\label{fig:analytic}
+	\end{figure}
+
+	Its exppresion is given by the following :
+
+	\begin{equation}
+		\phi_w = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over{\cosh(\pi x)-\cos(\pi y)\cosh(\pi {a\over{2}})}}\right)
+		\label{analytic}
+	\end{equation}
+
+	\subsection{All boundaries set to zero}
+
 \section{Applications}
 
 	In this section we will talk about three applications of our program.
