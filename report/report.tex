@@ -101,7 +101,24 @@
 
 	\subsection*{Organization of the thesis}
 
-		TODO
+	This thesis is organized in six Sections. The remainder of this manuscript
+is structured as follows.
+
+		\begin{itemize}
+			\item Section 1 introduces the finite element method and the
+			C++ finite element library \texttt{deal.ii}. Then, \textit{Weightfield},
+			a software simulating particle detectors, is presented.
+			\item Section 2 is a resume of the detector physics concepts that must be
+			known to understand the problem solved by the software developed in the
+			context of this thesis.
+			\item Section 3 presents the features of the software and the actions
+			it performs in chronological order.
+			\item Section 4 explains the software architecture and the role played by
+			the most important classes.
+			\item Section 5 presents the results obtained with our software for
+			different set of parameters which models various detectors.
+			\item Section 6 discusses the future work.
+		\end{itemize}
 
 		% In this paper we will first introduce briefly what the finite elements
 		% method is, and then a library we used in our program, "deal.II".
@@ -720,8 +737,8 @@ of the previous iteration.
 			Let's now talk about the results given by the program and let's compare them with Weightfield.
 
 			The program \textit{Pdetect} simulate the induced current on the strips when a particle passes through it.
-			For those results we are using a detector with only one strip and a particle passing vertically right in 
-			the middle of it, both in \textit{Pdetect} and in Weightfield, to have a better comparison. The 
+			For those results we are using a detector with only one strip and a particle passing vertically right in
+			the middle of it, both in \textit{Pdetect} and in Weightfield, to have a better comparison. The
 			Figure~\ref{fig:silicon} shows both the current simulate by \textit{Pdetect} and Weightfield.
 
 			\begin{figure}[H]
@@ -732,8 +749,8 @@ of the previous iteration.
 			\end{figure}
 
 			By taking a closer look, we see the total time taken for the generated ions-pair to move to the edges of the
-			detector is exactly $22,6056ns$ for \textit{Pdetect} and $25,28ns$ for Weightfield. Also the maximum 
-			currents are respectively $-0,596511\mu A$ and $-0,606824\mu A$. Plus there are clearly some slight 
+			detector is exactly $22,6056ns$ for \textit{Pdetect} and $25,28ns$ for Weightfield. Also the maximum
+			currents are respectively $-0,596511\mu A$ and $-0,606824\mu A$. Plus there are clearly some slight
 			differences in the two graphs. Those differences are due to some effects featured in Weightfield
 			but not in \textit{Pdetect} such as the depletion voltage or the gain.
 
@@ -767,7 +784,7 @@ of the previous iteration.
 				\item $p = 1 atm$ : The pressure inside the detector.
 				\item $a = 3 Torr^{-1}cm^{-1}$ : A constant used in the computation of the first
 					Townsend coefficient (taken from the lesson of Eduardo Cortina Gil~\cite{lphy2236}).
-				\item $b = 34 VTorr^{-1}cm^{-1}$ : Another constant used in the computation of the 
+				\item $b = 34 VTorr^{-1}cm^{-1}$ : Another constant used in the computation of the
 					first Townsend coefficient (taken from the lesson of Eduardo Cortina Gil~\cite{lphy2236}).
 
 			\end{itemize}
@@ -802,7 +819,7 @@ of the previous iteration.
 			any gas detector. The comparisons will thus be done with known results.
 
 			We will begin by the first case and discuss about the second later.
-			The resulting current simulated by \textit{Pdetect} for the first case is shown on 
+			The resulting current simulated by \textit{Pdetect} for the first case is shown on
 			Figure~\ref{fig:helium1_unprecise} (The particle passes again vertically in the middle of
 			the strip).
 
@@ -817,7 +834,7 @@ of the previous iteration.
 			detector which fade almost instantly. Actually that is not what happens. This peak of current
 			is the result of the electrons moving towards the detector to reach the anode. But since those
 			electrons are way quicker than the holes (almost a thousand times quicker), they will reach the
-			anode long before the holes reach the cathode. Once the electrons are all at the anode, only holes 
+			anode long before the holes reach the cathode. Once the electrons are all at the anode, only holes
 			remain in the detector. Due to their slowness, they induce a current so small compare to the
 			current that was induced by the electron that it seems on the graph to have no current.
 
@@ -831,21 +848,21 @@ of the previous iteration.
 			  \label{fig:helium1_precise}
 			\end{figure}
 
-			Now it is clear that this peak of current didn't fade instantly. Instead, there is now a weird-shaped 
+			Now it is clear that this peak of current didn't fade instantly. Instead, there is now a weird-shaped
 			graph that has nothing to do with the one of the silicon detector (Figure~\ref{fig:silicon}). Why?
 
 			This is due to the Townsend avalanche. While the electrons are moving toward the anode and some of them stop
-			(because they've reached it), other ions-pair are formed by this Townsend avalanche, if the electric field is 
+			(because they've reached it), other ions-pair are formed by this Townsend avalanche, if the electric field is
 			high enough. Therefore the new holes and electrons formed will contribute to the current. The resulting current
 			will thus increase, as shown on Figure~\ref{fig:helium1_precise}, around the times of $250ns$ or $500ns$.
 
-			The threshold value of the electric field needed for the Townsend avalanche to occur is $~10^6V/m$. With the 
-			dimensions of the detector used in the first application, the electric field near the anode is around 
+			The threshold value of the electric field needed for the Townsend avalanche to occur is $~10^6V/m$. With the
+			dimensions of the detector used in the first application, the electric field near the anode is around
 			$2*10^6V/m$, enough to see the Townsend avalanche occurs.
 
 			The graph also shows a very small current, of the order of $-10^{-6}\mu A$. This is simply due to the little
 			amount of ions-pair generated when the particle passes through the detector. Indeed, with the dimensions of the
-			first application of helium detector, the particle generates only $4$ ions-pair ($3,9$ to be precise). The detector 
+			first application of helium detector, the particle generates only $4$ ions-pair ($3,9$ to be precise). The detector
 			being half a centimeter thick, the particle thus generates between $7,8$ and $8$ ions-pair per centimeter.
 			This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, we see the theoretical
 			number of ions-pair in a helium detector is $7,8$ ions-pair per centimeter. We can therefore assume that the
@@ -855,7 +872,7 @@ of the previous iteration.
 
 \section{Future work}
 
-\section{Conclusion}
+\section*{Conclusion}
 
 \newpage
 
