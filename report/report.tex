@@ -530,7 +530,7 @@
 
 \section{Applications}
 
-	In this section we will talk about three applications of our program
+	In this section we will talk about three applications of our program.
 	Firstly we will talk about the simulation of a silicon detector, then the
 	simulation of two cases of an helium detector, each with their own properties.
 
@@ -544,14 +544,14 @@
 		For the application on the silicon detector, we used a serrated and rectangular detector
 		(see Figure~\ref{fig:serrated_rect_geometry}) using realistic dimensions and voltage.
 		In order to use the silicon type for the running of the program, the user have to specify
-		it using a macro define in the file \texttt{Constants.hpp}.
+		it by using a macro define in the file \texttt{Constants.hpp}.
 
 		The silicon detector uses all the features provided by the program, except the Townsend
 		avalanche, which is unique to gas detectors.
 
 		\subsubsection*{Different constants}
 
-			In order to contextualize the results showed below, it is necessary to first set the
+			In order to contextualize the results shown below, it is necessary to first set the
 			different constants used in the equations of the part~\ref{equations} of this thesis.
 			All the constants introduced below takes those values only for the case of a silicon
 			detector, of course.
@@ -559,9 +559,9 @@
 			\begin{itemize}
 
 				\item $w = 3 eV$ : $w$ is the average energy to produce one ion-pair.
-				\item $\mu_e = 1350 cm^2V^{-1}s^{-1}$ : $\mu$ is the mobility of the electrons
+				\item $\mu_e = 1350 cm^2V^{-1}s^{-1}$ : $\mu_e$ is the mobility of the electrons
 					when not considering saturation.
-				\item $\mu_h = 450 cm^2V^{-1}s^{-1}$ : $\mu$ is the mobility of the holes (ions)
+				\item $\mu_h = 450 cm^2V^{-1}s^{-1}$ : $\mu_h$ is the mobility of the holes (ions)
 					when not considering saturation.
 				\item $v_{sat} = 8,37*10^{4} ms^{-1}$ : $v_{sat}$ is the saturation velocity.
 
@@ -591,7 +591,7 @@
 
 			The program \textit{Pdetect} simulate the induced current on the strips when a particle passes through it.
 			For those results we are using a detector with only one strip and a particle passing vertically right in 
-			the middle of it, both in \textit{Pdetect} and in Weightfield, to better comparison. The 
+			the middle of it, both in \textit{Pdetect} and in Weightfield, to have a better comparison. The 
 			Figure~\ref{fig:silicon} shows both the current simulate by \textit{Pdetect} and Weightfield.
 
 			\begin{figure}[H]
@@ -601,7 +601,7 @@
 			  \label{fig:silicon}
 			\end{figure}
 
-			By taking a closer look, we see the total time for the generated ions-pair to move to the edges of the
+			By taking a closer look, we see the total time taken for the generated ions-pair to move to the edges of the
 			detector is exactly $22,6056ns$ for \textit{Pdetect} and $25,28ns$ for Weightfield. Also the maximum 
 			currents are respectively $-0,596511\mu A$ and $-0,606824\mu A$. Plus there are clearly some slight 
 			differences in the two graphs. Those differences are due to some effects featured in Weightfield
@@ -623,8 +623,8 @@
 
 		\subsubsection*{Different constants}
 
-			Since it is another type of detector, it has its own properties and therefor the constants
-			used for the silicon detector can not be used. We thus redefined the constants used in the
+			Since it is another type of detector, it has its own properties and therefore the constants
+			used for the silicon detector may not be used. We thus redefined the constants used in the
 			equations of part~\ref{equations} for the case of helium detector and define the constants
 			used for the Townsend avalanche :
 
@@ -638,7 +638,7 @@
 				\item $a = 3 Torr^{-1}cm^{-1}$ : A constant used in the computation of the first
 					Townsend coefficient (taken from the lesson of Eduardo Cortina Gil~\cite{lphy2236}).
 				\item $b = 34 VTorr^{-1}cm^{-1}$ : Another constant used in the computation of the 
-					first Townsend coefficient(taken from the lesson of Eduardo Cortina Gil~\cite{lphy2236}).
+					first Townsend coefficient (taken from the lesson of Eduardo Cortina Gil~\cite{lphy2236}).
 
 			\end{itemize}
 
@@ -673,7 +673,8 @@
 
 			We will begin by the first case and discuss about the second later.
 			The resulting current simulated by \textit{Pdetect} for the first case is shown on 
-			Figure~\ref{fig:helium1_unprecise}.
+			Figure~\ref{fig:helium1_unprecise} (The particle passes again vertically in the middle of
+			the strip).
 
 			\begin{figure}[H]
 			  \center
@@ -714,11 +715,13 @@
 
 			The graph also shows a very small current, of the order of $-10^{-6}\mu A$. This is simply due to the little
 			amount of ions-pair generated when the particle passes through the detector. Indeed, with the dimensions of the
-			first application of helium detector, the particle generate only $4$ ions-pair ($3,9$ to be precise). The detector 
-			being half a centimeter thick, the particle thus generate between $7,8$ and $8$ ions-pair per centimeter.
+			first application of helium detector, the particle generates only $4$ ions-pair ($3,9$ to be precise). The detector 
+			being half a centimeter thick, the particle thus generates between $7,8$ and $8$ ions-pair per centimeter.
 			This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, we see the theoretical
 			number of ions-pair in a helium detector is $7,8$ ions-pair per centimeter. We can therefore assume that the
 			results given by \textit{Pdetect} are accurate.
+
+			Let's now talk about the second case of helium detector.
 
 \section{Future work}
 
