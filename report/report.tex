@@ -98,7 +98,6 @@
 		%To perform this task, the software places charges
 		%resulting from the ionization of the molecules inside the detector. Then, these
 		%charges drift following the applied potential at the anode and cathode of the detector
-\newpage
 
 	\subsection*{Organization of the thesis}
 
@@ -205,7 +204,7 @@
 	(for the ions) or the cathode (for the electrons). These ions and electrons
 	are moving charges and therefore produce a current.
 
-	The number of ion-hole pairs per length $n_{eff}$ produced in the media by the
+	The number of ion-electron pairs per length $n_{eff}$ produced in the media by the
 	particle passage is given by the following formula:
 
 	\[n_{eff} = \frac{dE/dx}{w} \]
@@ -224,7 +223,7 @@
 	where $\mu$ is the \textit{mobility}. Electrons and holes (or ions) have different
 	mobilities. For example, in Silicon, mobilities are 1350 and 450 $cm^2V^{-1}s^{-1}$,
 	respectively. In gas, the mobility difference between electrons and holes is
-	much larger, electrons are typically a thousand times faster \newline($\mu =$ 100 $cm^2V^{-1}s^{-1}$
+	much larger, electrons are typically a thousand times faster ($\mu =$ 100 $cm^2V^{-1}s^{-1}$
 	for electrons and $\mu =$ 0.1 $cm^2V^{-1}s^{-1}$ for holes). Notice that the mobility
 	is not a constant in general.
 
@@ -237,7 +236,7 @@
 	\end{equation}
 
 	where $\beta$ is a constant, $\mu$ the mobility when not considering saturation,
-	$E_y$ the component of the electric field along the axis orthogonal to the anode and cathode
+	$E_y$ the component of the electric field along the axis orthogonal to the anode and cathode,
 	and $v_{sat}$ the saturation velocity. The saturation velocity depends on the
 	media and the temperature.
 
@@ -418,13 +417,13 @@
 	The segments being part of both the particle trajectory and the detector
 	geometry are retrieved. The total
 	distance covered by the particle inside the detector is then computed as
-	the sum of the length of these segments. From this, the total number of ions-pair
+	the sum of the length of these segments. From this, the total number of ion-pairs
 	created by the particle pass is computed
-	as the product of the covered distance with the number of ions-pair created by unit
-	of length. The number of ions-pair created by unit
+	as the product of the covered distance with the number of ion-pairs created by unit
+	of length. The number of ion-pairs created by unit
 	of length is considered as a constant and is different from one
 	media to another. Depending on the precision level specified by the user, the
-	total number of ions-pair
+	total number of ion-pairs
 	is uniformly spread along the path covered by the particle inside the
 	detector. When the precision is higher, the total number of pairs is spread
 	among more points. On the opposite, if the precision level is set to 0,
@@ -471,7 +470,6 @@
 	This section firstly presents how the final software should be organized in several
 	modules. Secondly, the most important classes and their responsibilities are
 	presented. Relevant implementation details are also mentioned.
-	\newpage
 
 	\subsection{Model–view–controller (MVC) software architectural pattern}
 
@@ -517,7 +515,7 @@
 		the boundaries of the geometry may not be well defined, leading to strange behavior
 		when solving the Laplace equation.
 
-		The \texttt{MyGeometryInfo} abstract class and provides informations
+		The \texttt{MyGeometryInfo} abstract class provides informations
 		related to the
 		geometry of the detector as well as methods to compute the intersections of a
 		line with the boundaries of the geometry and to check if a point is inside
@@ -546,7 +544,7 @@ bool constraints_are_periodic)
 		reached convergence. If the error difference between two successive iterations
 		of the solver is less than \texttt{stop\_accuracy} the solver stopped iterating
 		on the current grid. Notice that it does not mean that the computation of the
-		Laplace solution is over: the solver may solve the equation on finer grids
+		Laplace equation is over: the solver may solve the equation on finer grids
 		afterwards until the error is less than \texttt{refine\_accuracy} everywhere
 		in the grid. The solver also stopped when the number of iteration on a given
 		grid is equel to \texttt{max\_iter}. The \texttt{right\_hand\_side} parameter
@@ -562,7 +560,7 @@ bool constraints_are_periodic)
 
 		The functions that dictates the boundary values are stored in the
 		\texttt{boundary\_conditions} folder. There are two functions for each
-		type of geometry: one provides boundary values fore the potential and the electric
+		type of geometry: one provides boundary values for the potential and the electric
 		field computation, the other one for the weighting potential and the weighting
 		electric field computation.
 
@@ -608,7 +606,7 @@ bool constraints_are_periodic)
 			\item \lstinline{void comp_weight_potential()}: this method computes the
 			weighting potential	at each point of the detector.
 			\item \lstinline{MyGeometryInfo* get_geometry_info()}: returns a pointer
-			to a MyGeometryInfo containing all useful informations about the geometry
+			to a \lstinline{MyGeometryInfo} containing all useful informations about the geometry
 			of the detector.
 
 			\item \lstinline{void get_solution(Solution<2> &sol)}: provides
@@ -669,7 +667,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 		more punctual charges along the particle trajectory.
 
 		The current computation starts once the method \texttt{compute\_current} is called.
-		The user can chose to impose a $\Delta t$ himself. It it choses to do so, the
+		The user can chose to impose a $\Delta t$ himself. If he choses to do so, the
 		same $\Delta t$ is used throughout the entire computation. Otherwise,
 		the adaptive $\Delta t$ strategy is used: the program computes himself an
 		appropriate $\Delta t$ at each iteration depending on the maximum charge velocity
@@ -681,12 +679,12 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 \section{Discussion and applications}
 
 	In finite elements problems, it is very important to specify good boundary conditions.
-	Depending on the boundary conditions used, the results of the computation can be very
+	Depending on the boundary conditions used, the results of the computation may be very
 	different to one another. Of course, \textit{Pdetect} doesn't derogate to this rule. 
 
 	\subsection{Boundary conditions}
 
-		We will, in this part, talk about three different boundary conditions that can be used 
+		We will, in this part, talk about three different boundary conditions that may be used 
 		to simulate a serrated and rectangular particle detector 
 		(Figure~\ref{fig:serrated_rect_geometry}) and compare it to a well known analytic 
 		expression and to Weightfield.
@@ -702,7 +700,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 			\label{fig:analytic}
 		\end{figure}
 
-		Its expression is given by the equation~\ref{exp_analytic}
+		Its expression is given by the Equation~\ref{exp_analytic}
 
 		\begin{equation}
 			\phi_w = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over
@@ -726,7 +724,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 			\end{figure}
 
 			Let's look at the potential along a straight line passing vertically in the middle of
-			the detector. On Figure~\ref{fig:zero_conditions} there are both the analytical solution
+			the detector. On Figure~\ref{fig:zero_conditions}, there are both the analytical solution
 			given by the equation~\ref{exp_analytic} and the solution given by \textit{Pdetect}.
 
 			\begin{figure}[H]
@@ -753,7 +751,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 				\begin{minipage}[b]{.46\linewidth}
 					\center
 					\includegraphics[scale=0.5]{images/boundary_conditions/plot_analytic.jpg}
-					\caption{Two dimension plot of analytical solution given by equation~\ref{exp_analytic}}
+					\caption{Two dimension plot of analytical solution given by Equation~\ref{exp_analytic}}
 					\label{fig:plot_analytic}
 				\end{minipage} \hfill
 				\begin{minipage}[b]{.46\linewidth}
@@ -860,7 +858,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 			\subsubsection*{Different constants}
 
 				In order to contextualize the results shown below, it is necessary to first set the
-				different constants used in the equations of the part~\ref{equations} of this thesis.
+				different constants used in the equations of the Part~\ref{equations} of this thesis.
 				All the constants introduced below takes those values only for the case of a silicon
 				detector, of course.
 
@@ -875,7 +873,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				\end{itemize}
 
-				We do not need the values of the other constants used in part~\ref{equations} since
+				We do not need the values of the other constants used in Part~\ref{equations} since
 				those are for the Townsend avalanche which don't apply here.
 
 				To be fully consistent, we also need the dimensions of our detector:
@@ -888,7 +886,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 					\item Pitch $= 100 \mu m$ : The distance between the middle of a strip and the middle
 						of the next one.
 					\item $V_b = 100 V$ : The bias voltage applied.
-					\item $V_d = 50 V$ : The depletion voltage applied (Our program don't use it, we only
+					\item $V_d = 50 V$ : The depletion voltage applied (\textit{Pdetect} doesn't use it, we only
 						need it in Weightfield).
 
 				\end{itemize}
@@ -897,7 +895,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				Let's now talk about the results given by the program and let's compare them with Weightfield.
 
-				The program \textit{Pdetect} simulate the induced current on the strips when a particle passes through it.
+				The program \textit{Pdetect} simulates the induced current on the strips when a particle passes through it.
 				For those results we are using a detector with only one strip and a particle passing vertically right in
 				the middle of it, both in \textit{Pdetect} and in Weightfield, to have a better comparison. The
 				Figure~\ref{fig:silicon} shows both the current simulate by \textit{Pdetect} and Weightfield.
@@ -909,13 +907,13 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 				  \label{fig:silicon}
 				\end{figure}
 
-				By taking a closer look, we see the total time taken for the generated ions-pair to move to the edges of the
+				By taking a closer look, we see the total time taken for the generated ion-pairs to move to the edges of the
 				detector is exactly $22,6056ns$ for \textit{Pdetect} and $25,28ns$ for Weightfield. Also the maximum
 				currents are respectively $-0,596511\mu A$ and $-0,606824\mu A$. Plus there are clearly some slight
 				differences in the two graphs. Those differences are due to some effects featured in Weightfield
 				but not in \textit{Pdetect} such as the depletion voltage or the gain.
 
-				Indeed, the number of ions-pair generated by the pass of particle in \textit{Pdetect} and in Weightfield
+				Indeed, the number of ion-pairs generated by the pass of particle in \textit{Pdetect} and in Weightfield
 				are respectively $22275$ pairs and $21222$ pairs. Such a small difference wouldn't justify the difference
 				of current induced, especially since Weightfield has a bigger maximum current but less ions-pair generated.
 
@@ -933,7 +931,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				Since it is another type of detector, it has its own properties and therefore the constants
 				used for the silicon detector may not be used. We thus redefined the constants used in the
-				equations of part~\ref{equations} for the case of helium detector and define the constants
+				equations of Part~\ref{equations} for the case of helium detector and define the constants
 				used for the Townsend avalanche :
 
 				\begin{itemize}
@@ -993,9 +991,9 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				It seems, on the graph, to have a peak of current when the particle deposit the charges in the
 				detector which fade almost instantly. Actually that is not what happens. This peak of current
-				is the result of the electrons moving towards the detector to reach the anode. But since those
+				is the result of the electrons moving towards the detector to reach the cathode. But since those
 				electrons are way quicker than the holes (almost a thousand times quicker), they will reach the
-				anode long before the holes reach the cathode. Once the electrons are all at the anode, only holes
+				cathode long before the holes reach the anode. Once the electrons are all at the cathode, only holes
 				remain in the detector. Due to their slowness, they induce a current so small compare to the
 				current that was induced by the electron that it seems on the graph to have no current.
 
@@ -1012,8 +1010,8 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 				Now it is clear that this peak of current didn't fade instantly. Instead, there is now a weird-shaped
 				graph that has nothing to do with the one of the silicon detector (Figure~\ref{fig:silicon}). Why?
 
-				This is due to the Townsend avalanche. While the electrons are moving toward the anode and some of them stop
-				(because they've reached it), other ions-pair are formed by this Townsend avalanche, if the electric field is
+				This is due to the Townsend avalanche. While the electrons are moving toward the cathode and some of them stop
+				(because they've reached it), other ion-pairs are formed by this Townsend avalanche, if the electric field is
 				high enough. Therefore the new holes and electrons formed will contribute to the current. The resulting current
 				will thus increase, as shown on Figure~\ref{fig:helium1_precise}, around the times of $250ns$ or $500ns$.
 
@@ -1022,11 +1020,11 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 				$2*10^6V/m$, enough to see the Townsend avalanche occurs.
 
 				The graph also shows a very small current, of the order of $-10^{-6}\mu A$. This is simply due to the little
-				amount of ions-pair generated when the particle passes through the detector. Indeed, with the dimensions of the
-				first application of helium detector, the particle generates only $4$ ions-pair ($3,9$ to be precise). The detector
-				being half a centimeter thick, the particle thus generates between $7,8$ and $8$ ions-pair per centimeter.
+				amount of ion-pairs generated when the particle passes through the detector. Indeed, with the dimensions of the
+				first application of helium detector, the particle generates only $4$ ion-pairs ($3,9$ to be precise). The detector
+				being half a centimeter thick, the particle thus generates between $7,8$ and $8$ ion-pairs per centimeter.
 				This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, we see the theoretical
-				number of ions-pair in a helium detector is $7,8$ ions-pair per centimeter. We can therefore assume that the
+				number of ions-pairs in a helium detector is $7,8$ ion-pairs per centimeter. We can therefore assume that the
 				results given by \textit{Pdetect} are accurate.
 
 				Let's now talk about the second case of helium detector. The graph of the induced current is shown on
@@ -1041,7 +1039,7 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				Once again the graph isn't very explicit due to the slowness of the holes compared to the electrons.
 				Figure~\ref{fig:helium2_precise} shows the current induced by the electrons only (once again, it's only
-				a zoom from from Figure~\ref{fig:helium2_unprecise}).
+				a zoom from Figure~\ref{fig:helium2_unprecise}).
 
 				\begin{figure}[H]
 				  \center
@@ -1055,11 +1053,11 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 				detector that the electric field it generates is really low (Figure~\ref{fig:electric_field} shows the electric
 				field inside the detector). Therefore the charges (holes and electrons) are moving slowly towards the edges of
 				the detector. Since they move slowly, the induced current is quite small. After a certain time (an iteration
-				of the program for example), the electrons are closer to the anode (only the electrons induce a relevant current),
+				of the program for example), the electrons are closer to the cathode (only the electrons induce a relevant current),
 				where the electric field grow higher rapidly. The electrons have then a bigger velocity and induced a bigger
-				current. Again after some iterations, the closest electrons, which generate the higher current, reach the anode.
+				current. Again after some iterations, the closest electrons, which generate the higher current, reach the cathode.
 				The next few electrons being further will induce a little current and the cycle goes on. This is why there are
-				different \"branches\" on the graph.
+				different "branches" on the graph.
 
 				\begin{figure}[H]
 				  \center
@@ -1070,8 +1068,8 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 
 				In this case, due to the low electric field, the Townsend avalanche don't occurs. This is why the graph doesn't
 				look like the first one and why the current is so slow (the maximum current is $-3,86328*10^{-7}\mu A$) even though
-				there are much more ions-pair generated by the particle, $23$ ions-pair are generated along its path (the theoritical
-				number is $23,4$ ions-pair for three centimeters).
+				there are much more ion-pairs generated by the particle, $23$ ion-pairs are generated along its path (the theoritical
+				number is $23,4$ ion-pairs for three centimeters).
 
 \section{Future work}
 
