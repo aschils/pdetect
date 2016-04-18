@@ -47,16 +47,25 @@
 	computer science and physics. It offers a third way to do physics
 	that supplements theory and experiment.
 
-	In this thesis, these numerical techniques are applied to the field of particle
-	detectors physics. In order to design the best detectors,
+	In this work, these numerical techniques are applied to the field of particle
+	detector physics. In order to design the best detectors,
 	physicists have to know the measured signal resulting from the passage of a particle
 	in the detector. Unfortunately, due to the complex geometries of these detectors
 	and the various physical phenomena to handle, this signal is not easy
 	to compute analytically.
 
-	This is why, in the context of this thesis, a software  to compute the current measured
-	by a particle detector due to the passage of a particle has been developed.
-	This software has then been used to study silicon and gas particle detectors.
+	The objective of this work is to develop a software to compute the current measured
+	by a particle detector due to the passage of a particle. In its final version,
+	the software will generate the detector induced current for three-dimensional
+	geometries. To efficiently achieve this goal, the software may be improved
+	to take advantage of the processing power offered by clusters and GPUs~\footnote{Graphics Processing Unit.}.
+	Furthermore, a maximum of the relevant physical effects happening
+	in particle detectors will be implemented.
+	Additional types of medias (Ar, H$_2$,...), particles and energy deposit
+	distributions will be handled. Finally, a simulation of the electronic will
+	be implemented. This work is a first step to reach this objective.
+	The software developed in the context of this work, \textit{pdetect},
+	has been used to study silicon and gas particle detectors.
 
 	% In the context of our lesson LPHY1300 personal project, we
 	% had to simulate a particle detector using the finite elements method. We
@@ -70,8 +79,11 @@
 		following tasks.
 
 		Firstly, it computes the potential and the electric field
-		at each point of a particle detector solving the Laplace equation for non-trivial
-		two-dimensions geometries. Three types of 2D detector geometries are supported.
+		at each point of a particle detector solving the Laplace equation
+
+		\[\nabla^2 \phi(x,y) = 0\]
+
+		for non-trivial	two-dimensions geometries. Three types of 2D detector geometries are supported.
 		The Laplace equation is solved using the \textit{finite element method} with an adaptive
 		grid refinement strategy. The software supports multithreading and therefore
 		uses all available CPUs to quickly solve this equation.
@@ -79,9 +91,9 @@
 		Secondly, the software computes the current resulting from the passage of a particle
 		in the detector using the \textit{Shockley–Ramo theorem} and the solution of the
 		computed electric field. Every possible particle trajectories in the detector
-		are supported. Effects such as the \textit{mobility} difference between holes and
-		electrons, the \textit{saturation} phenomena and the \textit{Townsend Avalanche}
-		are handled.
+		are supported. Effects such as the \textit{mobility} difference between
+		charge carriers, \textit{saturation} phenomena and the
+		\textit{Townsend Avalanche} are handled.
 
 		This software has been developed following the object-oriented
 		programming paradigm and with the \textit{model-view-controller}
@@ -95,13 +107,24 @@
 		software have been compared with the results of \textit{Weightfield}~\cite{Cenna2015}, a
 		software performing similar computations.
 
+		Examples of other softwares able to perform the same tasks are
+		\textit{Garfield}~\cite{garfield}	and \textit{Comsol}~\cite{comsol}.
+		The first one simulates two- and three-dimensional gas detectors.
+		\textit{Garfield} heavily relies on external programs.
+		It accepts maps computed by finite element programs such as \textit{Ansys},
+		\textit{Maxwell}, \textit{Tosca}, \textit{QuickField} and \textit{FEMLAB}.
+		It relies on \textit{Magboltz} to compute electron properties in gas and
+		\textit{Heed} to simulate ionization of the media molecules.
+		The second one is a more general commercial software able to solve various physics and
+		engineering problems using finite element methods.
+
 		%To perform this task, the software places charges
 		%resulting from the ionization of the molecules inside the detector. Then, these
 		%charges drift following the applied potential at the anode and cathode of the detector
 
-	\subsection*{Organization of the thesis}
+	\subsection*{Organization of the work}
 
-		This thesis is organized in six Sections. The remainder of this manuscript
+		This work is organized in six Sections. The remainder of this manuscript
 		is structured as follows.
 
 		\begin{itemize}
