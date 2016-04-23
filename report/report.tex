@@ -223,10 +223,21 @@
 		using the finite element method. It is a very powerful but low-level library.
 		It offers several features such as adaptive meshes, grid handling
 		and refinement, handling of degrees of freedom, input of meshes and output of results in
-		graphics formats. Furthermore, deal.ii allows to easily write code that works
+		graphics formats. Furthermore, \textit{deal.ii} allows to easily write code that works
 		for any dimensions because code using deal.ii is written independently of the space
 		dimension. Thanks to this design choice, the code of our software is quite easily
 		extensible to 3D.
+
+
+				The library allows to chose among several finite element method configurations.
+				About \textit{variational formulation}, it is possible to use the
+				\textit{discontinuous Galerkin method}~\cite{dealii_Galerkin},
+				the \textit{hybridizable discontinuous Galkerin method}~\cite{dealii_Galerkin_hybrid} and much more.
+				Furthermore, different \textit{discretization strategies} can be implemented such as
+				\textit{hp-version}~\cite{hp_fem}, \textit{x-FEM}~\cite{CarraroWetterauer:2015}
+				and \textit{isogeometric analysis}~\cite{dealII83}. \textit{deal.ii} also
+				offers several solvers implementations, both direct or iterative~\cite{deal.ii.solvers}.
+
 
 		Finally, \textit{deal.ii} supports multithreading as well as \textit{MPI~\footnote{Message
 		Passing Interface. MPI is used to develop distributed softwares running on top of
@@ -235,7 +246,6 @@
 		clusters composed of hundreds of computers. Consequently,
 		the software developed in this thesis is multithreaded and could be extended to
 		exploit the resources offered by clusters.
-
 
 	\subsection{Weightfield}
 
