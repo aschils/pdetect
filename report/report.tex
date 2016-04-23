@@ -164,20 +164,62 @@
 
 		The finite element method is a numerical technique for
 		finding approximate solutions to boundary value problems for partial
-		differential equations. The finite element method subdivides a large
+		differential equations~\cite{wiki_fem}. The finite element method subdivides a large
 		problem into smaller, simpler, parts, called finite elements. The
 		simple equations that model these finite elements are then assembled
 		into a larger system of equations that models the entire problem. It
 		then uses variational methods from the calculus of variations to
 		approximate a solution by minimizing an associated error function.
 
-	\subsection{Deal.II library}
 
-		In order to avoid to reinvent the wheel, it was decided to use the deal.ii library
+		A finite element method is characterized by:
+		\begin{enumerate}
+			\item a \textit{variational formulation} such as the \textit{Galerkin methods}~\cite{wiki_galerkin}.
+			These methods convert a differential equation to a discrete problem.
+
+			The \textit{Galerkin methods} models the domain of interest by a mesh and
+			considers the restriction of the searched function on each element of the
+			mesh. These restrictions are then approached by polynomials on each
+			element.
+
+			\item a \textit{discretization strategy} i.e. procedures to generate the
+			finite element meshes, select the basis function on reference elements
+			and map the reference elements on the mesh elements.
+
+			A non-exhaustive list of discretization strategies contains the \textit{h-version},
+			\textit{p-version},	\textit{hp-version}, \textit{x-FEM} and \textit{isogeometric analysis}
+			strategies. Each discretization strategy has pros and cons.
+
+			\item one or more \textit{solution algorithms}. There are two types
+			of solution algorithms: direct and iterative solvers~\cite{iterative_vs_direct}.
+			These solvers solve the linear system
+
+			\[ A x =b\]
+
+			where $A$ is large, sparse and ill-conditioned~\footnote{a matrix is
+			ill-conditioned if the condition number is too large. This condition
+			number measures how much the output value of the function can change for
+			a small change in the input argument~\cite{wiki_cond_nbr}.}.
+
+			The direct solvers always work for any invertible matrix and are faster
+			for smaller problems. However, they consume more memory and are slower
+			for larger problems. The iterative solvers have a good spatial
+			complexity ($\mathcal{O}(n)$), can solve very large problems and are
+			easy to parallelize. The counterpart is that the choice of the iterative
+			solver depends on the problem.
+
+			\item \textit{post-processing procedures} extract the data of interest
+			from the finite element solution and estimates the related errors.
+		\end{enumerate}
+
+	\subsection{Pdetect}
+
+	  \textit{Pdetect} is the software developed in the context of this work.
+		In order to avoid to reinvent the wheel, \textit{Pdetect} uses the \textit{deal.ii} library
 		to solve the Laplace equation~\cite{Bangerth:2007:DGO:1268776.1268779}. This decision allows to rely on the optimized
-		and robust code of deal.ii and to benefit from the cutting edge numerical methods this library provides.
+		and robust code of \textit{deal.ii} and to benefit from the cutting edge numerical methods this library provides.
 
-		deal.II is a C++ library allowing to solve partial differential equations
+		\textit{deal.ii} is a C++ library allowing to solve partial differential equations
 		using the finite element method. It is a very powerful but low-level library.
 		It offers several features such as adaptive meshes, grid handling
 		and refinement, handling of degrees of freedom, input of meshes and output of results in
@@ -186,7 +228,7 @@
 		dimension. Thanks to this design choice, the code of our software is quite easily
 		extensible to 3D.
 
-		Finally, deal.ii supports multithreading as well as \textit{MPI~\footnote{Message
+		Finally, \textit{deal.ii} supports multithreading as well as \textit{MPI~\footnote{Message
 		Passing Interface. MPI is used to develop distributed softwares running on top of
 		clusters of computers.}}. Therefore,
 		deal.ii is able to hardness the power of multithreaded CPUs as well as
