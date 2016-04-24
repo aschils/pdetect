@@ -52,6 +52,6 @@ for(dir_name in dir_names){
   ratio = (pdet_y-1)/(wf_y-1)
   pdf(paste(plot_file,"_ratio.pdf",sep=""))
   #print(ratio)
-  plot(x=t,ratio, col="red")
+  plot(x=t,ratio, col="red", xlab = "Time (ns)")
   dev.off()
 }

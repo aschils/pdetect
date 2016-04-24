@@ -599,19 +599,20 @@ the following geometry: width 300microm, strip length
 
 \section{Discussion and applications}
 
-	In finite elements problems, it is very important to specify good boundary conditions.
-	Depending on the boundary conditions used, the results of the computation may be very
-	different to one another. Of course, \textit{Pdetect} doesn't derogate to this rule.
+	In this section we will firstly discuss the results given by the program developed
+	for this work, \textit{Pdetect}, and compare it with an analytical solution that will be
+	introduce later. After that, we will talk about three different applications, one with a
+	silicon detector and two with a gas detector, and compare the results of the computed
+	current with the current computed by \textit{Weightfield}.
 
-	\subsection{Boundary conditions}
+	For the entire section, the type geometry of the detector used in \textit{Pdetect} is a
+	serrated rectangle (see Figure~\ref{fig:serrated_rect_geometry}). 
 
-		We will, in this part, talk about three different boundary conditions that may be used
-		to simulate a serrated and rectangular particle detector
-		(Figure~\ref{fig:serrated_rect_geometry}) and compare it to a well known analytic
-		expression and to Weightfield.
+	\subsection{Analytical solution}
 
-		This theoretical analytic expression of the weighing potential has been calculated for
-		the geometry shown Figure~\ref{fig:analytic}
+		In order to compare the results of \textit{Pdetect} with the analytical solution,
+		we have to introduce the context in which this solution was found. The Figure~\ref{fig:analytic} 
+		shows the geometry in which the analytical solution has been calculated.
 
 		\begin{figure}[H]
 			\center
@@ -621,7 +622,8 @@ the following geometry: width 300microm, strip length
 			\label{fig:analytic}
 		\end{figure}
 
-		Its expression is given by the Equation~\ref{exp_analytic}
+		After painful calculations, the solution of the weighting potential in the above situation
+		has been calculated and is given by Equation~\ref{exp_analytic}
 
 		\begin{equation}
 			\phi_w = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over
@@ -629,164 +631,134 @@ the following geometry: width 300microm, strip length
 			\label{exp_analytic}
 		\end{equation}
 
-		For obvious reasons, all the results that will be shown below use the same geometry.
+		With this expression, it is not obvious to know the shape of the weighting potential in the
+		two dimensional space. Therefore Figure~\ref{fig:plot_analytic} shows this weighting potential 
+		(It has been rotated by 90 degrees to compare more easily with the results of \textit{Pdetect}).
 
-		\subsubsection{All boundaries set to zero}
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
+			\caption{Two dimension plot of analytical solution given by Equation~\ref{exp_analytic}}
+			\label{fig:plot_analytic}
+		\end{figure}
 
-			Firstly, we will discuss and compare the results of \textit{Pdetect} when all the
-			boundaries of the detector are set to a null electric potential
-			(see Figure~\ref{fig:w_zero_conditions}).
+		On the figure above, it appears (as suggested by Figure~\ref{fig:analytic}) that the boundary
+		conditions are free on the sides, and set to a zero potential  the bottom (or on the top for 
+		Figure~\ref{fig:analytic}) and on top next to the strip. This is why we will use those kind
+		of boundary conditions for the comparisons between the results given by \textit{Pdetect} and
+		the analytical solution.
 
-			\begin{figure}[H]
+	\subsection{Comparison with the analytical solution}
+
+		As said earlier, we will compare here the weighting potential computed by \textit{Pdetect} and 
+		the analytical solution given by Equation~\ref{exp_analytic}. 
+		To do so, the boundary conditions used for the computation by \textit{Pdetect} in this section 
+		are similar to the boundary conditions used to compute the analytical solution (see 
+		Figure~\ref{fig:w_semi_free_conditions}).
+
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
+			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect}}
+			\label{fig:w_semi_free_conditions}
+		\end{figure}
+
+		Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
+		the comparison of the weighting potential should be relevant.
+
+		Figure~\ref{fig:semi_free_conditions} shows both the weighting potential computed by \textit{Pdetect}
+		and by using Equation~\ref{exp_analytic} along a straight vertical line passing just in the middle of
+		the srip.
+
+		\begin{figure}[H]
+			\begin{minipage}[b]{.46\linewidth}
 				\center
-				\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_zero_conditions.png}
-				\caption{Electric potential inside the detector. All boudaries are set to zero.}
-				\label{fig:w_zero_conditions}
-			\end{figure}
-
-			Let's look at the potential along a straight line passing vertically in the middle of
-			the detector. On Figure~\ref{fig:zero_conditions}, there are both the analytical solution
-			given by the equation~\ref{exp_analytic} and the solution given by \textit{Pdetect}.
-
-			\begin{figure}[H]
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.5]{images/annexe/zero.pdf}
-					\caption{Electric potential along a line passing at the middle of the detector.
-							All boudaries are set to zero.}
-					\label{fig:zero_conditions}
-				\end{minipage} \hfill
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.5]{images/annexe/zero_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
-							computed by \textit{Pdetect} and the alatycal solution}
-					\label{fig:zero_ratio}
-					\end{minipage}
-			\end{figure}
-\newpage
-			The graphs seem to correlate at least a little. The \textit{Pdetect} potential can
-			be even closer to the analytical solution by changing some parameters of dimension,
-			but it can also become less accurate.
-
-		\subsubsection{Semi-free boundary conditions}
-
-			By looking at the plot of the analytical solution in two dimension
-			(see Figure~\ref{fig:plot_analytic}), it appears that the boundaries are
-			free on the sides of the detector but not between the strips. We therefore change
-			the boundary conditions in \textit{Pdetect} to fit with the boundary conditions of
-			the analytical solution (see Figure~\ref{fig:w_semi_free_conditions}).
-
-			\begin{figure}[H]
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
-					\caption{Two dimension plot of analytical solution given by Equation~\ref{exp_analytic}}
-					\label{fig:plot_analytic}
-				\end{minipage} \hfill
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
-					\caption{Weighting potential inside the detector given by \textit{Pdetect}}
-					\label{fig:w_semi_free_conditions}
-				\end{minipage}
-			\end{figure}
-
-			Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
-			the comparison of the weighting potential along a vertical line passing in the middle of the
-			should be more relevant. Figure~\ref{fig:semi_free_conditions} shows both graph with those boundary
-			condition.
-
-			\begin{figure}[H]
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
-					\caption{Weighting potential along a vertical line passing in the middle of the detector.}
-					\label{fig:semi_free_conditions}
-				\end{minipage} \hfill
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
-							computed by \textit{Pdetect} and the alatycal solution}
-					\label{fig:semi_free_ratio}
-				\end{minipage}
-			\end{figure}
-
-			Once again it seems to have some correlation between the two, but not more than with the boundaries
-			set to zero for \textit{Pdetect}. The graph given by \textit{Pdetect} can again be closer or further
-			of the graph of the analytical solution, depending on the dimension chosen to do the calculation.
-
-			Unfortunately, since we do not have more information about the context in which the equation~\ref{exp_analytic}
-			has been computed, it is not possible to make a better comparison. But there is still one particular
-			case in which the \textit{Pdetect} results and the analytical solution are almost exactly the same.
-			It is for two infinite parallel plaque (this case can be approached in \textit{Pdetect} by taking
-			a very large strip). The Figure~\ref{fig:parallel} shows both graph.
-
-			\begin{figure}[H]
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.45]{images/boundary_conditions/parallel.pdf}
-					\caption{Weighting potential along a vertical line passing through two infinite parallel plaque.}
-					\label{fig:parallel}
-				\end{minipage} \hfill
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[scale=0.45]{images/boundary_conditions/parallel_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
-							computed by \textit{Pdetect} and the alatycal solution}
-					\label{fig:parallel_ratio}
-				\end{minipage}
-			\end{figure}
-
-			The two graphs are so similar that we can't discern the analytical solution. This proof that
-			\textit{Pdetect} is at least on the good road.
-
-		\subsubsection{Free boundary conditions}
-
-			There still is one kind of boundary condition which appears to be the one used by Weightfield
-			(see Figure~\ref{fig:weight_free}).
-
-			\begin{figure}[H]
+				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
+				\caption{Weighting potential along a vertical line passing in the middle of the detector.}
+				\label{fig:semi_free_conditions}
+			\end{minipage} \hfill
+			\begin{minipage}[b]{.46\linewidth}
 				\center
-				\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
-				\caption{Weighting potential inside the detector, given by Weightfield.}
-				\label{fig:weight_free}
-			\end{figure}
+				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
+				\caption{Ratio between the weighting potential along a straight line 
+						computed by \textit{Pdetect} and the analytical solution}
+				\label{fig:semi_free_ratio}
+			\end{minipage}
+		\end{figure}
 
-			Since Weightfield is used and trusted in actual experiments, it seems relevant to use the same kind
-			of boundary condition in \textit{Pdetect}. Therefore, using free boundary conditions on the side of
-			the detector and between the strips of the detector, Weightfield and \textit{Pdetect} give us respectively
-			the graphs shown on Figure~\ref{fig:weight_pot} and Figure~\ref{fig:free_conditions}.
+		It clearly seems to have some correlation between the two. By changing the dimension of the detector
+		in \textit{Pdetect}, the graph will change a little bit and can be closer or further to the graph of the 
+		analytical solution.
 
-			\begin{figure}[H]
-				\begin{minipage}[b]{.46\linewidth}
-					\center
-					\includegraphics[height=6cm, width=8cm]{images/boundary_conditions/weight_pot.png}
-					\caption{Weighting potential along a vertical line passing in the middle of the detector,
-							given by Weightfield.}
-					\label{fig:weight_pot}
-				\end{minipage} \hfill
-				\begin{minipage}[b]{.46\linewidth}
+		Unfortunately, since we do not have more information about the context in which the equation~\ref{exp_analytic}
+		has been computed (the exact geometry), it is not possible to make a real better comparison. However,
+		a better comparison between \textit{Pdetect} and the analytical solution is made in the appendix (see 
+		Appendix~\ref{App:comp_an}).
+
+	\subsection{Comparison with \textit{Weightfield}}
+
+		Now that the comparison with the analytical solution is done, it would be interesting to compare the results
+		of \textit{Pdetect} with the results of \textit{Weightfield} since it is another simulation of particle detector
+		program, already use in some experiments.
+
+		Firstly, it is important to see that the boundary conditions used in \textit{Weightfield} are not the same 
+		than those used for the computation of the analytical solution. The Figure~\ref{fig:weight_free} shows
+		the weighting potential inside the detector, simulated by \textit{Weightfield}.
+
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
+			\caption{Weighting potential inside the detector, given by \textit{Weightfield}.}
+			\label{fig:weight_free}
+		\end{figure}
+
+		The Figure~\ref{fig:weight_free} clearly shows that the boundaries are free not only on the side of the detector, 
+		but also on the top of it, next to the strip.
+
+		Since Weightfield is used and trusted in actual experiments, it seems relevant to use the same kind
+		of boundary conditions in \textit{Pdetect} (see Figure~\ref{fig:pdetect_free}). 
+
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
+			\caption{Weighting potential inside the detector, given by \textit{Pdetect}.}
+			\label{fig:pdetect_free}
+		\end{figure}
+
+		Now we have the same boundary conditions for \textit{Pdetect} and \textit{Weightfield}. We can
+		therefor make a relevant comparison between both. Figure~\ref{fig:weight_pot} and Figure~\ref{fig:free_conditions}
+		show the weighting potential computed along a straight vertical line passing in the middle of the detector
+		by \textit{Weightfield} and \textit{Pdetect} respectively. 
+
+		\begin{figure}[H]
+			\begin{minipage}[b]{.46\linewidth}
 				\center
-					\includegraphics[scale=0.4]{images/boundary_conditions/free.pdf}
-					\caption{Weighting potential along a vertical line passing in the middle of the detector,
-							given by \textit{Pdetect}.}
-					\label{fig:free_conditions}
-					\end{minipage}
-			\end{figure}
+				\includegraphics[height=6cm, width=8cm]{images/boundary_conditions/weight_pot.png}
+				\caption{Weighting potential along a vertical line passing in the middle of the detector,
+						given by Weightfield.}
+				\label{fig:weight_pot}
+			\end{minipage} \hfill
+			\begin{minipage}[b]{.46\linewidth}
+			\center
+				\includegraphics[scale=0.4]{images/boundary_conditions/free.pdf}
+				\caption{Weighting potential along a vertical line passing in the middle of the detector,
+						given by \textit{Pdetect}.}
+				\label{fig:free_conditions}
+				\end{minipage}
+		\end{figure}
 
-			On those graphs, it appears that even if the weighting potential of \textit{Pdetect} is quite
-			different of the analytical solution, it is still very similar to the weighting potential
-			of Weightfield.
+		On those graphs, it appears that even if the weighting potential of \textit{Pdetect} is quite
+		different of the analytical solution, it is still very similar to the weighting potential
+		of Weightfield (unfortunately since we can't have the data used to make the graph of 
+		\textit{Weightfield}, we cannot plot the ratio to properly see the concurrence).
 
-			This is why on the rest of this thesis, the free boundary conditions will be used.
+		This is why for the rest of this work, the free boundary conditions will be used.
 
 	\subsection{Applications}
 
 		In this section we will talk about three applications of our program.
 		Firstly we will talk about the simulation of a silicon detector, then the
-		simulation of two cases of an helium detector, each with their own properties.
+		simulation of two cases of an gas detector, each with their own properties.
 
 		We will compare our results with known results, and for the silicon we will also
 		compare it with Weightfield, which can simulate a silicon detector.
@@ -812,7 +784,7 @@ the following geometry: width 300microm, strip length
 
 				\begin{itemize}
 
-					\item $w = 3 eV$ : $w$ is the average energy to produce one ion-pair.
+					\item w = 3 eV : w is the average energy to produce one ion-pair.
 					\item $\mu_e$ = 1350 cm$^2$V$^{-1}$s$^{-1}$ : $\mu_e$ is the mobility of the electrons
 						when not considering saturation.
 					\item $\mu_h$ = 450 cm$^2$V$^{-1}$s$^{-1}$ : $\mu_h$ is the mobility of the holes (ions)
@@ -845,19 +817,29 @@ the following geometry: width 300microm, strip length
 
 				The program \textit{Pdetect} simulates the induced current on the strips when a particle passes through it.
 				For those results we are using a detector with only one strip and a particle passing vertically right in
-				the middle of it, both in \textit{Pdetect} and in Weightfield, to have a better comparison. The
-				Figure~\ref{fig:silicon} shows both the current simulate by \textit{Pdetect} and Weightfield.
+				the middle of it, both in \textit{Pdetect} and in \textit{Weightfield}, to have a better comparison. The
+				Figure~\ref{fig:silicon} shows both the current simulate by \textit{Pdetect} and \textit{Weightfield}.
+				Figure~\ref{fig:silicon_ratio} shows the ratio between them.
 
 				\begin{figure}[H]
-				  \center
-				  \includegraphics[scale=0.5]{images/applications/silicon_current.png}
-				  \caption{Current induced by a particle in function of time, in a silicon detector.}
-				  \label{fig:silicon}
+					\begin{minipage}[b]{.46\linewidth}
+						\center
+						\includegraphics[scale=0.5]{images/applications/silicon_current.pdf}
+						\caption{Current induced by a particle in function of time, in a silicon detector.}
+						\label{fig:silicon}
+					\end{minipage} \hfill
+					\begin{minipage}[b]{.46\linewidth}
+						\center
+						\includegraphics[scale=0.5]{images/applications/silicon_ratio.pdf}
+						\caption{Ratio of the current induced by a particle between \textit{Pdetect} and
+								\textit{Weightfield}}
+						\label{fig:silicon_ratio}
+					\end{minipage}
 				\end{figure}
 
 				By taking a closer look, we see the total time taken for the generated ion-pairs to move to the edges of the
-				detector is exactly 22,6056ns for \textit{Pdetect} and 25,28ns for Weightfield. Also the maximum
-				currents are respectively -0,596511$\mu$ A and -0,606824$\mu$ A. Plus there are clearly some slight
+				detector is exactly 22,6056ns for \textit{Pdetect} and 25,28ns for \textit{Weightfield}. Also the maximum
+				currents are respectively -0,596511$\mu$A and -0,606824$\mu$A. Plus there are clearly some slight
 				differences in the two graphs. Those differences are due to some effects featured in Weightfield
 				but not in \textit{Pdetect} such as the depletion voltage or the gain.
 
@@ -865,12 +847,13 @@ the following geometry: width 300microm, strip length
 				are respectively 22275 pairs and 21222 pairs. Such a small difference wouldn't justify the difference
 				of current induced, especially since Weightfield has a bigger maximum current but less ions-pair generated.
 
-		\subsubsection{Helium detector}
+		\subsubsection{Gas detector}
 
-			The helium detector is the second type of particle detector implemented. The mechanics are basically
+			The gas detector is the second type of particle detector implemented. The mechanics are basically
 			the same as for the silicon detector, the detector is also a serrated and rectangular detector
 			(see Figure~\ref{fig:serrated_rect_geometry}). The only real difference is the use of the Townsend
-			avalanche for the the helium detector (or for any other gas detector).
+			avalanche for the the helium detector (or for any other gas detector). In those applications, we 
+			will use an helium detector.
 
 			Once again the user can use the helium detector by using a macro defined in the file
 			\texttt{Constants.hpp}.
@@ -922,7 +905,7 @@ the following geometry: width 300microm, strip length
 
 			\subsubsection*{Results}
 
-				For the helium detector, there are no comparisons with Weightfield since it doesn't simulate
+				For the helium detector, there are no comparisons with \textit{Weightfield} since it doesn't simulate
 				any gas detector. The comparisons will thus be done with known results.
 
 				We will begin by the first case and discuss about the second later.
@@ -1063,6 +1046,8 @@ the following geometry: width 300microm, strip length
 \newpage
 
 \appendix
+\section{Better comparison with the analytical solution} \label{App:comp_an}
+
 \section{Software architecture} \label{App:soft_arch}
 
 	This software is developed in C++ with the object-oriented programming paradigm.
