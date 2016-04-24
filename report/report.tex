@@ -86,11 +86,17 @@
 		following tasks.
 
 		Firstly, it computes the potential and the electric field
-		at each point of a particle detector solving the Laplace equation
+		at each point of a particle detector solving the Poisson equation
 
-		\[\nabla^2 \phi(x,y) = 0\]
+		\[\nabla^2 V = -\frac{\rho}{\epsilon}\]
 
-		for non-trivial	two-dimensions geometries. Three types of 2D detector geometries are supported.
+		for non-trivial	two-dimensions geometries. Currently, the charges distribution
+		is supposed to be $\rho=0$ inside the detector and the solved equation is
+		rather the Laplace equation:
+
+		\[\nabla^2 V = 0\]
+
+		Three types of 2D detector geometries are supported.
 		The Laplace equation is solved using the \textit{finite element method} with an adaptive
 		grid refinement strategy. The software supports multithreading and therefore
 		uses all available CPUs to quickly solve this equation.
@@ -1016,7 +1022,7 @@ the following geometry: width 300microm, strip length
 
 \section*{Conclusion}
 
-	In this thesis, a software computing the current induced by the pass of a
+	In this work, a software computing the current induced by the pass of a
 	particle in a detector has been developed. The results obtained for silicon
 	detectors are comparable to the results of \texttt{Weightfield},
 	another simulation software. The results obtained for gas detectors still
