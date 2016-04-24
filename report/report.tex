@@ -19,8 +19,8 @@
 	\newcommand*{\yMin}{0}%
 	\newcommand*{\yMax}{300}%
 
-\title{LPHY1300 Personal project report :\\ Simulation of a particle detector}
-\author{\textsc{Schils} Arnaud\\ \textsc{Lardinois} Simon}
+%\title{\Huge{Personal project report \\ Simulation of a particle detector}}
+%\author{\textsc{Schils} Arnaud\\ \textsc{Lardinois} Simon}
 \date{2015-2016}
 
 \begin{document}
@@ -34,7 +34,31 @@
 	                commentstyle=\color{green}\ttfamily,
 	                morecomment=[l][\color{magenta}]{\#}
 	}
-\maketitle
+
+	\begin{titlepage}
+    \centering
+    \vfill
+    { \Huge{Personal project report \\ Simulation of a particle detector}
+		  \vfill
+			\vfill
+			\vfill
+      \includegraphics[scale=0.055]{images/grid_refinement/garde.png}
+			\vfill
+			\vfill
+			\Large{Arnaud Schils\\ Simon Lardinois}
+			\vfill
+			\Large{2015-2016}
+    }
+
+\end{titlepage}
+
+%\maketitle
+
+
+%\begin{figure}[H]
+%	\center
+	%\includegraphics[scale=0.055]{images/grid_refinement/garde.png}
+%\end{figure}
 
 \newpage
 
@@ -659,7 +683,7 @@ the following geometry: width 300microm, strip length
 				\begin{minipage}[b]{.46\linewidth}
 					\center
 					\includegraphics[scale=0.5]{images/annexe/zero_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
+					\caption{Ratio between the electric potential along a straight line
 							computed by \textit{Pdetect} and the alatycal solution}
 					\label{fig:zero_ratio}
 					\end{minipage}
@@ -707,7 +731,7 @@ the following geometry: width 300microm, strip length
 				\begin{minipage}[b]{.46\linewidth}
 					\center
 					\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
+					\caption{Ratio between the electric potential along a straight line
 							computed by \textit{Pdetect} and the alatycal solution}
 					\label{fig:semi_free_ratio}
 				\end{minipage}
@@ -733,7 +757,7 @@ the following geometry: width 300microm, strip length
 				\begin{minipage}[b]{.46\linewidth}
 					\center
 					\includegraphics[scale=0.45]{images/boundary_conditions/parallel_ratio.pdf}
-					\caption{Ratio between the electric potential along a straight line 
+					\caption{Ratio between the electric potential along a straight line
 							computed by \textit{Pdetect} and the alatycal solution}
 					\label{fig:parallel_ratio}
 				\end{minipage}
