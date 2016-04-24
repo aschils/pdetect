@@ -10,7 +10,14 @@
 \usepackage{float}
 \usepackage{tocloft}
 \usepackage{url}
+\usepackage{tikz}
 
+
+
+	\newcommand*{\xMin}{0}%
+	\newcommand*{\xMax}{375}%
+	\newcommand*{\yMin}{0}%
+	\newcommand*{\yMax}{300}%
 
 \title{LPHY1300 Personal project report :\\ Simulation of a particle detector}
 \author{\textsc{Schils} Arnaud\\ \textsc{Lardinois} Simon}
@@ -441,31 +448,66 @@
 	For each one of these geometries, a coarse grid (or mesh) is generated using
 	functions of the \texttt{deal.ii} library.
 
-	Once the grid is generated (see Figure \ref{fig:no_refinement}), the Laplace equation is solved for the considered
+	Once the grid is generated (see Figure~\ref{fig:no_refinement}), the Laplace equation is solved for the considered
 	geometry. This is achieved using all available CPU cores and in several iterations.
 	At the first one, the
 	grid is coarse and the error on the computed results is high. Then, the grid is
 	refined only at cells with the largest errors and the Laplace equation is
 	solved on this denser grid. This process continues until
 	the error is smaller than a relative error provided by the user at each cell of
-	the grid (see Figure \ref{fig:high_refinement}). This is adaptive grid refinement. It allows to achieve good precision
+	the grid (see Figure~\ref{fig:high_refinement}). This is adaptive grid refinement. It allows to achieve good precision
 	everywhere in the grid without losing time refining cells where the error is already small
 	enough.
 
+	The adaptive refinement strategy used by \textit{pdetect} can be compared with
+	the uniform refinement strategy used by \textit{Weightfield} looking at
+	Figures~\ref{fig:high_refinement} and~\ref{fig:wf_mesh}. \textit{Weightfield}
+	uses a grid composed of 112500 cells whereas \textit{pdetect} only requires a
+	grid composed of 11966 cells to obtain results of similar precision simulating
+	a detector with the following properties: width 300microm, strip length
+	75microm, potential 100V, pitch 300microm, strip number 1, maximum relative
+	error on the potential for \textit{pdetect} 0.9$\%$. Notice that \textit{Weightfield}
+	always generates grids composed of 1microm$\times$1microm cells.
+
 	\begin{figure}[H]
 	  \center
-	  \includegraphics[scale=0.4]{images/grid_refinement/no_refinement.png}
-		\caption{Example of initial grid. The initial grid should be as coarse as
-		possible.}
+	  \includegraphics[scale=0.3]{images/grid_refinement/no_refinement_2.png}
+		\caption{State of the initial grid before starting the potential computation
+		for the serrated rectangle geometry with the following parameters:
+		width 300microm, strip length
+		75microm, pitch 300microm, strip number 1. The grid is composed of 5 cells.}
 	  \label{fig:no_refinement}
 	\end{figure}
 
 	\begin{figure}[H]
 	  \center
-	  \includegraphics[scale=0.3]{images/grid_refinement/high_refinement.png}
-	  \caption{State of the grid at the end of the adaptive grid refinement.}
+	  \includegraphics[scale=0.3]{images/grid_refinement/high_refinement_2.png}
+	  \caption{State of the grid at the end of the adaptive grid refinement.
+		This grid has been obtained computing potential for the serrated rectangle
+		geometry with the following parameters: width 300microm, strip length
+		75microm, potential 100V, pitch 300microm, strip number 1, maximum relative
+		error on the potential 0.9$\%$. The grid is composed of 11966 cells.}
 		\label{fig:high_refinement}
 	\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+	\begin{tikzpicture}[scale=0.025]
+	    \foreach \i in {\xMin,...,\xMax} {
+	        \draw [very thin,gray] (\i,\yMin) -- (\i,\yMax)  node [below] at (\i,\yMin) {};
+	    }
+	    \foreach \i in {\yMin,...,\yMax} {
+	        \draw [very thin,gray] (\xMin,\i) -- (\xMax,\i) node [left] at (\xMin,\i) {};
+	    }
+
+	\end{tikzpicture}
+\end{center}
+\caption{Grid used by \textit{Weightfield} when computing the potential for
+the following geometry: width 300microm, strip length
+75microm, pitch 300microm, strip number 1. The grid is composed of 112500 cells.}
+\label{fig:wf_mesh}
+\end{figure}
+
 
 	The result of the Laplace equation is of course the potential at each point of
 	the grid. The gradient of the potential is available as well at
