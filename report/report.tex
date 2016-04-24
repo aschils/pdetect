@@ -615,7 +615,7 @@ the following geometry: width 300microm, strip length
 
 		\begin{figure}[H]
 			\center
-			\includegraphics[scale=0.5]{images/boundary_conditions/analytic.png}
+			\includegraphics[scale=0.5]{images/boundary_conditions/detector/analytic.png}
 			\caption{Detector geometry for the calculation of the weighting
 				potential~\cite{pixeldetector}}
 			\label{fig:analytic}
@@ -639,7 +639,7 @@ the following geometry: width 300microm, strip length
 
 			\begin{figure}[H]
 				\center
-				\includegraphics[scale=0.4]{images/boundary_conditions/w_zero_conditions.png}
+				\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_zero_conditions.png}
 				\caption{Electric potential inside the detector. All boudaries are set to zero.}
 				\label{fig:w_zero_conditions}
 			\end{figure}
@@ -649,11 +649,20 @@ the following geometry: width 300microm, strip length
 			given by the equation~\ref{exp_analytic} and the solution given by \textit{Pdetect}.
 
 			\begin{figure}[H]
-				\center
-				\includegraphics[scale=0.5]{images/boundary_conditions/zero.pdf}
-				\caption{Electric potential along a line passing at the middle of the detector.
-						All boudaries are set to zero.}
-				\label{fig:zero_conditions}
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.5]{images/annexe/zero.pdf}
+					\caption{Electric potential along a line passing at the middle of the detector.
+							All boudaries are set to zero.}
+					\label{fig:zero_conditions}
+				\end{minipage} \hfill
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.5]{images/annexe/zero_ratio.pdf}
+					\caption{Ratio between the electric potential along a straight line 
+							computed by \textit{Pdetect} and the alatycal solution}
+					\label{fig:zero_ratio}
+					\end{minipage}
 			\end{figure}
 \newpage
 			The graphs seem to correlate at least a little. The \textit{Pdetect} potential can
@@ -671,16 +680,16 @@ the following geometry: width 300microm, strip length
 			\begin{figure}[H]
 				\begin{minipage}[b]{.46\linewidth}
 					\center
-					\includegraphics[scale=0.5]{images/boundary_conditions/plot_analytic.jpg}
+					\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
 					\caption{Two dimension plot of analytical solution given by Equation~\ref{exp_analytic}}
 					\label{fig:plot_analytic}
 				\end{minipage} \hfill
 				\begin{minipage}[b]{.46\linewidth}
-				\center
-					\includegraphics[scale=0.3]{images/boundary_conditions/w_semi_free_conditions.png}
+					\center
+					\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
 					\caption{Weighting potential inside the detector given by \textit{Pdetect}}
 					\label{fig:w_semi_free_conditions}
-					\end{minipage}
+				\end{minipage}
 			\end{figure}
 
 			Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
@@ -689,10 +698,19 @@ the following geometry: width 300microm, strip length
 			condition.
 
 			\begin{figure}[H]
-				\center
-				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
-				\caption{Weighting potential along a vertical line passing in the middle of the detector.}
-				\label{fig:semi_free_conditions}
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
+					\caption{Weighting potential along a vertical line passing in the middle of the detector.}
+					\label{fig:semi_free_conditions}
+				\end{minipage} \hfill
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
+					\caption{Ratio between the electric potential along a straight line 
+							computed by \textit{Pdetect} and the alatycal solution}
+					\label{fig:semi_free_ratio}
+				\end{minipage}
 			\end{figure}
 
 			Once again it seems to have some correlation between the two, but not more than with the boundaries
@@ -706,10 +724,19 @@ the following geometry: width 300microm, strip length
 			a very large strip). The Figure~\ref{fig:parallel} shows both graph.
 
 			\begin{figure}[H]
-				\center
-				\includegraphics[scale=0.45]{images/boundary_conditions/parallel.pdf}
-				\caption{Weighting potential along a vertical line passing through two infinite parallel plaque.}
-				\label{fig:parallel}
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.45]{images/boundary_conditions/parallel.pdf}
+					\caption{Weighting potential along a vertical line passing through two infinite parallel plaque.}
+					\label{fig:parallel}
+				\end{minipage} \hfill
+				\begin{minipage}[b]{.46\linewidth}
+					\center
+					\includegraphics[scale=0.45]{images/boundary_conditions/parallel_ratio.pdf}
+					\caption{Ratio between the electric potential along a straight line 
+							computed by \textit{Pdetect} and the alatycal solution}
+					\label{fig:parallel_ratio}
+				\end{minipage}
 			\end{figure}
 
 			The two graphs are so similar that we can't discern the analytical solution. This proof that
@@ -722,7 +749,7 @@ the following geometry: width 300microm, strip length
 
 			\begin{figure}[H]
 				\center
-				\includegraphics[scale=0.45]{images/boundary_conditions/weight_free.png}
+				\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
 				\caption{Weighting potential inside the detector, given by Weightfield.}
 				\label{fig:weight_free}
 			\end{figure}
