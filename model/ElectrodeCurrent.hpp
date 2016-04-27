@@ -79,6 +79,7 @@ private:
 	double strip_potential;
 	double covered_dist;
 	double coll_t_to_delta_t_div;
+	double tot_electrons;
 
 	Electron electron;
 	Hole hole;
@@ -187,6 +188,7 @@ private:
 		double total_hole_pairs_nbr = dist_covered_by_particle
 				* hole_pairs_nbr_per_lgth;
 		std::cout << "Hole pairs number: " << total_hole_pairs_nbr << std::endl;
+		tot_electrons = total_hole_pairs_nbr;
 		double init_punctual_electric_charge = total_hole_pairs_nbr
 				/ nbr_of_punctual_charges;
 
@@ -287,11 +289,9 @@ private:
 		double first_townsend_coefficient = det->get_first_townsend_coefficient(pos,
 																				values_at_pos);
 		double new_electric_charge = electric_charge*exp(first_townsend_coefficient*displacement);
-		/*unsigned electric_charge_mul = (townsend_avalanche_done)? 1: det->electric_charge_multiplicator(
-				pos,
-				charge, values_at_pos, displacement);*/
-		//double new_electric_charge = electric_charge*electric_charge_mul;
-		//bool new_townsend_avalanche_done = electric_charge_mul != 1;
+
+		double new_electrons = (new_electric_charge - electric_charge);
+		tot_electrons += new_electrons;
 
 		std::tuple<Point<2>, Charge*, double> new_charge(new_pos, charge,
 				new_electric_charge);
@@ -304,8 +304,6 @@ private:
 		unsigned init_nbr_punctual_charges = punctual_charges.size();
 		no_moves = true;
 		max_speed_y = 0.0;
-
-		//std::cout << "init_nbr_punctual_charges: " << init_nbr_punctual_charges << std::endl;
 
 		for (unsigned i = 0; i < init_nbr_punctual_charges; i++) {
 
@@ -330,12 +328,13 @@ private:
 				max_speed_y = abs_speed_y;
 
 			current_tot += current(pos, speed, charge, electric_charge);
+
 			Point<2> new_pos = compute_new_pos(pos, speed, delta_t);
 
 			if (geo_info->is_point_inside_geometry(new_pos)) {
 
 				int charge_sign = charge->get_charge_sign();
-				if(charge_sign < 0) { //if electron, townsend avalanche
+				if(charge_sign < 0 && tot_electrons < 1e12) { //if electron, townsend avalanche
 					generate_new_charges(charge, pos, new_pos, values_at_pos,
 							electric_charge);
 				}
@@ -346,7 +345,8 @@ private:
 				}			
 			}
 		}
-
+		if(current_tot*ELECTRON_CHARGE < -6e-06)
+				current_tot = -6e-06/ELECTRON_CHARGE;
 		return current_tot * ELECTRON_CHARGE;
 	}
 
