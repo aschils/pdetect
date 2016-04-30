@@ -176,7 +176,7 @@
 
 			\item Section 4 presents the results obtained with our software for
 			different set of parameters which models various detectors.
-			\item Section 5 discusses the future work.
+			%\item Section 5 discusses the future work.
 
 			\item Appendix~\ref{App:soft_arch} explains the software architecture and the role played by
 			the most important classes.
@@ -630,12 +630,12 @@ the following geometry: width 300microm, strip length
 	current with the current computed by \textit{Weightfield}.
 
 	For the entire section, the type geometry of the detector used in \textit{Pdetect} is a
-	serrated rectangle (see Figure~\ref{fig:serrated_rect_geometry}). 
+	serrated rectangle (see Figure~\ref{fig:serrated_rect_geometry}).
 
 	\subsection{Analytical solution}
 
 		In order to compare the results of \textit{Pdetect} with the analytical solution,
-		we have to introduce the context in which this solution was found. The Figure~\ref{fig:analytic} 
+		we have to introduce the context in which this solution was found. The Figure~\ref{fig:analytic}
 		shows the geometry in which the analytical solution has been calculated.
 
 		\begin{figure}[H]
@@ -656,7 +656,7 @@ the following geometry: width 300microm, strip length
 		\end{equation}
 
 		With this expression, it is not obvious to know the shape of the weighting potential in the
-		two dimensional space. Therefore Figure~\ref{fig:plot_analytic} shows this weighting potential 
+		two dimensional space. Therefore Figure~\ref{fig:plot_analytic} shows this weighting potential
 		(It has been rotated by 90 degrees to compare more easily with the results of \textit{Pdetect}).
 
 		\begin{figure}[H]
@@ -667,17 +667,17 @@ the following geometry: width 300microm, strip length
 		\end{figure}
 
 		On the figure above, it appears (as suggested by Figure~\ref{fig:analytic}) that the boundary
-		conditions are free on the sides, and set to a zero potential  the bottom (or on the top for 
+		conditions are free on the sides, and set to a zero potential  the bottom (or on the top for
 		Figure~\ref{fig:analytic}) and on top next to the strip. This is why we will use those kind
 		of boundary conditions for the comparisons between the results given by \textit{Pdetect} and
 		the analytical solution.
 
 	\subsection{Comparison with the analytical solution} \label{comparisons}
 
-		As said earlier, we will compare here the weighting potential computed by \textit{Pdetect} and 
-		the analytical solution given by Equation~\ref{exp_analytic}. 
-		To do so, the boundary conditions used for the computation by \textit{Pdetect} in this section 
-		are similar to the boundary conditions used to compute the analytical solution (see 
+		As said earlier, we will compare here the weighting potential computed by \textit{Pdetect} and
+		the analytical solution given by Equation~\ref{exp_analytic}.
+		To do so, the boundary conditions used for the computation by \textit{Pdetect} in this section
+		are similar to the boundary conditions used to compute the analytical solution (see
 		Figure~\ref{fig:w_semi_free_conditions}).
 
 		\begin{figure}[H]
@@ -704,19 +704,19 @@ the following geometry: width 300microm, strip length
 			\begin{minipage}[b]{.46\linewidth}
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
-				\caption{Ratio between the weighting potential along a straight line 
+				\caption{Ratio between the weighting potential along a straight line
 						computed by \textit{Pdetect} and the analytical solution}
 				\label{fig:semi_free_ratio}
 			\end{minipage}
 		\end{figure}
 
 		It clearly seems to have some correlation between the two. By changing the dimension of the detector
-		in \textit{Pdetect}, the graph will change a little bit and can be closer or further to the graph of the 
+		in \textit{Pdetect}, the graph will change a little bit and can be closer or further to the graph of the
 		analytical solution.
 
 		Unfortunately, since we do not have more information about the context in which the equation~\ref{exp_analytic}
 		has been computed (the exact geometry), it is not possible to make a real better comparison. However,
-		a better comparison between \textit{Pdetect} and the analytical solution is made in the appendix (see 
+		a better comparison between \textit{Pdetect} and the analytical solution is made in the appendix (see
 		Appendix~\ref{App:comp_an}).
 
 	\subsection{Comparison with \textit{Weightfield}}
@@ -725,7 +725,7 @@ the following geometry: width 300microm, strip length
 		of \textit{Pdetect} with the results of \textit{Weightfield} since it is another simulation of particle detector
 		program, already use in some experiments.
 
-		Firstly, it is important to see that the boundary conditions used in \textit{Weightfield} are not the same 
+		Firstly, it is important to see that the boundary conditions used in \textit{Weightfield} are not the same
 		than those used for the computation of the analytical solution. The Figure~\ref{fig:weight_free} shows
 		the weighting potential inside the detector, simulated by \textit{Weightfield}.
 
@@ -736,11 +736,11 @@ the following geometry: width 300microm, strip length
 			\label{fig:weight_free}
 		\end{figure}
 
-		The Figure~\ref{fig:weight_free} clearly shows that the boundaries are free not only on the side of the detector, 
+		The Figure~\ref{fig:weight_free} clearly shows that the boundaries are free not only on the side of the detector,
 		but also on the top of it, next to the strip.
 
 		Since Weightfield is used and trusted in actual experiments, it seems relevant to use the same kind
-		of boundary conditions in \textit{Pdetect} (see Figure~\ref{fig:pdetect_free}). 
+		of boundary conditions in \textit{Pdetect} (see Figure~\ref{fig:pdetect_free}).
 
 		\begin{figure}[H]
 			\center
@@ -752,7 +752,7 @@ the following geometry: width 300microm, strip length
 		Now we have the same boundary conditions for \textit{Pdetect} and \textit{Weightfield}. We can
 		therefor make a relevant comparison between both. Figure~\ref{fig:weight_pot} and Figure~\ref{fig:free_conditions}
 		show the weighting potential computed along a straight vertical line passing in the middle of the detector
-		by \textit{Weightfield} and \textit{Pdetect} respectively. 
+		by \textit{Weightfield} and \textit{Pdetect} respectively.
 
 		\begin{figure}[H]
 			\begin{minipage}[b]{.46\linewidth}
@@ -773,7 +773,7 @@ the following geometry: width 300microm, strip length
 
 		On those graphs, it appears that even if the weighting potential of \textit{Pdetect} is quite
 		different of the analytical solution, it is still very similar to the weighting potential
-		of Weightfield (unfortunately since we can't have the data used to make the graph of 
+		of Weightfield (unfortunately since we can't have the data used to make the graph of
 		\textit{Weightfield}, we cannot plot the ratio to properly see the concurrence).
 
 		This is why for the rest of this work, the free boundary conditions will be used.
@@ -813,7 +813,7 @@ the following geometry: width 300microm, strip length
 						when not considering saturation.
 					\item $\mu_h$ = 450 cm$^2$V$^{-1}$s$^{-1}$ : $\mu_h$ is the mobility of the holes (ions)
 						when not considering saturation.
-					\item v$_{sat}$ = 8,37$*$10$^{4}$ ms$^{-1}$ : v$_{sat}$ is the saturation velocity 
+					\item v$_{sat}$ = 8,37$*$10$^{4}$ ms$^{-1}$ : v$_{sat}$ is the saturation velocity
 							(this value is taken from the code of \textit{Weightfield}~\cite{Cenna2015}).
 
 				\end{itemize}
@@ -877,7 +877,7 @@ the following geometry: width 300microm, strip length
 			The gas detector is the second type of particle detector implemented. The mechanics are basically
 			the same as for the silicon detector, the detector is also a serrated and rectangular detector
 			(see Figure~\ref{fig:serrated_rect_geometry}). The only real difference is the use of the Townsend
-			avalanche for the the helium detector (or for any other gas detector). In those applications, we 
+			avalanche for the the helium detector (or for any other gas detector). In those applications, we
 			will use an helium detector.
 
 			Once again the user can use the helium detector by using a macro defined in the file
@@ -1027,34 +1027,6 @@ the following geometry: width 300microm, strip length
 				there are much more ion-pairs generated by the particle, 23 ion-pairs are generated along its path (the theoritical
 				number is 23,4 ion-pairs for three centimeters).
 
-\section{Future work}
-
-	There are a lot of ways to improve and extend the developed software.
-
-	Authors highlight five new features that could be introduced. Firstly, the
-	computation of the current for the
-	rectangular geometry with circular holes could be implemented quite easily.
-	Secondly, additional physical effect
-	could be implemented such as the \textit{Geiger avalanche}. Thirdly,
-	additional 2D geometries could be introduced such as
-	rectangular potential sources but with gaussian curves at their corners.
-	Fourthly, the software can be extended to handle both 2D and 3D geometries.
-	Fifthly, a graphic user interface could be developed to ease the usage of the
-	software.
-
-	Furthermore, since the passage to 3D geometries will slow down the computations,
-	it may become interesting to modify the \texttt{deal.ii} code in the
-	\texttt{LaplaceSolver} class in order to run the software on clusters.
-	Research could also be performed on how to efficiently parallelize the
-	computation of the current among several CPU cores (the finite element method
-	is multithreaded but the current computation is not for now) or among nodes of a cluster.
-	Another performance improvement would be to offload some computations on
-	Graphics Processing Unit.
-
-	Finally, the results obtained for gas detectors (helium) must be validated
-	by comparing them with experimental measurements or results provided by other
-	simulation softwares.
-
 \section*{Conclusion}
 
 	In this work, a software computing the current induced by the pass of a
@@ -1063,19 +1035,77 @@ the following geometry: width 300microm, strip length
 	another simulation software. The results obtained for gas detectors still
 	need to be validated.
 
+	This work allows us to derive the following conclusions. The finite element
+	method, and in particular its implementation in the \textit{deal.ii} library,
+	is an accurate and efficient way to solve the Laplace equation for the
+	considered geometries. The solution is considered accurate since it is
+	very close to both the analytical solution for carefully chosen parameters and
+	the solution provided by \textit{Weightfield}. About efficiency, it only takes between a few seconds
+	and one minute for our software to solve the Laplace equation.
+
+  Another conclusion is that using adaptive grid refinement strategy instead
+	of a uniform grid does not noticeably affect the results. Moreover, for the
+	considered 2D geometries, the speedup offered by adaptive grid refinement over
+	using a uniform grid is not significant. However, this speedup is expected
+	to grow sharply when dealing with much more heavy 3D grids.
+
+	This work also shows that the boundary conditions have a significant impact
+	on the computed potential. Indeed, enforcing Dirichlet boundary conditions setting
+	the non-strip detector boundaries to 0V or instead enforcing Neumann boundary
+	conditions setting a null derivative at these boundaries provides very
+	different results.
+
+  A last conclusion about the potential computation is the influence of the
+	number of strips on the weighting potential. The weighting potential computed
+	for a one strip detector is very different from the one computed for a three
+	strips detector. Conversely, the weighting potentials computed for three and five
+	strips detectors are identical.
+
+
 	This work is a first step to the development of a properly designed and open source
 	software to simulate particle detectors. Although there are still
 	many features to introduce in the software, authors believe it is a solid
 	basis for further improvements.
 
+
+
+	\section*{Future work}
+
+		There are a lot of ways to improve and extend the developed software.
+
+		Authors highlight five new features that could be introduced. Firstly, the
+		computation of the current for the
+		rectangular geometry with circular holes could be implemented quite easily.
+		Secondly, additional physical effect
+		could be implemented such as the \textit{Geiger avalanche}. Thirdly,
+		additional 2D geometries could be introduced such as
+		rectangular potential sources but with gaussian curves at their corners.
+		Fourthly, the software can be extended to handle both 2D and 3D geometries.
+		Fifthly, a graphic user interface could be developed to ease the usage of the
+		software.
+
+		Furthermore, since the passage to 3D geometries will slow down the computations,
+		it may become interesting to modify the \texttt{deal.ii} code in the
+		\texttt{LaplaceSolver} class in order to run the software on clusters.
+		Research could also be performed on how to efficiently parallelize the
+		computation of the current among several CPU cores (the finite element method
+		is multithreaded but the current computation is not for now) or among nodes of a cluster.
+		Another performance improvement would be to offload some computations on
+		Graphics Processing Unit.
+
+		Finally, the results obtained for gas detectors (helium) must be validated
+		by comparing them with experimental measurements or results provided by other
+		simulation softwares.
+
+
 \newpage
 
 \appendix
 
-\section{Better comparison with the analytical solution} \label{App:comp_an}
+\section{Comparison between the analytical and numerical solutions} \label{App:comp_an}
 
-	In this section of the appendix, we will continue the discussion of the comparison 
-	between the results of\textit{Pdetect} and the analytical solution given by 
+	In this section of the appendix, we will continue the discussion of the comparison
+	between the results of\textit{Pdetect} and the analytical solution given by
 	Equation~\ref{exp_analytic} (see Section~\ref{comparisons}).
 
 	To continue this comparison, we will compare the weighting potentials along different line.
@@ -1095,7 +1125,7 @@ the following geometry: width 300microm, strip length
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/middle-pitch_ratio.pdf}
-			\caption{Ratio of weighting potentials along a straight vertical line passing between the 
+			\caption{Ratio of weighting potentials along a straight vertical line passing between the
 					strip and the border of the detector.}
 			\label{fig:mid_pitch_ratio}
 		\end{minipage}
@@ -1107,11 +1137,11 @@ the following geometry: width 300microm, strip length
 	the graph of the analytical solution. Once again the lack of knowledge about the specific conditions
 	in which the analytical solution has been calculated is a bit problematic.
 
-	Anyway, even if the differences seem big, by looking at the scale, there actually rather small 
+	Anyway, even if the differences seem big, by looking at the scale, there actually rather small
 	than big. Let's still continue the comparisons by plotting the weighting potential along
 	a vertical straight line, now passing right at the edge of the strip. This particular case
 	is very interesting since on there are a singularity at the edge of the strip. Indeed, the
-	strip itself have certain potential (1V in this case), but just next to it, outside the strip, 
+	strip itself have certain potential (1V in this case), but just next to it, outside the strip,
 	the potential is set to zero (with the boundary conditions of the analytical solution).
 	Figure~\ref{fig:edge_strip} shows the potential along this line, for both \textit{Pdetect}
 	and the analytical solution (Figure~\ref{fig:edge_strip_ratio} shows the ratio).
@@ -1134,11 +1164,11 @@ the following geometry: width 300microm, strip length
 	\end{figure}
 
 	Here the two graphs seem to fit almost perfectly, which is a very good sign for \textit{Pdetect}.
-	But again, the graph of \textit{Pdetect} can change a little bit by changing the dimensions 
+	But again, the graph of \textit{Pdetect} can change a little bit by changing the dimensions
 	of the detector.
 
 	Now all interesting cases of vertical line have been compared. Let's now look at the weighting potential
-	along a horizontal line, passing just below the strip (see Figure~\ref{fig:horizon} and 
+	along a horizontal line, passing just below the strip (see Figure~\ref{fig:horizon} and
 	Figure~\ref{fig:horizon_ratio}).
 
 	\begin{figure}[H]
@@ -1151,7 +1181,7 @@ the following geometry: width 300microm, strip length
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/horizon-top_ratio.pdf}
-			\caption{Ratio of weighting potential along a straight horizontal line passing right below 
+			\caption{Ratio of weighting potential along a straight horizontal line passing right below
 					the strip.}
 			\label{fig:horizon_ratio}
 		\end{minipage}
@@ -1161,20 +1191,20 @@ the following geometry: width 300microm, strip length
 
 	Let's now make a last comparison between the results of \textit{Pdetect} and the analytical solution.
 	Figure~\ref{fig:oblique} shows the weighting potentials along an oblique straight line, passing right at the
-	center of the detector (Figure~\ref{fig:oblique_ratio} shows the ratio). 
+	center of the detector (Figure~\ref{fig:oblique_ratio} shows the ratio).
 
 	\begin{figure}[H]
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique.pdf}
-			\caption{Weighting potential along a straight oblique line passing right in the center of 
+			\caption{Weighting potential along a straight oblique line passing right in the center of
 					the detector.}
 			\label{fig:oblique}
 		\end{minipage} \hfill
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique_ratio.pdf}
-			\caption{Ratio of weighting potential along a straight oblique line passing right in the 
+			\caption{Ratio of weighting potential along a straight oblique line passing right in the
 					center of the detector.}
 			\label{fig:oblique_ratio}
 		\end{minipage}
@@ -1185,7 +1215,7 @@ the following geometry: width 300microm, strip length
 	\textit{Pdetect}.
 
 	All those comparisons tends to validate the results computed by \textit{Pdetect}. Indeed, even
-	if there are some differences, those are really small and can be reduced by changing some parameters 
+	if there are some differences, those are really small and can be reduced by changing some parameters
 	in \textit{detect}.
 
 \section{Software architecture} \label{App:soft_arch}
