@@ -96,7 +96,9 @@
 	distributions will be handled. Finally, a simulation of the electronic will
 	be implemented. This work is a first step to reach this objective.
 	The software developed in the context of this work, \textit{pdetect},
-	has been used to study silicon and gas particle detectors.
+	has been used to study silicon and gas particle detectors. The source code
+	is available on \textit{github} at the following address:
+	\url{https://github.com/aschils/pdetect}.
 
 	% In the context of our lesson LPHY1300 personal project, we
 	% had to simulate a particle detector using the finite elements method. We
@@ -1030,10 +1032,7 @@ the following geometry: width 300microm, strip length
 \section*{Conclusion}
 
 	In this work, a software computing the current induced by the pass of a
-	particle in a detector has been developed. The results obtained for silicon
-	detectors are comparable to the results of \texttt{Weightfield},
-	another simulation software. The results obtained for gas detectors still
-	need to be validated.
+	particle in a detector has been developed.
 
 	This work allows us to derive the following conclusions. The finite element
 	method, and in particular its implementation in the \textit{deal.ii} library,
@@ -1061,6 +1060,44 @@ the following geometry: width 300microm, strip length
 	strips detector. Conversely, the weighting potentials computed for three and five
 	strips detectors are identical.
 
+  The computation of the current induced by a particle was found to be the
+	most heavy computation. Without any optimization, i.e. accessing the potential
+	and electric field at one cell with a $\mathcal{O}(n)$ time complexity, $n$
+	being the total number of cells in the grid,
+	the computation was far too slow. This process has been sped up using a
+	\textit{rtree} data structure which allows to access data of interest
+	with a $\mathcal{O}( \log{n})$ time complexity. This computation nevertheless
+	remains the one taking the most time to complete. It takes typically four or five
+	times the time required to solve the Laplace equation (a few minutes).
+	This computation should scale well when passing to 3D geometries thanks
+	to the logarithmic time complexity. It is expected that the potential computation
+	becomes the slowest phase when handling 3D geometries since its time complexity
+	is far worst than logarithmic (at best $\mathcal{O}(k \log{k})$, $k$ being
+	the size of the finite element method matrix~\cite{5165661}).
+
+	The currents obtained for silicon
+  detectors are comparable to the results of \textit{Weightfield},
+  another simulation software. The difference are at most $\approx$10$\%$.
+	This difference does not come from differences in the computed potentials
+	since they appear to be identical. It is unlikely that it is due to differences
+	in the electric fields since it is just the the opposite of the potential
+	gradient. Authors believe the differences are explained by the additionnal
+	physical effects handled by \textit{Weightfield}. For example, the number
+	of initial holes and electrons are different in \textit{Weightfield}. This
+	behavior is not implemented in \textit{Pdetect} yet. Moreover, \textit{Weightfield}
+	takes into account additional parameters such as the temperature and the
+	depletion voltage. It would be interesting to compare the two softwares again once
+	 missing physical effects are implemented in \textit{Pdetect}.
+
+	The results obtained for gas detectors still need to be validated. The
+	implementation of the Townsend avalanche leads to abnormally high currents
+	($\approx 10^{80}$A). Authors are confident in the correctness of the implementation
+	regarding the equations of the Townsend avalanche. The issue may come from the
+	lack of a mechanism to stop the avalanche once there are no electrons left
+	to extract. Tests have been performed limiting the number of free electrons in
+	the detector. Results are in this case not interesting since the maximum allowed
+	current is reached very quickly. Further investigation need to be made on this
+	effect.
 
 	This work is a first step to the development of a properly designed and open source
 	software to simulate particle detectors. Although there are still
@@ -1105,7 +1142,7 @@ the following geometry: width 300microm, strip length
 \section{Comparison between the analytical and numerical solutions} \label{App:comp_an}
 
 	In this section of the appendix, we will continue the discussion of the comparison
-	between the results of\textit{Pdetect} and the analytical solution given by
+	between the results of \textit{Pdetect} and the analytical solution given by
 	Equation~\ref{exp_analytic} (see Section~\ref{comparisons}).
 
 	To continue this comparison, we will compare the weighting potentials along different line.
