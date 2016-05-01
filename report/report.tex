@@ -95,16 +95,10 @@
 	Additional types of medias (Ar, H$_2$,...), particles and energy deposit
 	distributions will be handled. Finally, a simulation of the electronic will
 	be implemented. This work is a first step to reach this objective.
-	The software developed in the context of this work, \textit{pdetect},
+	The software developed in the context of this work, \textit{Pdetect},
 	has been used to study silicon and gas particle detectors. The source code
-	is available on \textit{github} at the following address:
+	is available on \textit{Github} at the following address:
 	\url{https://github.com/aschils/pdetect}.
-
-	% In the context of our lesson LPHY1300 personal project, we
-	% had to simulate a particle detector using the finite elements method. We
-	% thus develop our program "pdetect" which simulates the electric potential
-	% and electric field inside a pixel detector. It also computes the electric
-	% current induce by an incident particle with a given trajectory.
 
 	\subsection*{Overview of the contributions}
 
@@ -192,14 +186,6 @@
 			and the distribution of tasks between the authors.
 
 		\end{itemize}
-
-		% In this paper we will first introduce briefly what the finite elements
-		% method is, and then a library we used in our program, "deal.II".
-		% After what we will explain properly our program, the way it works, and
-		% also comparing our results with the results of "weightfield", another
-		% simulator of a particle detector, already use in many experiences.
-		% To finish this paper we will talk about two specific cases of detector,
-		% a silicon detector, and a helium detector.
 
 \newpage
 \section{Background and related work}
@@ -951,7 +937,7 @@ the following geometry: width 300microm, strip length
 
 				\begin{figure}[H]
 				  \center
-				  \includegraphics[scale=0.5]{images/applications/helium1_unprecise.png}
+				  \includegraphics[scale=0.5]{images/applications/helium1_unprecise.pdf}
 				  \caption{Current induced by the ions-pair in function of time, in the first case of helium detector.}
 				  \label{fig:helium1_unprecise}
 				\end{figure}
@@ -969,37 +955,39 @@ the following geometry: width 300microm, strip length
 
 				\begin{figure}[H]
 				  \center
-				  \includegraphics[scale=0.5]{images/applications/helium1_precise.png}
+				  \includegraphics[scale=0.5]{images/applications/helium1_precise.pdf}
 				  \caption{Current induced by the electrons in function of time, in the first case of helium detector.}
 				  \label{fig:helium1_precise}
 				\end{figure}
 
-				Now it is clear that this peak of current didn't fade instantly. Instead, there is now a weird-shaped
-				graph that has nothing to do with the one of the silicon detector (Figure~\ref{fig:silicon}). Why?
+				Now it is clear that this peak of current didn't fade instantly. Instead, there is now a weird plate
+				on the graph which wasn't there for the silicon case. Why?
 
-				This is due to the Townsend avalanche. While the electrons are moving toward the cathode and some of them stop
-				(because they've reached it), other ion-pairs are formed by this Townsend avalanche, if the electric field is
-				high enough. Therefore the new holes and electrons formed will contribute to the current. The resulting current
-				will thus increase, as shown on Figure~\ref{fig:helium1_precise}, around the times of 250ns or 500ns.
+				This is due to two effects: the Townsend avalanche, and the electronics in the detector. Indeed, on the graph
+				there is firstly an increasing current, due to the fact that while the electrons are moving toward the cathode,
+				they have enough energy to create a new ion-electron pair. This is the Townsend avalanche. This phenomena occurs
+				when the electric field inside the detector exceeds 10$^6$V/m, which is the case in this particular application, 
+				where the electric field is $\pm$2$*$10$^6$V/m.
 
-				The threshold value of the electric field needed for the Townsend avalanche to occur is ~10$^6$V/m. With the
-				dimensions of the detector used in the first application, the electric field near the anode is around
-				2$*$10$^6$V/m, enough to see the Townsend avalanche occurs.
+				The presence of a plate on the graph is due to the electronics inside the detector. The electrodes in which the 
+				current is induced cannot handle a very high current, it will have a limit current that can't be surpassed.
+				In this work (in the program), we introduced this value manually, and fixed it the limit current to 1$\mu$A, 
+				which seems reasonable. The reason why the current here exceed this limit, is because of the Townsend avalanche
+				(without any limit, the induced current reaches $\pm$1A).
 
-				The graph also shows a very small current, of the order of -10$^{-6}\mu$ A. This is simply due to the little
-				amount of ion-pairs generated when the particle passes through the detector. Indeed, with the dimensions of the
-				first application of helium detector, the particle generates only 4 ion-pairs (3,9 to be precise). The detector
-				being half a centimeter thick, the particle thus generates between 7,8 and 8 ion-pairs per centimeter.
-				This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, we see the theoretical
-				number of ions-pairs in a helium detector is 7,8 ion-pairs per centimeter. We can therefore assume that the
-				results given by \textit{Pdetect} are accurate.
+				To check the validity of the results, let's compare those at some already known results.
+				With the dimensions of the first application of helium detector, the particle generates only 4 ion-electron pairs 
+				(3,9 to be precise). The detector being half a centimeter thick, the particle thus generates between 7,8 and 8 
+				ion-pairs per centimeter. This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, 
+				we see the theoretical number of ions-pairs in a helium detector is 7,8 ion-pairs per centimeter. We can therefore 
+				assume that the results given by \textit{Pdetect} are accurate.
 
 				Let's now talk about the second case of helium detector. The graph of the induced current is shown on
 				Figure~\ref{fig:helium2_unprecise}.
 
 				\begin{figure}[H]
 				  \center
-				  \includegraphics[scale=0.4]{images/applications/helium2_unprecise.png}
+				  \includegraphics[scale=0.4]{images/applications/helium2_unprecise.pdf}
 				  \caption{Current induced by the ions-pair in function of time, in the second case of helium detector.}
 				  \label{fig:helium2_unprecise}
 				\end{figure}
@@ -1010,33 +998,15 @@ the following geometry: width 300microm, strip length
 
 				\begin{figure}[H]
 				  \center
-				  \includegraphics[scale=0.4]{images/applications/helium2_precise.png}
+				  \includegraphics[scale=0.4]{images/applications/helium2_precise.pdf}
 				  \caption{Current induced by the electrons in function of time, in the second case of helium detector.}
 				  \label{fig:helium2_precise}
 				\end{figure}
 
-				The aspect of the graph on Figure~\ref{fig:helium2_precise} has nothing to do with the others. This is due
-				to the dimension of the detector used in this application. Indeed, the strip is so small compared to the
-				detector that the electric field it generates is really low (Figure~\ref{fig:electric_field} shows the electric
-				field inside the detector). Therefore the charges (holes and electrons) are moving slowly towards the edges of
-				the detector. Since they move slowly, the induced current is quite small. After a certain time (an iteration
-				of the program for example), the electrons are closer to the cathode (only the electrons induce a relevant current),
-				where the electric field grow higher rapidly. The electrons have then a bigger velocity and induced a bigger
-				current. Again after some iterations, the closest electrons, which generate the higher current, reach the cathode.
-				The next few electrons being further will induce a little current and the cycle goes on. This is why there are
-				different "branches" on the graph.
-
-				\begin{figure}[H]
-				  \center
-				  \includegraphics[scale=0.4]{images/applications/electric_field.png}
-				  \caption{Electric field inside the detector (Top quarter of the detector)}
-				  \label{fig:electric_field}
-				\end{figure}
-
-				In this case, due to the low electric field, the Townsend avalanche don't occurs. This is why the graph doesn't
-				look like the first one and why the current is so slow (the maximum current is -3,86328$*$10$^{-7}\mu$ A) even though
-				there are much more ion-pairs generated by the particle, 23 ion-pairs are generated along its path (the theoritical
-				number is 23,4 ion-pairs for three centimeters).
+				The graph looks now a bit more like the current induce into a silicon detector. Actually, there is no
+				Townsend avalanche here since the electric field is too small to generate it. But here, unless like for the
+				silicon, the current decrease steadily. This is because in this particular application, is almost null everywhere.
+				Therefore the electrons are almost not accelerated.
 
 \section*{Conclusion}
 

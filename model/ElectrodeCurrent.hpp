@@ -345,8 +345,8 @@ private:
 				}			
 			}
 		}
-		if(current_tot*ELECTRON_CHARGE < -6e-06)
-				current_tot = -6e-06/ELECTRON_CHARGE;
+		if(current_tot*ELECTRON_CHARGE < -1e-05)
+				current_tot = -1e-05/ELECTRON_CHARGE;
 		return current_tot * ELECTRON_CHARGE;
 	}
 
