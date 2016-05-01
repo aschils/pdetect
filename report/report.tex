@@ -1108,9 +1108,26 @@ the following geometry: width 300microm, strip length
 	current is reached very quickly. Further investigation need to be made on this
 	behavior.
 
+	Another flaw in this work is that the finite element method parameters used
+	by our \textit{deal.ii} code are unknown. This code is very low level and
+	is inspired from the \textit{deal.ii} tutorial~\cite{deal.iituto}.
+	Therefore, it is not easy for people inexperienced with finite
+	element method to make the connection between the \textit{C++} code and
+	the finite element method concepts it implements. However, since
+	the Laplace equation is very common and in view of the consistent results,
+	authors are confident in the solution of the Laplace equation. Using finite
+	element method as a black box does not alter the quality of this work. Maybe
+	experienced finite element method users may find ways to improve the process.
+	However, authors do not see it as a priority since the current code is already
+	efficient and accurate enough to answer current needs.
 
 	This work is a first step to the development of a properly designed and open source
-	software to simulate particle detectors. Although there are still
+	software to simulate particle detectors. Authors are confident in the results
+	for silicon detectors and gas detectors when there is no Townsend avalanche.
+	Conversely obtained results for gas detectors with Townsend avalanche are
+	false and the simulation of this phenomena needs to be corrected in order
+	to match the physical reality.
+	 Although there are still
 	many features to introduce in the software, authors believe it is a solid
 	basis for further improvements.
 
@@ -1129,7 +1146,8 @@ the following geometry: width 300microm, strip length
 		rectangular potential sources but with gaussian curves at their corners.
 		Fourthly, the software can be extended to handle both 2D and 3D geometries.
 		Fifthly, a graphic user interface could be developed to ease the usage of the
-		software.
+		software. Sixthly, the implementation of the Townsend avalanche phenomena
+		must be improved to match the real behavior of gas detectors.
 
 		Furthermore, since the passage to 3D geometries will slow down the computations,
 		it may become interesting to modify the \texttt{deal.ii} code in the
@@ -1481,6 +1499,12 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 		library to solve partial differential equations and how to tackle some
 		difficulties specific to the development of a numerical software.
 
+		The work achieved by each author, the number of days spent on this work
+		and other statistics can be retrieved from the github repository of the
+		project: \url{https://github.com/aschils/pdetect}. In total, 108 days
+		has been spent on this project, a significant part of them being entire
+		work days. The software is composed of 5209 lines of \textit{C++} code.
+
 		The most time-consuming task of this work was to learn the \textit{deal.ii}
 		library. It is a quite low level library with a lot of functionalities.
 		A huge amount of time has been spent on technical details about the
@@ -1500,10 +1524,8 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 		allowing other students to work on the same project in the future.
 		Retrospectively, maybe it would have been more judicious to develop
 		this software in a higher level programming language such as \textit{Python}.
-		It would allow to develop the software faster. %The Laplace equation
-		%would have been solved by another library than \textit{deal.ii}. Another
-		%possibility would have been to
-
+		It would allow to develop the software faster. Besides the programming
+		language choice, we think the problem has been approached properly.
 
 \newpage
 
