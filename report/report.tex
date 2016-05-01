@@ -305,6 +305,51 @@
 		\textit{Weightfield} has been used in this work to compare and valid the results
 		obtained with our own software, \textit{pdetect}.
 
+	\subsection{Analytical solution of the weighting potential}
+
+		The weighting potential has already been calculated for some type of geometry.
+		Since \textit{Pdetect} calculate the weighting potential, it is interesting to compare
+		its results with the expression of the analytical solution.
+
+		In order to compare the results of \textit{Pdetect} with the analytical solution,
+		we have to introduce the context in which this solution was found. The Figure~\ref{fig:analytic}
+		shows the geometry in which the analytical solution has been calculated.
+
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.5]{images/boundary_conditions/detector/analytic.png}
+			\caption{Detector geometry for the calculation of the analytical expression of the weighting
+				potential~\cite{pixeldetector}}
+			\label{fig:analytic}
+		\end{figure}
+
+		After painful calculations, the solution of the weighting potential in the above situation
+		has been calculated and is given by Equation~\ref{exp_analytic}.
+
+		\begin{equation}
+			\phi_w = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over
+					{\cosh(\pi x)-\cos(\pi y)\cosh(\pi {a\over{2}})}}\right)
+			\label{exp_analytic}
+		\end{equation}
+
+		With this expression, it is not obvious to know the shape of the weighting potential in the
+		two dimensional space. Therefore Figure~\ref{fig:plot_analytic} shows this weighting potential
+		(It has been rotated by 90 degrees to compare more easily with the results of \textit{Pdetect}).
+
+		\begin{figure}[H]
+			\center
+			\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
+			\caption{Two dimension plot of analytical solution of the weighting field given by 
+				Equation~\ref{exp_analytic}}
+			\label{fig:plot_analytic}
+		\end{figure}
+
+		On the figure above, it appears (as suggested by Figure~\ref{fig:analytic}) that the boundary
+		conditions are free on the sides, and set to a zero potential  the bottom (or on the top for
+		Figure~\ref{fig:analytic}) and on top next to the strip. This is why we will use those kind
+		of boundary conditions for the comparisons between the results given by \textit{Pdetect} and
+		the analytical solution.
+
 \section{Introduction to the physics of particle detectors}
 
 	\label{equations}
@@ -629,46 +674,6 @@ the following geometry: width 300microm, strip length
 	For the entire section, the type geometry of the detector used in \textit{Pdetect} is a
 	serrated rectangle (see Figure~\ref{fig:serrated_rect_geometry}).
 
-	\subsection{Analytical solution}
-
-		In order to compare the results of \textit{Pdetect} with the analytical solution,
-		we have to introduce the context in which this solution was found. The Figure~\ref{fig:analytic}
-		shows the geometry in which the analytical solution has been calculated.
-
-		\begin{figure}[H]
-			\center
-			\includegraphics[scale=0.5]{images/boundary_conditions/detector/analytic.png}
-			\caption{Detector geometry for the calculation of the weighting
-				potential~\cite{pixeldetector}}
-			\label{fig:analytic}
-		\end{figure}
-
-		After painful calculations, the solution of the weighting potential in the above situation
-		has been calculated and is given by Equation~\ref{exp_analytic}
-
-		\begin{equation}
-			\phi_w = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over
-					{\cosh(\pi x)-\cos(\pi y)\cosh(\pi {a\over{2}})}}\right)
-			\label{exp_analytic}
-		\end{equation}
-
-		With this expression, it is not obvious to know the shape of the weighting potential in the
-		two dimensional space. Therefore Figure~\ref{fig:plot_analytic} shows this weighting potential
-		(It has been rotated by 90 degrees to compare more easily with the results of \textit{Pdetect}).
-
-		\begin{figure}[H]
-			\center
-			\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
-			\caption{Two dimension plot of analytical solution given by Equation~\ref{exp_analytic}}
-			\label{fig:plot_analytic}
-		\end{figure}
-
-		On the figure above, it appears (as suggested by Figure~\ref{fig:analytic}) that the boundary
-		conditions are free on the sides, and set to a zero potential  the bottom (or on the top for
-		Figure~\ref{fig:analytic}) and on top next to the strip. This is why we will use those kind
-		of boundary conditions for the comparisons between the results given by \textit{Pdetect} and
-		the analytical solution.
-
 	\subsection{Comparison with the analytical solution} \label{comparisons}
 
 		As said earlier, we will compare here the weighting potential computed by \textit{Pdetect} and
@@ -680,7 +685,9 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
-			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect}}
+			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:w_semi_free_conditions}
 		\end{figure}
 
@@ -695,14 +702,18 @@ the following geometry: width 300microm, strip length
 			\begin{minipage}[b]{.46\linewidth}
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
-				\caption{Weighting potential along a vertical line passing in the middle of the detector.}
+				\caption{Weighting potential along a vertical line passing in the middle of the detector with pitch 
+						of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+						on the side of the detector.}
 				\label{fig:semi_free_conditions}
 			\end{minipage} \hfill
 			\begin{minipage}[b]{.46\linewidth}
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
 				\caption{Ratio between the weighting potential along a straight line
-						computed by \textit{Pdetect} and the analytical solution}
+						computed by \textit{Pdetect} and the analytical solution for a detector with pitch 
+						of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+						on the side of the detector.}
 				\label{fig:semi_free_ratio}
 			\end{minipage}
 		\end{figure}
@@ -729,7 +740,8 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
-			\caption{Weighting potential inside the detector, given by \textit{Weightfield}.}
+			\caption{Weighting potential inside the detector, given by \textit{Weightfield} with pitch 
+				of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:weight_free}
 		\end{figure}
 
@@ -742,7 +754,8 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
-			\caption{Weighting potential inside the detector, given by \textit{Pdetect}.}
+			\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch 
+				of 450$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:pdetect_free}
 		\end{figure}
 
@@ -756,14 +769,16 @@ the following geometry: width 300microm, strip length
 				\center
 				\includegraphics[height=6cm, width=8cm]{images/boundary_conditions/weight_pot.png}
 				\caption{Weighting potential along a vertical line passing in the middle of the detector,
-						given by Weightfield.}
+						given by \textit{Weightfield} with pitch of 450$\mu$m, strip length of 100$\mu$m,
+						detector width of 300$\mu$m.}
 				\label{fig:weight_pot}
 			\end{minipage} \hfill
 			\begin{minipage}[b]{.46\linewidth}
 			\center
 				\includegraphics[scale=0.4]{images/boundary_conditions/free.pdf}
 				\caption{Weighting potential along a vertical line passing in the middle of the detector,
-						given by \textit{Pdetect}.}
+						given by \textit{Pdetect} with pitch of 450$\mu$m, strip length of 100$\mu$m, detector
+						width of 300$\mu$m.}
 				\label{fig:free_conditions}
 				\end{minipage}
 		\end{figure}
@@ -822,13 +837,13 @@ the following geometry: width 300microm, strip length
 
 				\begin{itemize}
 
-					\item Detector width = 300 $\mu$ m : The width of the detector.
-					\item Strip length = 25 $\mu$ m : The length of one strip (where the potential is
+					\item Detector width = 300 $\mu$m : The width of the detector.
+					\item Strip length = 25 $\mu$m : The length of one strip (where the potential is
 						applied).
-					\item Pitch = 100 $\mu$ m : The distance between the middle of a strip and the middle
+					\item Pitch = 100 $\mu$m : The distance between the middle of a strip and the middle
 						of the next one.
-					\item V$_b$ = 100 V : The bias voltage applied.
-					\item V$_d$ = 50 V : The depletion voltage applied (\textit{Pdetect} doesn't use it, we only
+					\item V$_b$ = 100V : The bias voltage applied.
+					\item V$_d$ = 50V : The depletion voltage applied (\textit{Pdetect} doesn't use it, we only
 						need it in \textit{Weightfield}).
 
 				\end{itemize}
@@ -847,7 +862,8 @@ the following geometry: width 300microm, strip length
 					\begin{minipage}[b]{.46\linewidth}
 						\center
 						\includegraphics[scale=0.5]{images/applications/silicon_current.pdf}
-						\caption{Current induced by a particle in function of time, in a silicon detector.}
+						\caption{Current induced by a particle in function of time, in a silicon detector, computed by 
+								\textit{Pdetect} and \textit{Weightfield}.}
 						\label{fig:silicon}
 					\end{minipage} \hfill
 					\begin{minipage}[b]{.46\linewidth}
@@ -907,10 +923,10 @@ the following geometry: width 300microm, strip length
 				The first application will use those dimensions :
 				\begin{itemize}
 
-					\item Detector width = 5 mm
-					\item Strip length = 0,9 cm
-					\item Pitch = 1 cm
-					\item V$_b$ = 10000 V
+					\item Detector width = 5mm
+					\item Strip length = 0,9cm
+					\item Pitch = 1cm
+					\item V$_b$ = 10000V
 
 				\end{itemize}
 
@@ -918,10 +934,10 @@ the following geometry: width 300microm, strip length
 
 				\begin{itemize}
 
-					\item Detector width = 3 cm
-					\item Strip length = 100 $\mu$ m
-					\item Pitch = 1 cm
-					\item V$_b$ = 2000 V
+					\item Detector width = 3cm
+					\item Strip length = 100 $\mu$m
+					\item Pitch = 1cm
+					\item V$_b$ = 2000V
 
 				\end{itemize}
 
@@ -938,7 +954,7 @@ the following geometry: width 300microm, strip length
 				\begin{figure}[H]
 				  \center
 				  \includegraphics[scale=0.5]{images/applications/helium1_unprecise.pdf}
-				  \caption{Current induced by the ions-pair in function of time, in the first case of helium detector.}
+				  \caption{Current induced by the ion-electron pairs in function of time, in the first case of helium detector.}
 				  \label{fig:helium1_unprecise}
 				\end{figure}
 
@@ -988,7 +1004,7 @@ the following geometry: width 300microm, strip length
 				\begin{figure}[H]
 				  \center
 				  \includegraphics[scale=0.4]{images/applications/helium2_unprecise.pdf}
-				  \caption{Current induced by the ions-pair in function of time, in the second case of helium detector.}
+				  \caption{Current induced by the ion-electron pairs in function of time, in the second case of helium detector.}
 				  \label{fig:helium2_unprecise}
 				\end{figure}
 
@@ -1021,7 +1037,7 @@ the following geometry: width 300microm, strip length
 	the solution provided by \textit{Weightfield}. About efficiency, it only takes between a few seconds
 	and one minute for our software to solve the Laplace equation.
 
-  Another conclusion is that using adaptive grid refinement strategy instead
+    Another conclusion is that using adaptive grid refinement strategy instead
 	of a uniform grid does not noticeably affect the results. Moreover, for the
 	considered 2D geometries, the speedup offered by adaptive grid refinement over
 	using a uniform grid is not significant. However, this speedup is expected
@@ -1033,13 +1049,13 @@ the following geometry: width 300microm, strip length
 	conditions setting a null derivative at these boundaries provides very
 	different results.
 
-  A last conclusion about the potential computation is the influence of the
+    A last conclusion about the potential computation is the influence of the
 	number of strips on the weighting potential. The weighting potential computed
 	for a one strip detector is very different from the one computed for a three
 	strips detector. Conversely, the weighting potentials computed for three and five
 	strips detectors are identical.
 
-  The computation of the current induced by a particle was found to be the
+    The computation of the current induced by a particle was found to be the
 	most heavy computation. Without any optimization, i.e. accessing the potential
 	and electric field at one cell with a $\mathcal{O}(n)$ time complexity, $n$
 	being the total number of cells in the grid,
@@ -1055,8 +1071,8 @@ the following geometry: width 300microm, strip length
 	the size of the finite element method matrix~\cite{5165661}).
 
 	The currents obtained for silicon
-  detectors are comparable to the results of \textit{Weightfield},
-  another simulation software. The difference are at most $\approx$10$\%$.
+    detectors are comparable to the results of \textit{Weightfield},
+    another simulation software. The difference are at most $\approx$10$\%$.
 	This difference does not come from differences in the computed potentials
 	since they appear to be identical. It is unlikely that it is due to differences
 	in the electric fields since it is just the the opposite of the potential
@@ -1097,7 +1113,7 @@ the following geometry: width 300microm, strip length
 	Conversely obtained results for gas detectors with Townsend avalanche are
 	false and the simulation of this phenomena needs to be corrected in order
 	to match the physical reality.
-	 Although there are still
+	Although there are still
 	many features to introduce in the software, authors believe it is a solid
 	basis for further improvements.
 
@@ -1154,14 +1170,18 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/middle-pitch.pdf}
 			\caption{Weighting potential along a straight vertical line passing between the strip and
-					the border of the detector.}
+					the border of the detector with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:mid_pitch}
 		\end{minipage} \hfill
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/middle-pitch_ratio.pdf}
 			\caption{Ratio of weighting potentials along a straight vertical line passing between the
-					strip and the border of the detector.}
+					strip and the border of the detector with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:mid_pitch_ratio}
 		\end{minipage}
 	\end{figure}
@@ -1186,14 +1206,18 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/edge-strip.pdf}
 			\caption{Weighting potential along a straight vertical line passing right at the edge
-					of the strip.}
+					of the strip with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:edge_strip}
 		\end{minipage} \hfill
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/edge-strip_ratio.pdf}
-			\caption{Ratio of weighting potentials along a straight vertical line passing ight at the edge
-					of the strip.}
+			\caption{Ratio of weighting potentials along a straight vertical line passing right at the edge
+					of the strip with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:edge_strip_ratio}
 		\end{minipage}
 	\end{figure}
@@ -1210,14 +1234,18 @@ the following geometry: width 300microm, strip length
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/horizon-top.pdf}
-			\caption{Weighting potential along a straight horizontal line passing right below the strip.}
+			\caption{Weighting potential along a straight horizontal line passing right below the strip with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:horizon}
 		\end{minipage} \hfill
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/horizon-top_ratio.pdf}
 			\caption{Ratio of weighting potential along a straight horizontal line passing right below
-					the strip.}
+					the strip with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:horizon_ratio}
 		\end{minipage}
 	\end{figure}
@@ -1233,14 +1261,18 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique.pdf}
 			\caption{Weighting potential along a straight oblique line passing right in the center of
-					the detector.}
+					the detector with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:oblique}
 		\end{minipage} \hfill
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique_ratio.pdf}
 			\caption{Ratio of weighting potential along a straight oblique line passing right in the
-					center of the detector.}
+					center of the detector with pitch 
+					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+					on the side of the detector.}
 			\label{fig:oblique_ratio}
 		\end{minipage}
 	\end{figure}
