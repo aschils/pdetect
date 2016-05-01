@@ -180,8 +180,17 @@
 			different set of parameters which models various detectors.
 			%\item Section 5 discusses the future work.
 
+			\item Appendix~\ref{App:comp_an} presents further comparisons between
+			the numerical and analytical solutions of the potential.
+
 			\item Appendix~\ref{App:soft_arch} explains the software architecture and the role played by
 			the most important classes.
+
+			\item Appendix~\ref{App:academic} answers questions related to the
+			academic activity such as what was
+			the most difficult part of the project, how the project was conducted
+			and the distribution of tasks between the authors.
+
 		\end{itemize}
 
 		% In this paper we will first introduce briefly what the finite elements
@@ -1097,7 +1106,8 @@ the following geometry: width 300microm, strip length
 	to extract. Tests have been performed limiting the number of free electrons in
 	the detector. Results are in this case not interesting since the maximum allowed
 	current is reached very quickly. Further investigation need to be made on this
-	effect.
+	behavior.
+
 
 	This work is a first step to the development of a properly designed and open source
 	software to simulate particle detectors. Although there are still
@@ -1462,6 +1472,37 @@ ElectrodeCurrent(Detector2D *det, Line particle_trajectory,
 		the adaptive $\Delta t$ strategy is used: the program computes himself an
 		appropriate $\Delta t$ at each iteration depending on the maximum charge velocity
 		of the previous iteration.
+
+		\section{Comments on the academic activity} \label{App:academic}
+
+
+		Throughout the realization of this work, we learned the	basics of
+		particle detectors physics. Furthermore, we learned to use the \textit{deal.ii}
+		library to solve partial differential equations and how to tackle some
+		difficulties specific to the development of a numerical software.
+
+		The most time-consuming task of this work was to learn the \textit{deal.ii}
+		library. It is a quite low level library with a lot of functionalities.
+		A huge amount of time has been spent on technical details about the
+		library and the programming language. The architecture of the software
+		has been changed dozens of times in order to keep a clean architecture in
+		agreement with the \textit{deal.ii} abstractions.
+
+		Maybe it would be easier to learn the library if we had followed
+		a course on finite element method beforehand. However, we do not think
+		it would have an impact on the resulting software since we are using
+		finite element method as a black box. Solving the Laplace equation being
+		a very common problem it was easy to find examples solving this equation
+		in the \textit{deal.ii} tutorial.
+
+		The \textit{C++} language has been selected because it is mastered by the two authors of this
+		work. Moreover, it is the language instructed to physicists at our university
+		allowing other students to work on the same project in the future.
+		Retrospectively, maybe it would have been more judicious to develop
+		this software in a higher level programming language such as \textit{Python}.
+		It would allow to develop the software faster. %The Laplace equation
+		%would have been solved by another library than \textit{deal.ii}. Another
+		%possibility would have been to
 
 
 \newpage
