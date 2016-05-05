@@ -193,6 +193,27 @@
 \includegraphics[scale=0.35,angle=90]{images/townsend_avalanche.png}
 \end{center}
 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Particle detector physics}
+  \framesubtitle{Summary: what do we need to compute the current?}
+
+  \vspace{-2em}
+
+
+\[i = -q \vec{v} \cdot \vec{E}_w \qquad \qquad \quad \vec{v} = \frac{q}{|q|} \mu \vec{E}\]
+
+\[\implies i = - |q| \mu \textcolor{red}{\vec{E}} \cdot \textcolor{red}{\vec{E}_w}\]
+
+\[\vec{E} = -\nabla V \qquad \qquad \vec{E}_w = -\nabla V_w\]
+
+\vspace{1em}
+
+$\implies$ to compute $i$ you need \textcolor{red}{$V$} and \textcolor{red}{$V_w$}
+
+$\implies$ Solve \textcolor{red}{$\nabla^2 V = 0$} and
+\textcolor{red}{$\nabla^2 V_w = 0$} for corresponding boundary conditions
 
 \end{frame}
 
