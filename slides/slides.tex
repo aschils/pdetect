@@ -3,6 +3,7 @@
 
 \usepackage{color}
 \usepackage{tikz}
+\usepackage{graphicx}
 
 \usetheme{Warsaw}
 \begin{document}
@@ -129,16 +130,91 @@
   \frametitle{Particle detector physics}
   \framesubtitle{Media ionization (II)}
 
-  Number of \textcolor{red}{ion-electron pairs}
+  Number of \textcolor{red}{hole-electron pairs}
 
   \[N = \frac{dE/dx}{w} \times L\]
 
 \begin{itemize}
   \item \textcolor{red}{$dE/dx$} energy deposited per unit of length
-  \item \textcolor{red}{$w$} energy to produce one ion-pair
+  \item \textcolor{red}{$w$} energy to produce one hole-electron pair
   \item \textcolor{red}{$L$} distance covered in the detector
 \end{itemize}
 
 \end{frame}
+
+\begin{frame}
+  \frametitle{Particle detector physics}
+  \framesubtitle{Drift velocity}
+
+  Charges drift with \textcolor{red}{velocity}
+
+  \[|\vec{v}| = \mu |\vec{E}|\]
+
+  where  $\mu$ is the \textcolor{red}{mobility}
+
+  \begin{itemize}
+    \item \textcolor{red}{Electrons mobility} is much \textcolor{red}{higher} than hole mobility
+    \item mobility decreases when fields of 104 $V cm^{-1}$ and higher are
+    applied due to \textcolor{red}{saturation}
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Particle detector physics}
+  \framesubtitle{Shockley Ramo theorem}
+
+   Instantaneous \textcolor{red}{current} generated	by \textcolor{red}{one moving charge} $q$ at speed $\vec{v}$
+
+		\[i_{e,h}(t) = -q \vec{v}(t) \cdot \vec{E}_w(t)\]
+
+	\textcolor{red}{Weighting field} $\vec{E}_w$ = $\vec{E}$ computed when applying
+
+\begin{itemize}
+  \item $1V$ to the measurement electrode
+	\item $0V$ to the other electrodes
+\end{itemize}
+
+\textcolor{red}{Instantaneous current} induced by the particle
+
+\[i_{tot}(t) = \sum_{holes} i_h(t) + \sum_{electrons} i_e(t)\]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Particle detector physics}
+  \framesubtitle{Townsend avalanche}
+
+\begin{itemize}
+ \item $e^{-}$ extract $e^{-}$ from media molecules
+ \item In gas detectors when $|\vec{E}| > 10^6$Vm$^{-1}$
+\end{itemize}
+
+\begin{center}
+\includegraphics[scale=0.35,angle=90]{images/townsend_avalanche.png}
+\end{center}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Saturation}
+
+  \begin{equation}
+		\mu_s = \mu \left (1 + \left (\frac{\mu |E_y|}{v_{sat}} \right )^{\beta} \right )^{-\frac{1}{\beta}}
+		\label{eq:saturation}
+	\end{equation}
+
+\begin{itemize}
+  \item $\beta$ is a constant
+  \item $\mu$ is the mobility when not considering saturation
+  \item $E_y$ is the component of the electric field along the axis orthogonal
+  to the anode and cathode
+  \item $v_{sat}$ the saturation velocity, it depends on the media and the
+  temperature.
+\end{itemize}
+
+\end{frame}
+
 
 \end{document}
