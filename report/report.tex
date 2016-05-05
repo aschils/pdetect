@@ -339,7 +339,7 @@
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
-			\caption{Two dimension plot of analytical solution of the weighting field given by 
+			\caption{Two dimension plot of analytical solution of the weighting field given by
 				Equation~\ref{exp_analytic}}
 			\label{fig:plot_analytic}
 		\end{figure}
@@ -380,7 +380,7 @@
 	field and the mobility~\cite{spieler2005semiconductor}:
 
 	\begin{equation}
-		\vec{v} = \mu \vec{E}
+		|\vec{v}| = \mu |\vec{E}|
 		\label{eq:charge_speed}
 	\end{equation}
 
@@ -685,7 +685,7 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
-			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch 
+			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:w_semi_free_conditions}
@@ -702,7 +702,7 @@ the following geometry: width 300microm, strip length
 			\begin{minipage}[b]{.46\linewidth}
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free.pdf}
-				\caption{Weighting potential along a vertical line passing in the middle of the detector with pitch 
+				\caption{Weighting potential along a vertical line passing in the middle of the detector with pitch
 						of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 						on the side of the detector.}
 				\label{fig:semi_free_conditions}
@@ -711,7 +711,7 @@ the following geometry: width 300microm, strip length
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
 				\caption{Ratio between the weighting potential along a straight line
-						computed by \textit{Pdetect} and the analytical solution for a detector with pitch 
+						computed by \textit{Pdetect} and the analytical solution for a detector with pitch
 						of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 						on the side of the detector.}
 				\label{fig:semi_free_ratio}
@@ -740,7 +740,7 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
-			\caption{Weighting potential inside the detector, given by \textit{Weightfield} with pitch 
+			\caption{Weighting potential inside the detector, given by \textit{Weightfield} with pitch
 				of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:weight_free}
 		\end{figure}
@@ -754,7 +754,7 @@ the following geometry: width 300microm, strip length
 		\begin{figure}[H]
 			\center
 			\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
-			\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch 
+			\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch
 				of 450$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:pdetect_free}
 		\end{figure}
@@ -862,7 +862,7 @@ the following geometry: width 300microm, strip length
 					\begin{minipage}[b]{.46\linewidth}
 						\center
 						\includegraphics[scale=0.5]{images/applications/silicon_current.pdf}
-						\caption{Current induced by a particle in function of time, in a silicon detector, computed by 
+						\caption{Current induced by a particle in function of time, in a silicon detector, computed by
 								\textit{Pdetect} and \textit{Weightfield}.}
 						\label{fig:silicon}
 					\end{minipage} \hfill
@@ -982,20 +982,20 @@ the following geometry: width 300microm, strip length
 				This is due to two effects: the Townsend avalanche, and the electronics in the detector. Indeed, on the graph
 				there is firstly an increasing current, due to the fact that while the electrons are moving toward the cathode,
 				they have enough energy to create a new ion-electron pair. This is the Townsend avalanche. This phenomena occurs
-				when the electric field inside the detector exceeds 10$^6$V/m, which is the case in this particular application, 
+				when the electric field inside the detector exceeds 10$^6$V/m, which is the case in this particular application,
 				where the electric field is $\pm$2$*$10$^6$V/m.
 
-				The presence of a plate on the graph is due to the electronics inside the detector. The electrodes in which the 
+				The presence of a plate on the graph is due to the electronics inside the detector. The electrodes in which the
 				current is induced cannot handle a very high current, it will have a limit current that can't be surpassed.
-				In this work (in the program), we introduced this value manually, and fixed it the limit current to 1$\mu$A, 
+				In this work (in the program), we introduced this value manually, and fixed it the limit current to 1$\mu$A,
 				which seems reasonable. The reason why the current here exceed this limit, is because of the Townsend avalanche
 				(without any limit, the induced current reaches $\pm$1A).
 
 				To check the validity of the results, let's compare those at some already known results.
-				With the dimensions of the first application of helium detector, the particle generates only 4 ion-electron pairs 
-				(3,9 to be precise). The detector being half a centimeter thick, the particle thus generates between 7,8 and 8 
-				ion-pairs per centimeter. This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236}, 
-				we see the theoretical number of ions-pairs in a helium detector is 7,8 ion-pairs per centimeter. We can therefore 
+				With the dimensions of the first application of helium detector, the particle generates only 4 ion-electron pairs
+				(3,9 to be precise). The detector being half a centimeter thick, the particle thus generates between 7,8 and 8
+				ion-pairs per centimeter. This result is totally realistic, using the lesson of Eduardo Cortina Gil~\cite{lphy2236},
+				we see the theoretical number of ions-pairs in a helium detector is 7,8 ion-pairs per centimeter. We can therefore
 				assume that the results given by \textit{Pdetect} are accurate.
 
 				Let's now talk about the second case of helium detector. The graph of the induced current is shown on
@@ -1170,7 +1170,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/middle-pitch.pdf}
 			\caption{Weighting potential along a straight vertical line passing between the strip and
-					the border of the detector with pitch 
+					the border of the detector with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:mid_pitch}
@@ -1179,7 +1179,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/middle-pitch_ratio.pdf}
 			\caption{Ratio of weighting potentials along a straight vertical line passing between the
-					strip and the border of the detector with pitch 
+					strip and the border of the detector with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:mid_pitch_ratio}
@@ -1206,7 +1206,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/edge-strip.pdf}
 			\caption{Weighting potential along a straight vertical line passing right at the edge
-					of the strip with pitch 
+					of the strip with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:edge_strip}
@@ -1215,7 +1215,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/edge-strip_ratio.pdf}
 			\caption{Ratio of weighting potentials along a straight vertical line passing right at the edge
-					of the strip with pitch 
+					of the strip with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:edge_strip_ratio}
@@ -1234,7 +1234,7 @@ the following geometry: width 300microm, strip length
 		\begin{minipage}[b]{.46\linewidth}
 			\center
 			\includegraphics[scale=0.5]{images/annexe/horizon-top.pdf}
-			\caption{Weighting potential along a straight horizontal line passing right below the strip with pitch 
+			\caption{Weighting potential along a straight horizontal line passing right below the strip with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:horizon}
@@ -1243,7 +1243,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/horizon-top_ratio.pdf}
 			\caption{Ratio of weighting potential along a straight horizontal line passing right below
-					the strip with pitch 
+					the strip with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:horizon_ratio}
@@ -1261,7 +1261,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique.pdf}
 			\caption{Weighting potential along a straight oblique line passing right in the center of
-					the detector with pitch 
+					the detector with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:oblique}
@@ -1270,7 +1270,7 @@ the following geometry: width 300microm, strip length
 			\center
 			\includegraphics[scale=0.5]{images/annexe/oblique_ratio.pdf}
 			\caption{Ratio of weighting potential along a straight oblique line passing right in the
-					center of the detector with pitch 
+					center of the detector with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:oblique_ratio}
