@@ -28,6 +28,8 @@
 \frametitle{Particle detector physics}
 \framesubtitle{The detector}
 
+%\textcolor{red}{strips}: cathode
+
 \begin{figure}[H]
 \begin{center}
 	\begin{tikzpicture}[scale=0.7]
@@ -62,8 +64,64 @@
 \end{center}
 \end{figure}
 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Particle detector physics}
+  \framesubtitle{Media ionization}
 
 
+  \begin{figure}[H]
+  \begin{center}
+  	\begin{tikzpicture}[scale=0.7]
+      \draw[line width=1mm, black] (-6,3) -- (-5,3);
+      \draw[line width=1mm, black] (-3,3) -- (-1,3);
+      \draw[line width=1mm, black] (1,3) -- (3,3);
+      \draw[line width=1mm, black] (5,3) -- (6,3);
+
+      \draw[line width=1mm, red] (-5,2) -- (-3,2);
+      \draw[line width=1mm, red] (-1,2) -- (1,2);
+      \draw[line width=1mm, red] (3,2) -- (5,2);
+
+      \draw[line width=1mm, red] (-5,3) -- (-5,2);
+      \draw[line width=1mm, red] (-3,3) -- (-3,2);
+
+      \draw[line width=1mm, red] (-1,3) -- (-1,2);
+      \draw[line width=1mm, red] (1,3) -- (1,2);
+
+      \draw[line width=1mm, red] (3,3) -- (3,2);
+      \draw[line width=1mm, red] (5,3) -- (5,2);
+
+      \draw[line width=1mm, blue] (-6,-3) -- (6,-3);
+      \node[blue] at (7,-3) {V=0V};
+      \node[red] at (7,2.5) {V=300V};
+
+      \node[black!40!green] at (-6.5,0) {$\vec{\text{E}}$};
+      \draw[line width=1mm, black!40!green, ->] (-6, 1) -- (-6,-1);
+
+      \draw[line width=0.6mm, violet] (-5, 4) -- (5, -4);
+      \node[violet] at (-1,4) {particle trajectory};
+      \node[black!5!yellow] at (-2,1) {+};
+      \node[black!5!yellow] at (-1,0.2) {+};
+      \node[black!5!yellow] at (0,-0.6) {+};
+      \node[black!5!yellow] at (1,-1.4) {+};
+      \node[black!5!yellow] at (2,-2.2) {+};
+
+      \node[black!5!yellow] at (-2,-1) {holes};
+      \draw[line width=0.4mm, black!5!yellow, ->] (-0.5,-1) -- (-0.5,-2.5);
+
+      \node[orange] at (-0.5,1) {--};
+      \node[orange] at (0.5,0.2) {--};
+      \node[orange] at (1.5,-0.6) {--};
+      \node[orange] at (2.5,-1.4) {--};
+      \node[orange] at (3.5,-2.2) {--};
+
+      \node[orange] at (3.5,0) {electrons};
+      \draw[line width=0.4mm, orange, ->] (1.5,0) -- (1.5,1.5);
+
+  	\end{tikzpicture}
+  \end{center}
+  \end{figure}
 
 \end{frame}
 
