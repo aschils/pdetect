@@ -276,10 +276,6 @@ composition,...) advantages:
   \frametitle{Pdetect software}
   \framesubtitle{Detector geometry and boundary conditions (I)}
 
-%\begin{center}
-%\includegraphics[scale=0.15]{images/serrated.png}
-%\end{center}
-
 \vspace{-2em}
 
 \begin{figure}[H]
@@ -502,11 +498,10 @@ numerically, roughly:
 
 \fontsize{13pt}{7.2}\selectfont
 
-Use \textcolor{red}{deal.ii} to solve the Laplace eq. $\implies$
-fast (multithreaded)
+Use \textcolor{red}{deal.ii} to solve the Laplace eq. (fast thanks to multithreading)
 \newline
 
-\vspace{2em}
+\vspace{1.5em}
 
 \begin{columns}
   \begin{column}{0.5\textwidth}
@@ -585,6 +580,129 @@ Perform this process \textcolor{red}{two times}
 
   Final grid is composed of small cells only where the Electric field varies
   strongly
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Serrated rectangle: potential and electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Strip potential = 200V, detector width = 300$\mu$m, strip length = 100 $\mu$m, strip width = 20 $\mu$m,
+  inter-strips distance = 50 $\mu$m, max relative error = 0.9$\%$
+
+  \vspace{-2em}
+
+  \begin{center}
+  \includegraphics[scale=0.18]{images/serrated_pot_3.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4.5em} \includegraphics[scale=0.15]{images/serrated_pot_3_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Serrated rectangle: weighting potential and weighting electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Strip potential = 200V, detector width = 300$\mu$m, strip length = 100 $\mu$m, strip width = 20 $\mu$m,
+  inter-strips distance = 50 $\mu$m, max relative error = 0.9$\%$
+
+  \vspace{-2em}
+
+  \begin{center}
+  \includegraphics[scale=0.175]{images/serrated_pot_3_weight.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/serrated_pot_3_grid_weight.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: potential and electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+	inter strips distance = 50$\mu$m, number of strips = 3, potential = 10V,
+	max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.175]{images/rect_rect_pot_3.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: weighting potential and weighting electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+	inter strips distance = 50$\mu$m, number of strips = 3, potential = 10V,
+	max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.18]{images/rect_rect_pot_3_weight.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_weight_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Circular strips: potential and weighting potential}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
+ inter strips distance = 50$\mu$m, potential = 10V, max relative error 1$\%$
+
+ \begin{columns}
+   \begin{column}{0.5\textwidth}
+
+     \begin{center}
+     \includegraphics[scale=0.16]{images/circle_pot_3.png}
+     \end{center}
+
+   \end{column}
+
+   \begin{column}{0.5\textwidth}
+     \begin{center}
+       \vspace{0.5em}
+     \includegraphics[scale=0.16]{images/circle_pot_3_weight.png}
+     \end{center}
+
+   \end{column}
+ \end{columns}
+
 \end{frame}
 
 \begin{frame}
