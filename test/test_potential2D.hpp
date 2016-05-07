@@ -18,7 +18,7 @@ void test_serrated_2D_potential() {
 
 	double strip_potential = 200;
 	unsigned strip_length = 100;
-	unsigned strip_width = 3;
+	unsigned strip_width = 20;
 	unsigned half_pitch = 50;
 	unsigned max_iter = 100000;
 	double stop_accuracy = 10e-12;
@@ -40,12 +40,16 @@ void test_serrated_2D_potential() {
 
 		std::string output_file = output_dir + "/" + "half-pitch_"
 				+ std::to_string(half_pitch) + "_"
-				+ std::to_string(nbr_of_strips) + ".vtk";
+				+ std::to_string(nbr_of_strips);
 		SerratedRect2DDetector srdd(nbr_of_strips, strip_length, strip_width,
 				half_pitch, strip_potential, refine_accuracy, max_iter,
 				stop_accuracy, TYPE_SILICON);
 		srdd.comp_potential();
-		srdd.draw_vtk_graph_potential(output_file);
+		srdd.comp_weight_potential();
+		srdd.draw_vtk_graph_potential(output_file+ ".vtk");
+		srdd.draw_vtk_graph_weight_potential(output_file+ "weight.vtk");
+		srdd.draw_vtk_graph_gradient_of_potential(output_file+ "grad.vtk");
+		srdd.draw_vtk_graph_gradient_of_weight_potential(output_file+ "grad_weight.vtk");
 	}
 }
 
