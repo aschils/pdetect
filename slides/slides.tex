@@ -542,6 +542,52 @@ Perform this process \textcolor{red}{two times}
 \end{frame}
 
 \begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the potential: adaptive grid refinement (I)}
+
+  \textcolor{red}{Electric field constant in most part of the detector}
+  \begin{itemize}
+    \item quick computation with large FE sufficient
+  \end{itemize}
+
+  But Electric field \textcolor{red}{varies strongly close to the strips}
+  \begin{itemize}
+    \item much smaller FE required to get precise results\newline
+  \end{itemize}
+
+  Uniform coarse grid composed of \textcolor{red}{large FE}
+
+  $\implies$ results
+  \textcolor{red}{not precise} enough close to the strips
+  \newline
+
+  Uniform dense grid composed of \textcolor{red}{small FE}
+
+   $\implies$ \textcolor{red}{waste of time}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the potential: adaptive grid refinement (II)}
+
+  Iterative process
+
+  \begin{enumerate}
+    \item Starts with the coarsest grid
+    \item Compute $V$ and error at each FE
+    \item If max error $>$ max tolerated error
+    \begin{enumerate}
+      \item \textcolor{red}{refine} only \textcolor{red}{cells} of the grid with \textcolor{red}{highest errors}
+      \item return to step 2
+    \end{enumerate}
+  \end{enumerate}
+
+  Final grid is composed of small cells only where the Electric field varies
+  strongly
+\end{frame}
+
+\begin{frame}
   \frametitle{Appendix}
   \framesubtitle{Saturation}
 
