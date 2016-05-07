@@ -6,6 +6,9 @@
 \usepackage{graphicx}
 
 \usetheme{Warsaw}
+
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
+
 \begin{document}
 
 \title{Simulation of a particle detector}
@@ -17,16 +20,19 @@
 
 \begin{enumerate}
   \setlength\itemsep{1.4em}
-  \item Particle detector physics
-  \item Computing the \textcolor{red}{potential} in the detector
-  \item Computing the \textcolor{red}{current} induced by a particle
+  \item Problem statement
+  \item The software \textit{pdetect}
+  \begin{itemize}
+    \item Computing the \textcolor{red}{potential} in the detector
+    \item Computing the \textcolor{red}{current} induced by a particle
+  \end{itemize}
   \item Conclusion
 \end{enumerate}
 \end{frame}
 
 \begin{frame}
 
-\frametitle{Particle detector physics}
+\frametitle{Problem statement}
 \framesubtitle{The detector}
 
 %\textcolor{red}{strips}: cathode
@@ -68,7 +74,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Media ionization (I)}
 
 
@@ -127,7 +133,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Media ionization (II)}
 
   Number of \textcolor{red}{hole-electron pairs}
@@ -143,7 +149,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Drift velocity}
 
   Charges drift with \textcolor{red}{velocity}
@@ -161,7 +167,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Shockley Ramo theorem}
 
    Instantaneous \textcolor{red}{current} generated	by \textcolor{red}{one moving charge} $q$ at speed $\vec{v}$
@@ -181,12 +187,12 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Townsend avalanche}
 
 \begin{itemize}
  \item $e^{-}$ extract $e^{-}$ from media molecules
- \item In gas detectors when $|\vec{E}| > 10^6$Vm$^{-1}$
+ \item In \textcolor{red}{gas detectors} when $|\vec{E}| > 10^6$Vm$^{-1}$
 \end{itemize}
 
 \begin{center}
@@ -196,7 +202,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Particle detector physics}
+  \frametitle{Problem statement}
   \framesubtitle{Summary: what do we need to compute the current?}
 
   \vspace{-2em}
@@ -214,6 +220,51 @@ $\implies$ to compute $i$ you need \textcolor{red}{$V$} and \textcolor{red}{$V_w
 
 $\implies$ Solve \textcolor{red}{$\nabla^2 V = 0$} and
 \textcolor{red}{$\nabla^2 V_w = 0$} for corresponding boundary conditions
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Features}
+
+\begin{itemize}
+  \item Simulates both \textcolor{red}{silicon and gas detectors}
+  \item Computes \textcolor{red}{$\vec{E}$} and \textcolor{red}{$\vec{E}_w$}
+  for \textcolor{red}{three} different 2D \textcolor{red}{geometries}
+  \item Computes \textcolor{red}{$i_{tot}$} for any particle trajectory
+  \item Simulates \textcolor{red}{Townsend avalanche} and \textcolor{red}{mobility saturation}
+  \item Outputs:
+  \begin{itemize}
+      \item plots of $V(x,y)$,$V_w(x,y)$, $\vec{E}(x,y)$, $\vec{E}_w(x,y)$
+      \item points $(t,i_{tot}(t))$ in a text file
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Technical characteristics}
+
+\vspace{-1em}
+
+  Developed in \textcolor{red}{\CC} (5209 lines of code)
+
+  Good software engineering practices:
+
+  \begin{itemize}
+    \item Model-view-controller (\textcolor{red}{MVC}) design pattern
+    \item Intensive use of \textcolor{red}{OO} (inheritance, generic programming, composition,...)
+  \end{itemize}
+
+  $\implies$  \textcolor{red}{avoids code duplication}
+
+  $\implies$ \textcolor{red}{add features} to a module with \textcolor{red}{few modifications} to other
+  modules
+
+  $\implies$ improve code \textcolor{red}{readability}
+
+  \textcolor{red}{Fast}: multithreading, adaptive grid refinement,...
 
 \end{frame}
 
