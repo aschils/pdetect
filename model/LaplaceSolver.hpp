@@ -271,7 +271,7 @@ void LaplaceSolver<dim>::get_solution(Solution<dim> &sol) {
 	//Used only to output vtk file
 	DataOut<2> fun_drawer;
 	fun_drawer.attach_dof_handler(dof_handler);
-	fun_drawer.add_data_vector(solution_vec, "solution");
+	fun_drawer.add_data_vector(solution_vec, "potential");
 	fun_drawer.build_patches();
 
 	//PostProcessor, used only to output vtk file
