@@ -417,7 +417,7 @@ composition,...) advantages:
 
 \begin{frame}
   \frametitle{Pdetect software}
-  \framesubtitle{Detector geometry and boundary conditions (IOI)}
+  \framesubtitle{Detector geometry and boundary conditions (III)}
 
 \vspace{-3em}
 
@@ -467,6 +467,78 @@ composition,...) advantages:
   \end{column}
 \end{columns}
 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the potential: finite element method}
+
+  \fontsize{12pt}{7.2}\selectfont
+
+
+\textcolor{red}{Finite element method} solves $\nabla^2 V = 0$
+numerically, roughly:
+
+\begin{itemize}
+    \setlength\itemsep{1em}
+  \item function domain is divided in \textcolor{red}{subdomains} called \textcolor{red}{finite elements}
+  \item \textcolor{red}{piecewise interpolation}: one polynomial fits the restriction
+  of the searched function on one finite element
+  \item build a linear system with the polynomials coefficients
+  \item solves the system thanks to constraints:
+  \begin{itemize}
+    \item satisfy $\nabla^2 V = 0$
+    \item match imposed domain boundary conditions
+    \item boundary conditions between polynomials defined on adjacent finite
+    elements
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the potential: deal.ii}
+
+\fontsize{13pt}{7.2}\selectfont
+
+Use \textcolor{red}{deal.ii} to solve the Laplace eq. $\implies$
+fast (multithreaded)
+\newline
+
+\vspace{2em}
+
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+
+    \textcolor{red}{Inputs}:
+      \begin{enumerate}
+        \item Detector geometry
+        \item Boundary conditions
+        \item Max relative error on V
+        %\item Maximum number of iterations
+      \end{enumerate}
+
+  \end{column}
+
+  \begin{column}{0.6\textwidth}
+    \textcolor{red}{Outputs} for each FE:
+    \begin{enumerate}
+      \item a funct approximating $V$
+      \item a bound on the error on $V$
+      \item a funct approximating $\nabla V$
+    \end{enumerate}
+
+  \end{column}
+\end{columns}
+
+\vspace{2em}
+
+Perform this process \textcolor{red}{two times}
+\begin{itemize}
+  \item get $\textcolor{red}{\vec{E}} = -\nabla V$
+  \item get $\textcolor{red}{\vec{E}_w} = -\nabla V_w$ with other boundary conditions
+\end{itemize}
 \end{frame}
 
 \begin{frame}
