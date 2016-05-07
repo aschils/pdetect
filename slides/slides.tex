@@ -246,25 +246,33 @@ $\implies$ Solve \textcolor{red}{$\nabla^2 V = 0$} and
   \frametitle{Pdetect software}
   \framesubtitle{Technical characteristics}
 
-\vspace{-1em}
-
   Developed in \textcolor{red}{\CC} (5209 lines of code)
+\newline
 
-  Good software engineering practices:
+\textcolor{red}{Object oriented programming} (inheritance, generic programming,
+composition,...) advantages:
 
-  \begin{itemize}
-    \item Model-view-controller (\textcolor{red}{MVC}) design pattern
-    \item Intensive use of \textcolor{red}{OO} (inheritance, generic programming, composition,...)
-  \end{itemize}
+  %\begin{itemize}
+    %\item Model-view-controller (\textcolor{red}{MVC}) design pattern
+    %\item Intensive use of \textcolor{red}{OO} (inheritance, generic programming, composition,...)
+  %\end{itemize}
 
-  $\implies$  \textcolor{red}{avoids code duplication}
-
-  $\implies$ \textcolor{red}{add features} to a module with \textcolor{red}{few modifications} to other
+\begin{itemize}
+  \item \textcolor{red}{avoids code duplication}
+  \item \textcolor{red}{add features} to a module with \textcolor{red}{few modifications} to other
   modules
+  \item improve code \textcolor{red}{readability}
+  \newline
+\end{itemize}
 
-  $\implies$ improve code \textcolor{red}{readability}
+\textcolor{red}{Fast}: multithreading, adaptive grid refinement,...
 
-  \textcolor{red}{Fast}: multithreading, adaptive grid refinement,...
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Detector geometry}
+
 
 \end{frame}
 
@@ -314,5 +322,32 @@ $\implies$ Solve \textcolor{red}{$\nabla^2 V = 0$} and
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Model-view-controller}
+
+
+\fontsize{12pt}{7.2}\selectfont
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+
+      \begin{itemize}
+        \item \textcolor{red}{model} manages the data, logic and rules of the application
+        \item \textcolor{red}{view}: any output representation of information, multiple views of the same information are possible
+        \item \textcolor{red}{controller} accepts input and converts it to commands for the model or view
+      \end{itemize}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.45]{images/MVC.png}
+      \end{center}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
 
 \end{document}
