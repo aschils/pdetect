@@ -972,6 +972,32 @@ iteration}
   \frametitle{Pdetect software}
   \framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
 
+Current computation algorithm accesses $\vec{E}(x,y)$ and $\vec{E}_w(x,y)$ very
+often $\implies$ access must be fast
+\newline
+
+The problem: find the cell (FE) in which the point $(x,y)$ belong
+\newline
+
+Running through each cell is too slow: $\mathcal{O}(n)$ time complexity ($n$= $\#$cells)
+\newline
+
+$\implies$ use \textcolor{red}{rtree} data structure allows to access the right
+cell with $\mathcal{O}(\log(n))$ time complexity
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Conclusion}
+  %\framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
+
+\begin{itemize}
+  \item Computed potentials match analytical solution and Weightfield results
+  \item Computed current for silicon detectors match Weightfield results
+  \item Computed current for gas detectors need to be validated
+  \item Townsend avalanche phenomena implementation needs to b
+\end{itemize}
+
 
 \end{frame}
 
