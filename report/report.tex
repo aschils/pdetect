@@ -11,6 +11,7 @@
 \usepackage{tocloft}
 \usepackage{url}
 \usepackage{tikz}
+\usepackage{pgfplots}
 
 
 
@@ -338,7 +339,7 @@
 
 		\begin{figure}[H]
 			\center
-			\includegraphics[scale=0.5]{images/boundary_conditions/detector/plot_analytic.png}
+			\includegraphics[height=7.5cm,width=11cm]{images/boundary_conditions/detector/plot_analytic.png}
 			\caption{Two dimension plot of analytical solution of the weighting field given by
 				Equation~\ref{exp_analytic}}
 			\label{fig:plot_analytic}
@@ -562,23 +563,23 @@
 		\label{fig:high_refinement}
 	\end{figure}
 
-\begin{figure}[H]
-\begin{center}
-	\begin{tikzpicture}[scale=0.025]
-	    \foreach \i in {\xMin,...,\xMax} {
-	        \draw [very thin,gray] (\i,\yMin) -- (\i,\yMax)  node [below] at (\i,\yMin) {};
-	    }
-	    \foreach \i in {\yMin,...,\yMax} {
-	        \draw [very thin,gray] (\xMin,\i) -- (\xMax,\i) node [left] at (\xMin,\i) {};
-	    }
+	\begin{figure}[H]
+		\begin{center}
+			\begin{tikzpicture}[scale=0.025]
+		    	\foreach \i in {\xMin,...,\xMax} {
+		        	\draw [very thin,gray] (\i,\yMin) -- (\i,\yMax)  node [below] at (\i,\yMin) {};
+		    	}
+		    	\foreach \i in {\yMin,...,\yMax} {
+		        	\draw [very thin,gray] (\xMin,\i) -- (\xMax,\i) node [left] at (\xMin,\i) {};
+		    	}
 
-	\end{tikzpicture}
-\end{center}
-\caption{Grid used by \textit{Weightfield} when computing the potential for
-the following geometry: width 300microm, strip length
-75microm, pitch 300microm, strip number 1. The grid is composed of 112500 cells.}
-\label{fig:wf_mesh}
-\end{figure}
+			\end{tikzpicture}
+		\end{center}
+		\caption{Grid used by \textit{Weightfield} when computing the potential for
+			the following geometry: width 300microm, strip length
+			75microm, pitch 300microm, strip number 1. The grid is composed of 112500 cells.}
+		\label{fig:wf_mesh}
+	\end{figure}
 
 
 	The result of the Laplace equation is of course the potential at each point of
@@ -663,6 +664,7 @@ the following geometry: width 300microm, strip length
 	may be multiplied due to the Townsend avalanche effect following Equation~\ref{eq:townsend}.
 	Notice that this effect happens only for gas detectors.
 
+
 \section{Discussion and applications}
 
 	In this section we will firstly discuss the results given by the program developed
@@ -683,13 +685,36 @@ the following geometry: width 300microm, strip length
 		Figure~\ref{fig:w_semi_free_conditions}).
 
 		\begin{figure}[H]
-			\center
-			\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
+			\begin{minipage}[b]{.60\linewidth}
+				\begin{tikzpicture}
+				    \begin{axis}[
+					    width=10cm,
+					    height=7.5cm,
+				        scale only axis,
+				        enlargelimits=false,
+				        axis on top]
+				        \addplot graphics[xmin=0,xmax=400,ymin=0,ymax=300] {images/boundary_conditions/detector/w_semi_free_conditions.png};
+				    \end{axis}
+				\end{tikzpicture}
+			\end{minipage}
+			\begin{minipage}[b]{.46\linewidth}
+				\center
+				\includegraphics[scale=0.45]{images/boundary_conditions/detector/graduation.png}
+			\end{minipage}
 			\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch
 					of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 					on the side of the detector.}
 			\label{fig:w_semi_free_conditions}
 		\end{figure}
+
+		%\begin{figure}[H]
+		%	\center
+		%	\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
+		%	\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch
+		%			of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
+		%			on the side of the detector.}
+		%	\label{fig:w_semi_free_conditions}
+		%\end{figure}
 
 		Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
 		the comparison of the weighting potential should be relevant.
@@ -706,8 +731,8 @@ the following geometry: width 300microm, strip length
 						of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
 						on the side of the detector.}
 				\label{fig:semi_free_conditions}
-			\end{minipage} \hfill
-			\begin{minipage}[b]{.46\linewidth}
+				\end{minipage} \hfill
+				\begin{minipage}[b]{.46\linewidth}
 				\center
 				\includegraphics[scale=0.45]{images/boundary_conditions/semi-free_ratio.pdf}
 				\caption{Ratio between the weighting potential along a straight line
@@ -739,7 +764,7 @@ the following geometry: width 300microm, strip length
 
 		\begin{figure}[H]
 			\center
-			\includegraphics[scale=0.45]{images/boundary_conditions/detector/weight_free.png}
+			\includegraphics[width=11cm,height=7.5cm]{images/boundary_conditions/detector/weight_free.png}
 			\caption{Weighting potential inside the detector, given by \textit{Weightfield} with pitch
 				of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:weight_free}
@@ -752,12 +777,34 @@ the following geometry: width 300microm, strip length
 		of boundary conditions in \textit{Pdetect} (see Figure~\ref{fig:pdetect_free}).
 
 		\begin{figure}[H]
-			\center
-			\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
+			\begin{minipage}[b]{.60\linewidth}
+				\begin{tikzpicture}
+				    \begin{axis}[
+					    width=10cm,
+					    height=7.5cm,
+				        scale only axis,
+				        enlargelimits=false,
+				        axis on top]
+				        \addplot graphics[xmin=0,xmax=400,ymin=0,ymax=300] {images/boundary_conditions/detector/w_free_conditions.png};
+				    \end{axis}
+				\end{tikzpicture}
+			\end{minipage}
+			\begin{minipage}[b]{.46\linewidth}
+				\center
+				\includegraphics[scale=0.45]{images/boundary_conditions/detector/graduation.png}
+			\end{minipage}
 			\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch
 				of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:pdetect_free}
 		\end{figure}
+
+		%\begin{figure}[H]
+		%	\center
+		%	\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
+		%	\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch
+		%		of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
+		%	\label{fig:pdetect_free}
+		%\end{figure}
 
 		Now we have the same boundary conditions for \textit{Pdetect} and \textit{Weightfield}. We can
 		therefor make a relevant comparison between both. Figure~\ref{fig:weight_pot} and Figure~\ref{fig:free_conditions}
