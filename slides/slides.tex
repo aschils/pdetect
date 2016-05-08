@@ -972,8 +972,8 @@ iteration}
   \frametitle{Pdetect software}
   \framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
 
-Current computation algorithm accesses $\vec{E}(x,y)$ and $\vec{E}_w(x,y)$ very
-often $\implies$ access must be fast
+Current computation algorithm \textcolor{red}{accesses $\vec{E}(x,y)$ and $\vec{E}_w(x,y)$} very
+often $\implies$ access \textcolor{red}{must be fast}
 \newline
 
 The problem: find the cell (FE) in which the point $(x,y)$ belong
@@ -982,7 +982,7 @@ The problem: find the cell (FE) in which the point $(x,y)$ belong
 Running through each cell is too slow: $\mathcal{O}(n)$ time complexity ($n$= $\#$cells)
 \newline
 
-$\implies$ use \textcolor{red}{rtree} data structure allows to access the right
+$\implies$ \textcolor{red}{rtree} data structure allows to access the right
 cell with $\mathcal{O}(\log(n))$ time complexity
 
 \end{frame}
@@ -991,13 +991,42 @@ cell with $\mathcal{O}(\log(n))$ time complexity
   \frametitle{Conclusion}
   %\framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
 
+  \fontsize{13pt}{7.2}\selectfont
+
+
 \begin{itemize}
+  \item This work is a first step to the development of a properly designed
+	software to simulate particle detectors
   \item Computed potentials match analytical solution and Weightfield results
   \item Computed current for silicon detectors match Weightfield results
   \item Computed current for gas detectors need to be validated
-  \item Townsend avalanche phenomena implementation needs to b
+  \item Solving the Laplace equation is fast for 2D geometries
+  \item The slowest phase is the current computation
 \end{itemize}
 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Future work}
+  %\framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
+
+  \fontsize{13pt}{10}\selectfont
+
+
+  \begin{itemize}
+    \item Validate results for gas detectors and Townsend avalanche
+    \item Simulation of additional physical effects: non uniform energy deposition by the
+    particle in the detector,...
+    \item Additional 2D geometries: gaussian curves as corners
+    \item 3D geometries
+    \item Graphic user interface
+    \item Clusters, GPUs
+    \item Simulation of the electronic
+    \item Dependance regarding pressure and temperature
+    \item External magnetic field
+    \item ...
+  \end{itemize}
 
 \end{frame}
 
