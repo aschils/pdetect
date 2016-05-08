@@ -30,11 +30,19 @@
 \begin{enumerate}
   \setlength\itemsep{1.4em}
   \item Problem statement
+  \begin{itemize}
+    \item Particle detector
+    \item Media ionization
+    \item Drift velocity
+    \item Shockley Ramo theorem
+    \item Townsend avalanche
+  \end{itemize}
   \item The software \textit{pdetect}
   \begin{itemize}
+    \item Features and technical characteristics
     \item Geometries and boundary conditions
-    \item Computing the \textcolor{red}{potential} in the detector
-    \item Computing the \textcolor{red}{current} induced by a particle
+    \item Computing the potential in the detector
+    \item Computing the current induced by a particle
   \end{itemize}
   \item Conclusion
 \end{enumerate}
@@ -813,9 +821,159 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
       \end{column}
     \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current}
+
+%The current induced by a particle can be computed for any trajectory
+
+\fontsize{13pt}{7.2}\selectfont
+
+
+User must choose
+
+\begin{itemize}
+  \item particle \textcolor{red}{trajectory} (all supported)
+  \item a \textcolor{red}{precision level} affecting
+  \begin{itemize}
+    \item the time interval $\Delta t$ of the simulation
+    \item the number of punctual charges
+  \end{itemize}
+\end{itemize}
+
+\vspace{1.5em}
+
+Initial charges are grouped among \textcolor{red}{punctual charges}
+
+\begin{itemize}
+  \item equidistant and uniformly distributed along the trajectory
+  \item punctual charge = $\Sigma$ physical charges at that point
+  \item fewer than real charges $\implies$ faster computation
+\end{itemize}
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Punctual / virtual charges}
+
+
+  \begin{figure}[H]
+  \begin{center}
+  	\begin{tikzpicture}[scale=0.4]
+
+      \foreach \x in {0,15}{
+
+      \draw[line width=1mm, black] (-6+\x,3) -- (-5+\x,3);
+      \draw[line width=1mm, black] (-3+\x,3) -- (-1+\x,3);
+      \draw[line width=1mm, black] (1+\x,3) -- (3+\x,3);
+      \draw[line width=1mm, black] (5+\x,3) -- (6+\x,3);
+
+      \draw[line width=1mm, red] (-5+\x,2) -- (-3+\x,2);
+      \draw[line width=1mm, red] (-1+\x,2) -- (1+\x,2);
+      \draw[line width=1mm, red] (3+\x,2) -- (5+\x,2);
+
+      \draw[line width=1mm, red] (-5+\x,3) -- (-5+\x,2);
+      \draw[line width=1mm, red] (-3+\x,3) -- (-3+\x,2);
+
+      \draw[line width=1mm, red] (-1+\x,3) -- (-1+\x,2);
+      \draw[line width=1mm, red] (1+\x,3) -- (1+\x,2);
+
+      \draw[line width=1mm, red] (3+\x,3) -- (3+\x,2);
+      \draw[line width=1mm, red] (5+\x,3) -- (5+\x,2);
+
+      \draw[line width=1mm, blue] (-6+\x,-3) -- (6+\x,-3);
+
+      \draw[line width=0.6mm, violet] (-5+\x, 4) -- (5+\x, -4);
+      }
+
+      \node[black!5!yellow] at (-2,1) {+};
+      \node[black!5!yellow] at (-1,0.2) {+};
+      \node[black!5!yellow] at (0,-0.6) {+};
+      \node[black!5!yellow] at (1,-1.4) {+};
+      \node[black!5!yellow] at (2,-2.2) {+};
+
+
+      \node[orange] at (-0.5,1) {--};
+      \node[orange] at (0.5,0.2) {--};
+      \node[orange] at (1.5,-0.6) {--};
+      \node[orange] at (2.5,-1.4) {--};
+      \node[orange] at (3.5,-2.2) {--};
+
+        \node at (0,5) {10 physical charges};
+
+      \node at (7.5,0) {$\implies$};
+
+      \node[black!5!yellow] at (-2+13.5,0.2) {(3+)};
+      \node[black!5!yellow] at (1+13.5,-1.4) {(2+)};
+
+      \node[orange] at (0.5+16.5,0.2) {(3--)};
+      \node[orange] at (2.5+16.5,-1.4) {(2--)};
+
+      \node at (15,5) {4 virtual charges};
+
+  	\end{tikzpicture}
+  \end{center}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current: iteration}
+
+$t=0$
+
+while there are charges inside detector
+
+\hspace{0.5cm} $i_{tot} = 0$
+
+\hspace{0.5cm} for each punctual charge
+\begin{enumerate}
+  \addtolength{\itemindent}{1cm}
+  \item computes $\vec{v}$ using $\vec{E}$
+  \item computes $i$ using $\vec{v}$ and $\vec{E}_w$
+  \begin{itemize}
+    \item $i_{tot} = i_{tot}+i$
+  \end{itemize}
+  \item move punctual charge
+  \begin{itemize}
+    \item $(x,y) = (x,y) + (\Delta t \times v_x, \Delta t \times v_y)$
+  \end{itemize}
+\end{enumerate}
+
+\hspace{0.5cm} save $(t,i_{tot})$
+
+\hspace{0.5cm} $t = t+\Delta t$
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current: adaptive $\Delta t$}
+
+  In gas detectors holes slower than e$^-$ (1000 times)
+  \begin{itemize}
+    \item small $\Delta t$: fine to capture electrons current but far too slow
+    to compute holes current
+    \item large $\Delta t$: capture quickly holes current but miss electrons current
+  \end{itemize}
+
+Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
+iteration}
+
+\[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current: quickly access $\vec{E}$ and $\vec{E}_w$}
+
+
+\end{frame}
 
 \begin{frame}
   \frametitle{Appendix}
