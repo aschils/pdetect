@@ -53,13 +53,6 @@
 
 \end{titlepage}
 
-%\maketitle
-
-
-%\begin{figure}[H]
-%	\center
-	%\includegraphics[scale=0.055]{images/grid_refinement/garde.png}
-%\end{figure}
 
 \newpage
 
@@ -152,10 +145,6 @@
 		The second one is a more general commercial software able to solve various physics and
 		engineering problems using finite element methods.
 
-		%To perform this task, the software places charges
-		%resulting from the ionization of the molecules inside the detector. Then, these
-		%charges drift following the applied potential at the anode and cathode of the detector
-
 	\subsection*{Organization of the work}
 
 		This work is organized in six Sections. The remainder of this manuscript
@@ -173,7 +162,6 @@
 
 			\item Section 4 presents the results obtained with our software for
 			different set of parameters which models various detectors.
-			%\item Section 5 discusses the future work.
 
 			\item Appendix~\ref{App:comp_an} presents further comparisons between
 			the numerical and analytical solutions of the potential.
@@ -266,14 +254,14 @@
 		extensible to 3D.
 
 
-				The library allows to chose among several finite element method configurations.
-				About \textit{variational formulation}, it is possible to use the
-				\textit{discontinuous Galerkin method}~\cite{dealii_Galerkin},
-				the \textit{hybridizable discontinuous Galkerin method}~\cite{dealii_Galerkin_hybrid} and much more.
-				Furthermore, different \textit{discretization strategies} can be implemented such as
-				\textit{hp-version}~\cite{hp_fem}, \textit{x-FEM}~\cite{CarraroWetterauer:2015}
-				and \textit{isogeometric analysis}~\cite{dealII83}. \textit{deal.ii} also
-				offers several solvers, both direct or iterative~\cite{deal.ii.solvers}.
+		The library allows to chose among several finite element method configurations.
+		About \textit{variational formulation}, it is possible to use the
+		\textit{discontinuous Galerkin method}~\cite{dealii_Galerkin},
+		the \textit{hybridizable discontinuous Galkerin method}~\cite{dealii_Galerkin_hybrid} and much more.
+		Furthermore, different \textit{discretization strategies} can be implemented such as
+		\textit{hp-version}~\cite{hp_fem}, \textit{x-FEM}~\cite{CarraroWetterauer:2015}
+		and \textit{isogeometric analysis}~\cite{dealII83}. \textit{deal.ii} also
+		offers several solvers, both direct or iterative~\cite{deal.ii.solvers}.
 
 
 		Finally, \textit{deal.ii} supports multithreading as well as \textit{MPI~\footnote{Message
@@ -707,15 +695,6 @@
 			\label{fig:w_semi_free_conditions}
 		\end{figure}
 
-		%\begin{figure}[H]
-		%	\center
-		%	\includegraphics[scale=0.4]{images/boundary_conditions/detector/w_semi_free_conditions.png}
-		%	\caption{Weighting potential inside a serrated detector given by \textit{Pdetect} with pitch
-		%			of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m, free boundary conditions
-		%			on the side of the detector.}
-		%	\label{fig:w_semi_free_conditions}
-		%\end{figure}
-
 		Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
 		the comparison of the weighting potential should be relevant.
 
@@ -797,14 +776,6 @@
 				of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
 			\label{fig:pdetect_free}
 		\end{figure}
-
-		%\begin{figure}[H]
-		%	\center
-		%	\includegraphics[scale=0.45]{images/boundary_conditions/detector/w_free_conditions.png}
-		%	\caption{Weighting potential inside the detector, given by \textit{Pdetect} with pitch
-		%		of 400$\mu$m, strip length of 100$\mu$m, detector width of 300$\mu$m.}
-		%	\label{fig:pdetect_free}
-		%\end{figure}
 
 		Now we have the same boundary conditions for \textit{Pdetect} and \textit{Weightfield}. We can
 		therefor make a relevant comparison between both. Figure~\ref{fig:weight_pot} and Figure~\ref{fig:free_conditions}
