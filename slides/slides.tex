@@ -11,9 +11,18 @@
 
 \begin{document}
 
+  {
+  \usebackgroundtemplate{\includegraphics[width=\paperwidth, height=\paperheight]{images/cms.jpg}}
+\begin{frame}
+
+\setbeamercolor{author}{fg=white}
+\setbeamercolor{date}{fg=white}
 \title{Simulation of a particle detector}
 \author{Arnaud Schils \\ Simon Lardinois}
 \maketitle
+
+\end{frame}
+}
 
 \begin{frame}
 \frametitle{Summary}
@@ -76,7 +85,7 @@
 
 \begin{frame}
   \frametitle{Problem statement}
-  \framesubtitle{Media ionization (I)}
+  \framesubtitle{Media ionization}
 
 
   \begin{figure}[H]
@@ -130,22 +139,6 @@
   	\end{tikzpicture}
   \end{center}
   \end{figure}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Problem statement}
-  \framesubtitle{Media ionization (II)}
-
-  Number of \textcolor{red}{hole-electron pairs}
-
-  \[N = \frac{dE/dx}{w} \times L\]
-
-\begin{itemize}
-  \item \textcolor{red}{$dE/dx$} energy deposited per unit of length
-  \item \textcolor{red}{$w$} energy to produce one hole-electron pair
-  \item \textcolor{red}{$L$} distance covered in the detector
-\end{itemize}
 
 \end{frame}
 
@@ -473,7 +466,7 @@ composition,...) advantages:
 
 
 \textcolor{red}{Finite element method} solves $\nabla^2 V = 0$
-numerically, roughly:
+numerically
 
 \begin{itemize}
     \setlength\itemsep{1em}
@@ -705,6 +698,136 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
 \end{frame}
 
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth, height=\paperheight]{images/circle_pot_3_weight_grid.png}}
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Circular strips: example of adaptive grid}
+
+  % \begin{center}
+  %    \includegraphics[scale=0.18]{images/circle_pot_3_weight_grid.png}
+  %  \end{center}
+
+\end{frame}
+}
+%
+% \begin{frame}
+%   \frametitle{Pdetect software}
+%   \framesubtitle{Potential numerical vs analytical solution}
+%
+%   \begin{columns}
+%     \begin{column}{0.5\textwidth}
+%
+%       \begin{center}
+%         \textcolor{red}{Analytical}
+%         \includegraphics[width=\textwidth]{images/plot_analytic.png}
+%       \end{center}
+%
+%     \end{column}
+%
+%     \begin{column}{0.5\textwidth}
+%       \begin{center}
+%         \textcolor{red}{Numerical}
+%       \includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}
+%       \end{center}
+%
+%     \end{column}
+%   \end{columns}
+%
+% \end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Potential: numerical vs analytical solution}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+  Potential along a vertical line (middle of the detector)
+
+  Pitch = 400$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m, V$_{strip} = 1$V
+
+\vspace{-2em}
+
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+
+        \begin{center}
+          \begin{tikzpicture}
+            \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
+            \draw[red, line width=0.5mm, dashed] (0.23,-1.6) -- (0.23,1.95);
+          \end{tikzpicture}
+        \end{center}
+      \end{column}
+
+      \begin{column}{0.5\textwidth}
+        \begin{center}
+          \includegraphics[width=\textwidth]{images/semi-free.pdf}
+        \end{center}
+
+      \end{column}
+    \end{columns}
+
+\begin{itemize}
+  \item The two curves perfectly match for a different strip width
+  \item Strip width used to compute analytical solution is unknown
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Potential: comparison with Weightfield}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+  V=1V, 1 strip, pitch = 450$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m
+
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+
+        \begin{center}
+          %\begin{tikzpicture}
+            %\node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth, height=6cm]{images/weight_free.png}};
+          %\end{tikzpicture}
+          \textcolor{red}{Weightfield}
+          \includegraphics[width=\textwidth, height=5cm]{images/weight_free.png}
+        \end{center}
+      \end{column}
+
+      \begin{column}{0.5\textwidth}
+        \begin{center}
+          %\vspace{1.28em}
+          \vspace{0.5em}
+
+          \textcolor{red}{Pdetect}
+
+            \vspace{0.3em}
+
+          \includegraphics[width=\textwidth, height=5cm]{images/w_free_conditions.png}
+        \end{center}
+
+      \end{column}
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Media ionization}
+
+  Number of \textcolor{red}{hole-electron pairs}
+
+  \[N = \frac{dE/dx}{w} \times L\]
+
+\begin{itemize}
+  \item \textcolor{red}{$dE/dx$} energy deposited per unit of length
+  \item \textcolor{red}{$w$} energy to produce one hole-electron pair
+  \item \textcolor{red}{$L$} distance covered in the detector
+\end{itemize}
+
+\end{frame}
+
 \begin{frame}
   \frametitle{Appendix}
   \framesubtitle{Saturation}
@@ -776,6 +899,87 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
     \end{column}
   \end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Potential analytical solution}
+
+\begin{center}
+  \includegraphics[scale=0.5]{images/analytic.png}
+\end{center}
+
+\vspace{-1.5em}
+
+  \[\phi_w(x,y) = atan\left({\sin(\pi y)\sinh(\pi {a\over{2}})\over
+      {\cosh(\pi x)-\cos(\pi y)\cosh(\pi {a\over{2}})}}\right)\]
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Potential: numerical vs analytical solution (I)}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+  Potential along a vertical line (edge of the strip)
+
+  Pitch = 400$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m, V$_{strip} = 1$V
+
+\vspace{-1.5em}
+
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+
+        \begin{center}
+          \begin{tikzpicture}
+            \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
+            \draw[red, line width=0.5mm, dashed] (-0.35,-1.6) -- (-0.35,1.95);
+          \end{tikzpicture}
+        \end{center}
+      \end{column}
+
+      \begin{column}{0.5\textwidth}
+        \begin{center}
+          \includegraphics[width=\textwidth]{images/edge-strip.pdf}
+        \end{center}
+
+      \end{column}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Potential: numerical vs analytical solution (II)}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+  Potential along a horizontal line (below the strip at y=298 $\mu$m)
+
+  Pitch = 400$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m, V$_{strip} = 1$V
+
+\vspace{-1.5em}
+
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+
+        \begin{center}
+          \begin{tikzpicture}
+            \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
+            \draw[red, line width=0.5mm, dashed] (-2.1,1.9) -- (2.6,1.9);
+          \end{tikzpicture}
+        \end{center}
+      \end{column}
+
+      \begin{column}{0.5\textwidth}
+        \begin{center}
+          \includegraphics[width=\textwidth]{images/horizon-top.pdf}
+        \end{center}
+
+      \end{column}
+    \end{columns}
 
 \end{frame}
 
