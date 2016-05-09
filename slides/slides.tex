@@ -1319,5 +1319,25 @@ cell with $\mathcal{O}(\log(n))$ time complexity
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Finite elements error}
+
+  \begin{itemize}
+    \item Kelly error \textcolor{red}{estimator}
+
+    \item Integration of the "jump" of gradient of the function on the sides.
+    \[\eta_K^2 = \sum_{F\in\delta K}{c_F\int_{\delta K_F}{\left(a{\delta u_h\over{\delta n}}\right)^2do}} \]
+
+    \item Upper bound of the error
+
+    \item Modified version of Kelly error system
+
+    \item Reliable for Poisson equation
+  \end{itemize}
+
+  More information: see the deal.ii Kelly error estimator page
+\end{frame}
+
 
 \end{document}
