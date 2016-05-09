@@ -175,7 +175,7 @@
 
    Instantaneous \textcolor{red}{current} generated	by \textcolor{red}{one moving charge} $q$ at speed $\vec{v}$
 
-		\[i_{e,h}(t) = -q \vec{v}(t) \cdot \vec{E}_w(t)\]
+		\[i_{e,h} = -q \vec{v} \cdot \vec{E}_w\]
 
 	\textcolor{red}{Weighting field} $\vec{E}_w$ = $\vec{E}$ computed when applying
 
@@ -186,7 +186,7 @@
 
 \textcolor{red}{Instantaneous current} induced by the particle
 
-\[i_{tot}(t) = \sum_{holes} i_h(t) + \sum_{electrons} i_e(t)\]
+\[i_{tot} = \sum_{holes} i_h + \sum_{electrons} i_e\]
 \end{frame}
 
 \begin{frame}
@@ -634,52 +634,6 @@ Perform this process \textcolor{red}{two times}
 
 \begin{frame}
   \frametitle{Pdetect software}
-  \framesubtitle{Rectangular strips: potential and electric field}
-
-  \fontsize{10pt}{7.2}\selectfont
-
-
-  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
-	inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
-	max relative error = 0.9$\%$
-
-  \begin{center}
-  \includegraphics[scale=0.175]{images/rect_rect_pot_3.png}
-  \end{center}
-
-\vspace{-2em}
-
-  \begin{center}
-  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_grid.png}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pdetect software}
-  \framesubtitle{Rectangular strips: weighting potential and weighting electric field}
-
-  \fontsize{10pt}{7.2}\selectfont
-
-
-  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
-	inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
-	max relative error = 0.9$\%$
-
-  \begin{center}
-  \includegraphics[scale=0.18]{images/rect_rect_pot_3_weight.png}
-  \end{center}
-
-\vspace{-2em}
-
-  \begin{center}
-  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_weight_grid.png}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pdetect software}
   \framesubtitle{Circular strips: potential and weighting potential}
 
   \fontsize{10pt}{7.2}\selectfont
@@ -970,22 +924,56 @@ while there are charges inside detector
 
 \end{frame}
 
+%\begin{frame}
+  %\frametitle{Pdetect software}
+  %\framesubtitle{Computing the current: adaptive $\Delta t$}
+
+  %In gas detectors holes slower than e$^-$ (1000 times)
+  %\begin{itemize}
+    %\item small $\Delta t$: fine to capture electrons current but far too slow
+   % to compute holes current
+  %  \item large $\Delta t$: capture quickly holes current but miss electrons current
+ % \end{itemize}
+
+%Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
+%iteration}
+
+%\[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+
+%\end{frame}
+
 \begin{frame}
   \frametitle{Pdetect software}
-  \framesubtitle{Computing the current: adaptive $\Delta t$}
+  \framesubtitle{Computing the current: adaptative $\Delta t$}
 
-  In gas detectors holes slower than e$^-$ (1000 times)
-  \begin{itemize}
-    \item small $\Delta t$: fine to capture electrons current but far too slow
-    to compute holes current
-    \item large $\Delta t$: capture quickly holes current but miss electrons current
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
-Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
-iteration}
+      \begin{center}
+        
+        \fontsize{10pt}{7.2}\selectfont
+      In gas detectors holes slower than e$^-$ (1000 times)
+      \begin{itemize}
+        \item small $\Delta t$: fine to capture electrons current but far too slow
+          to compute holes current
+        \item large $\Delta t$: capture quickly holes current but miss electrons current
+      \end{itemize}
 
-\[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+      Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
+      iteration}
 
+      \[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+       \includegraphics[width=0.7\textwidth]{images/helium2_unprecise.pdf}
+       
+       \vspace{-0.5cm}
+
+       \includegraphics[width=0.7\textwidth]{images/helium2_precise.pdf}
+    \end{column}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -1063,7 +1051,8 @@ cell with $\mathcal{O}(\log(n))$ time complexity
       \begin{itemize}
         \item Depletion voltage
         \item Gain
-        \item Electronics
+        \item Temperature
+        \item Different number of hole/electron
       \end{itemize}
 
     \end{column}
@@ -1283,5 +1272,52 @@ cell with $\mathcal{O}(\log(n))$ time complexity
     \end{columns}
 
 \end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: potential and electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+  inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
+  max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.175]{images/rect_rect_pot_3.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: weighting potential and weighting electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+  inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
+  max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.18]{images/rect_rect_pot_3_weight.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_weight_grid.png}
+  \end{center}
+
+\end{frame}
+
 
 \end{document}
