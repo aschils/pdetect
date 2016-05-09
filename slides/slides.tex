@@ -4,6 +4,7 @@
 \usepackage{color}
 \usepackage{tikz}
 \usepackage{graphicx}
+\usepackage{pgfplots}
 
 \usetheme{Warsaw}
 
@@ -637,52 +638,6 @@ Perform this process \textcolor{red}{two times}
 
 \begin{frame}
   \frametitle{Pdetect software}
-  \framesubtitle{Rectangular strips: potential and electric field}
-
-  \fontsize{10pt}{7.2}\selectfont
-
-
-  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
-	inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
-	max relative error = 0.9$\%$
-
-  \begin{center}
-  \includegraphics[scale=0.175]{images/rect_rect_pot_3.png}
-  \end{center}
-
-\vspace{-2em}
-
-  \begin{center}
-  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_grid.png}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pdetect software}
-  \framesubtitle{Rectangular strips: weighting potential and weighting electric field}
-
-  \fontsize{10pt}{7.2}\selectfont
-
-
-  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
-	inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
-	max relative error = 0.9$\%$
-
-  \begin{center}
-  \includegraphics[scale=0.18]{images/rect_rect_pot_3_weight.png}
-  \end{center}
-
-\vspace{-2em}
-
-  \begin{center}
-  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_weight_grid.png}
-  \end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pdetect software}
   \framesubtitle{Circular strips: potential and weighting potential}
 
   \fontsize{10pt}{7.2}\selectfont
@@ -765,8 +720,18 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
         \begin{center}
           \begin{tikzpicture}
-            \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
-            \draw[red, line width=0.5mm, dashed] (0.23,-1.6) -- (0.23,1.95);
+
+            \begin{axis}[
+                width=4cm,
+                height=3.30cm,
+                scale only axis,
+                enlargelimits=false,
+                axis on top]
+              \addplot graphics[xmin=0,xmax=400,ymin=0,ymax=300] {images/w_semi_free_conditions.png};
+            \end{axis}
+
+            %\node[inner sep=0pt]  at (0,0); %{\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
+            \draw[red, line width=0.5mm, dashed] (2,0) -- (2,3.35);
           \end{tikzpicture}
         \end{center}
       \end{column}
@@ -792,7 +757,7 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
   \fontsize{10pt}{7.2}\selectfont
 
-  V=1V, 1 strip, pitch = 450$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m
+  V=1V, 1 strip, pitch = 400$\mu$m, strip length = 100$\mu$m, width = 300$\mu$m
 
   \begin{columns}
 
@@ -818,9 +783,18 @@ Detector width = 200$\mu$m, number of strips = 3, radius = 21$\mu$m,
 
           \textcolor{red}{Pdetect}
 
-            \vspace{0.3em}
-
-          \includegraphics[width=\textwidth]{images/w_free_conditions.png}
+            \vspace{0.1em}
+            \begin{tikzpicture}
+              \begin{axis}[
+                width=4cm,
+                height=3.30cm,
+                scale only axis,
+                enlargelimits=false,
+                axis on top]
+              \addplot graphics[xmin=0,xmax=400,ymin=0,ymax=300] {images/w_free_conditions.png};
+            \end{axis}
+          \end{tikzpicture}
+          %\includegraphics[width=\textwidth]{images/w_free_conditions.png}
         \end{center}
 
       \end{column}
@@ -954,22 +928,56 @@ while there are charges inside detector
 
 \end{frame}
 
+%\begin{frame}
+  %\frametitle{Pdetect software}
+  %\framesubtitle{Computing the current: adaptive $\Delta t$}
+
+  %In gas detectors holes slower than e$^-$ (1000 times)
+  %\begin{itemize}
+    %\item small $\Delta t$: fine to capture electrons current but far too slow
+   % to compute holes current
+  %  \item large $\Delta t$: capture quickly holes current but miss electrons current
+ % \end{itemize}
+
+%Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
+%iteration}
+
+%\[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+
+%\end{frame}
+
 \begin{frame}
   \frametitle{Pdetect software}
-  \framesubtitle{Computing the current: adaptive $\Delta t$}
+  \framesubtitle{Computing the current: adaptative $\Delta t$}
 
-  In gas detectors holes slower than e$^-$ (1000 times)
-  \begin{itemize}
-    \item small $\Delta t$: fine to capture electrons current but far too slow
-    to compute holes current
-    \item large $\Delta t$: capture quickly holes current but miss electrons current
-  \end{itemize}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
-Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
-iteration}
+      \begin{center}
+        
+        \fontsize{10pt}{7.2}\selectfont
+      In gas detectors holes slower than e$^-$ (1000 times)
+      \begin{itemize}
+        \item small $\Delta t$: fine to capture electrons current but far too slow
+          to compute holes current
+        \item large $\Delta t$: capture quickly holes current but miss electrons current
+      \end{itemize}
 
-\[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+      Solution: at each iteration \textcolor{red}{select $\Delta t$ depending on max speed at previous
+      iteration}
 
+      \[\Delta t = \frac{width}{max\_speed\_y \times 2^{precision\_level}}\]
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+       \includegraphics[width=0.7\textwidth]{images/helium2_unprecise.pdf}
+       
+       \vspace{-0.5cm}
+
+       \includegraphics[width=0.7\textwidth]{images/helium2_precise.pdf}
+    \end{column}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -989,6 +997,70 @@ Running through each cell is too slow: $\mathcal{O}(n)$ time complexity ($n$= $\
 $\implies$ \textcolor{red}{rtree} data structure allows to access the right
 cell with $\mathcal{O}(\log(n))$ time complexity
 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current: Pdetect vs Weightfield}
+
+  \fontsize{10pt}{7.2}\selectfont
+  Current induce by particle passing vertically (middle of the detector)
+
+  1 strip, pitch = 100$\mu$m, strip length = 25$\mu$m, width = 300$\mu$m, V$_{strip} = 100$V
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      \begin{center}
+        \begin{tikzpicture}
+
+          \begin{axis}[
+              width=4cm,
+              height=3.30cm,
+              scale only axis,
+              enlargelimits=false,
+              axis on top]
+            \addplot graphics[xmin=0,xmax=100,ymin=0,ymax=300] {images/w_free_conditions.png};
+          \end{axis}
+
+          \draw[red, line width=0.5mm, dashed] (2,0) -- (2,3.35);
+        \end{tikzpicture}
+      \end{center}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{images/silicon_current.pdf}
+      \end{center}
+    \end{column}
+
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Computing the current: Pdetect vs Weightfield}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      \begin{center}
+        \includegraphics[width=5cm]{images/silicon_current.pdf}
+      \end{center}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \fontsize{12pt}{9}\selectfont
+
+      Some differences, due to effect in Weightfield:
+      \begin{itemize}
+        \item Depletion voltage
+        \item Gain
+        \item Temperature
+        \item Different number of hole/electron
+      \end{itemize}
+
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -1157,7 +1229,7 @@ cell with $\mathcal{O}(\log(n))$ time complexity
         \begin{center}
           \begin{tikzpicture}
             \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
-            \draw[red, line width=0.5mm, dashed] (-0.35,-1.6) -- (-0.35,1.95);
+            \draw[red, line width=0.5mm, dashed] (-0.6,-1.9) -- (-0.6,2.1);
           \end{tikzpicture}
         \end{center}
       \end{column}
@@ -1190,7 +1262,7 @@ cell with $\mathcal{O}(\log(n))$ time complexity
         \begin{center}
           \begin{tikzpicture}
             \node[inner sep=0pt]  at (0,0) {\includegraphics[width=\textwidth]{images/w_semi_free_conditions.png}};
-            \draw[red, line width=0.5mm, dashed] (-2.1,1.9) -- (2.6,1.9);
+            \draw[red, line width=0.5mm, dashed] (-2.5,1.9) -- (2.6,1.9);
           \end{tikzpicture}
         \end{center}
       \end{column}
@@ -1204,5 +1276,72 @@ cell with $\mathcal{O}(\log(n))$ time complexity
     \end{columns}
 
 \end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: potential and electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+  inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
+  max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.175]{images/rect_rect_pot_3.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pdetect software}
+  \framesubtitle{Rectangular strips: weighting potential and weighting electric field}
+
+  \fontsize{10pt}{7.2}\selectfont
+
+
+  Detector width = 200 $\mu$m, strip length = 50 $\mu$m, strip width = 50 $\mu$m,
+  inter strips distance = 100$\mu$m, number of strips = 3, potential = 10V,
+  max relative error = 0.9$\%$
+
+  \begin{center}
+  \includegraphics[scale=0.18]{images/rect_rect_pot_3_weight.png}
+  \end{center}
+
+\vspace{-2em}
+
+  \begin{center}
+  \hspace{4em} \includegraphics[scale=0.15]{images/rect_rect_pot_3_weight_grid.png}
+  \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Appendix}
+  \framesubtitle{Finite elements error}
+
+  \begin{itemize}
+    \item Kelly error \textcolor{red}{estimator}
+
+    \item Integration of the "jump" of gradient of the function on the sides.
+    \[\eta_K^2 = \sum_{F\in\delta K}{c_F\int_{\delta K_F}{\left(a{\delta u_h\over{\delta n}}\right)^2do}} \]
+
+    \item Upper bound of the error
+
+    \item Modified version of Kelly error system
+
+    \item Reliable for Poisson equation
+  \end{itemize}
+
+  More information: see the deal.ii Kelly error estimator page
+\end{frame}
+
 
 \end{document}
