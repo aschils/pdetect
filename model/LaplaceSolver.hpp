@@ -256,6 +256,13 @@ void LaplaceSolver<dim>::build_solution(
 
 		bpoint bottom_left(bottom_left_dealii[0], bottom_left_dealii[1]);
 		bpoint top_right(top_right_dealii[0], top_right_dealii[1]);
+
+		/**
+		 * TODO: for circular strips detector cells are not always rectangle.
+		 * Structure in rtree should be more general (i.e. a Quadrilateral)
+		 *
+		 */
+
 		box rect(bottom_left, top_right);
 
 		values_at_cells.insert(
