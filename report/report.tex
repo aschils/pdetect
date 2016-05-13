@@ -695,7 +695,7 @@
 			\label{fig:w_semi_free_conditions}
 		\end{figure}
 
-		Now that the boundary conditions are the same in the analytical case and for \textit{pdetect},
+		Now that the boundary conditions are the same in the analytical case and for \textit{Pdetect},
 		the comparison of the weighting potential should be relevant.
 
 		Figure~\ref{fig:semi_free_conditions} shows both the weighting potential computed by \textit{Pdetect}
@@ -725,6 +725,36 @@
 		It clearly seems to have some correlation between the two. By changing the dimension of the detector
 		in \textit{Pdetect}, the graph will change a little bit and can be closer or further to the graph of the
 		analytical solution.
+
+		However, it would be interesting to compare both results in the case of two parallel conductive plate.
+		This configuration can be approach in \textit{Pdetect} bye taking a very large strip in a detector of small
+		width comparatively. Figure~\ref{fig:parallel} shows the potential, again along a vertical straight line passing
+		at the exact middle of the detector (Figure\ref{fig:parallel_ratio} shows the ratio).
+
+		\begin{figure}[H]
+			\begin{minipage}[b]{.46\linewidth}
+				\center
+				\includegraphics[scale=0.45]{images/boundary_conditions/parallel.pdf}
+				\caption{Weighting potential along a vertical line passing in the middle of the detector with pitch
+						of 1$\mu$m, strip length of 1000$\mu$m, detector width of 300$\mu$m, free boundary conditions
+						on the side of the detector.}
+				\label{fig:parallel}
+				\end{minipage} \hfill
+				\begin{minipage}[b]{.46\linewidth}
+				\center
+				\includegraphics[scale=0.45]{images/boundary_conditions/parallel_ratio.pdf}
+				\caption{Ratio between the weighting potential along a straight line
+						computed by \textit{Pdetect} and the analytical solution for a detector with pitch
+						of 1$\mu$m, strip length of 1000$\mu$m, detector width of 300$\mu$m, free boundary conditions
+						on the side of the detector.}
+				\label{fig:parallel_ratio}
+			\end{minipage}
+		\end{figure}
+
+		On the graph of the ratio, we see that the ratio doesn't exceed 1.012. That results shows how \textit{Pdetect}
+		almost perfectly match the analytical solution in this well known case. Plus, it is well known that in the case
+		of two parallel infinite plate, the potential grows linearly with the distance to the anode, which is what 
+		\textit{Pdetect} gives us.
 
 		Unfortunately, since we do not have more information about the context in which the equation~\ref{exp_analytic}
 		has been computed (the exact geometry), it is not possible to make a real better comparison. However,
