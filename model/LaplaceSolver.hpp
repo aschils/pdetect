@@ -52,6 +52,7 @@ using namespace dealii;
 namespace bg = boost::geometry;
 namespace bgi = boost::geometry::index;
 
+
 template<unsigned dim>
 class LaplaceSolver {
 
@@ -251,22 +252,45 @@ void LaplaceSolver<dim>::build_solution(
 	unsigned pos = 0;
 	for (; cell != endc; cell++) {
 
-		Point<dim> bottom_left_dealii = cell->vertex(0);
-		Point<dim> top_right_dealii = cell->vertex(vertices_per_cell - 1);
+		//Point<dim> bottom_left_dealii = cell->vertex(0);
+		//Point<dim> top_right_dealii = cell->vertex(vertices_per_cell - 1);
 
-		bpoint bottom_left(bottom_left_dealii[0], bottom_left_dealii[1]);
-		bpoint top_right(top_right_dealii[0], top_right_dealii[1]);
+		//From deal.ii cell to boost geometry polygon
+		std::vector<bpoint> boost_points(vertices_per_cell);
+		Utils::cell_to_bpoints<dim>(vertices_per_cell, cell, boost_points);
 
-		/**
-		 * TODO: for circular strips detector cells are not always rectangle.
-		 * Structure in rtree should be more general (i.e. a Quadrilateral)
-		 *
-		 */
 
-		box rect(bottom_left, top_right);
+		//bpoint bottom_left(bottom_left_dealii[0], bottom_left_dealii[1]);
+		//bpoint top_right(top_right_dealii[0], top_right_dealii[1]);
+
+		//box rect(bottom_left, top_right);
+
+		bg::model::polygon<bpoint> polygon;
+		bg::assign_points(polygon, boost_points);
+
+		//std::cout << bg::wkt<bg::model::polygon<bpoint>>(polygon) << std::endl;
+
+		box b = bg::return_envelope<box>(polygon);
+
+		/*bpoint max_corner = b.max_corner();
+		bpoint min_corner = b.min_corner();
+
+		std::cout <<"Rectangle: " << std::endl;
+		std::cout << "(" << (max_corner.get<0>()) << ", " << (max_corner.get<1>()) << ")" << std::endl;
+		std::cout << "(" << (min_corner.get<0>()) << ", " << (min_corner.get<1>()) << ")" << std::endl;*/
+
+
+		//std::cout << bg::wkt<bg::model::box<bpoint>>(b) << std::endl;
+
+
+		//boost::geometry::model::polygon<bpoint> polygon;
+		//boost::geometry::read_wkt("POLYGON((0 0,1.123 9.987,8.876 2.234,0 0),(3.345 4.456,7.654 8.765,9.123 5.432,3.345 4.456))", polygon);
+		//boost::geometry::for_each_point(poly, round_coordinates<bpoint>(0.1));
+		//std::cout << "Rounded: " << boost::geometry::wkt(polygon) << std::endl;
 
 		values_at_cells.insert(
-				std::make_pair(rect,
+				std::make_pair(b,
+				//std::make_pair(rect,
 				std::make_pair(cell, uncertainty_per_cell[pos])));
 		pos++;
 	}

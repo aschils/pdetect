@@ -19,7 +19,7 @@
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
 
 #include <boost/geometry/index/rtree.hpp>
 
@@ -27,6 +27,7 @@
 
 #include "TensorUtils.hpp"
 #include "Utils.hpp"
+#include "errors.hpp"
 
 using namespace dealii;
 
@@ -77,8 +78,11 @@ public:
 
 	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
-	typedef std::pair<box,
-			std::pair<typename DoFHandler<dim>::active_cell_iterator, float>> cell_coord_pair;
+	typedef std::pair<box, std::pair<
+				typename DoFHandler<dim>::active_cell_iterator, float>>
+		cell_coord_pair;
+
+
 	bgi::rtree<cell_coord_pair, bgi::quadratic<16> > values_at_cells;
 
 	Vector<double> solution_vec;
@@ -127,15 +131,64 @@ private:
 	std::vector<Tensor<1, dim> > gradient_v;
 	PhysicalValues<dim> extrapol;
 
+	/**
+	 * The rtree data structure only work with rectangles subspaces. However,
+	 * cells of the grid may be any quadrilateral. When dealing with
+	 * non-rectangle cells, the smallest rectangle including the cell is used
+	 * as subspace in the rtree. Therefore, the rtree data structure may return
+	 * several results.
+	 *
+	 * This function searched among the rtree results for the cell
+	 * containing the point "query_point".
+	 *
+	 */
+	int index_of_cell_containing_pt(std::vector<cell_coord_pair> &rtree_search_results,
+			bpoint &query_point){
+
+		if(rtree_search_results.size() == 0)
+			return RETURN_FAILURE;
+		if(rtree_search_results.size() == 1)
+			return 0;
+
+		const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+
+		for(unsigned i=0; i<rtree_search_results.size(); i++){
+
+			cell_coord_pair ccp = rtree_search_results[i];
+			typename DoFHandler<dim>::active_cell_iterator cell = ccp.second.first;
+			std::vector<bpoint> boost_points(vertices_per_cell);
+			Utils::cell_to_bpoints<dim>(vertices_per_cell, cell, boost_points);
+			bg::model::polygon<bpoint> polygon;
+			bg::assign_points(polygon, boost_points);
+
+			//std::cout << bg::wkt<bg::model::polygon<bpoint>>(polygon) << std::endl;
+
+			if(boost::geometry::covered_by(query_point, polygon))
+				return i;
+		}
+
+		return RETURN_FAILURE;
+	}
+
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
 
 		FE_Q<dim> fe(1);
 
 		bpoint query_point(point[0], point[1]);
-		std::vector<cell_coord_pair> result_s;
+		std::vector<cell_coord_pair> rtree_search_results;
 		values_at_cells.query(bgi::intersects(query_point),
-				std::back_inserter(result_s));
-		cell_coord_pair cell_containing_point = result_s[0];
+				std::back_inserter(rtree_search_results));
+
+
+		//std::cout << "(" << point[0] << "," << point[1] << ")" << std::endl;
+		//std::cout << "Results size " << rtree_search_results.size() << std::endl;
+
+		unsigned cell_idx = index_of_cell_containing_pt(rtree_search_results,
+					query_point);
+
+		assert(cell_idx != RETURN_FAILURE);
+
+		cell_coord_pair cell_containing_point = rtree_search_results[cell_idx];
 
 		const Point<dim> p_cell = mapping.transform_real_to_unit_cell(
 				cell_containing_point.second.first, point);

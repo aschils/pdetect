@@ -214,8 +214,8 @@ void test_mid_circle_rect2D_det() {
 void test_mid_rect_rect_2D_det() {
 
 	unsigned half_width = 100;
-	unsigned strip_length = 30;
-	unsigned half_strip_width = 5;
+	unsigned strip_length = 50;
+	unsigned half_strip_width = 25;
 	unsigned half_inter_potential_srcs_dist = 50;
 	unsigned nbr_of_strips = 3;
 	unsigned potential = 10;
@@ -240,6 +240,8 @@ void test_mid_rect_rect_2D_det() {
 	det.comp_weight_potential();
 	det.draw_vtk_graph_potential(output_dir+"out.vtk");
 	det.draw_vtk_graph_weight_potential(output_dir+"out_weight.vtk");
+	det.draw_vtk_graph_gradient_of_potential(output_dir+"grad.vtk");
+	det.draw_vtk_graph_gradient_of_weight_potential(output_dir+"grad_weight.vtk");
 }
 
 void test_various() {

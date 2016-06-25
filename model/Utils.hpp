@@ -25,6 +25,9 @@
 #include <functional>
 #include <math.h>
 
+#include <boost/geometry.hpp>
+
+
 using namespace dealii;
 
 class Utils {
@@ -99,26 +102,26 @@ public:
 
 		int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 
-		auto cmp =
-				[&vertices_per_cell](
-						std::pair<typename DoFHandler<dim>::active_cell_iterator,
-						T> const & a,
-						std::pair<typename DoFHandler<dim>::active_cell_iterator,
-						T> const & b) {
+		auto cmp = [&vertices_per_cell](
+				std::pair<typename DoFHandler<dim>::active_cell_iterator,
+				T> const & a,
+				std::pair<typename DoFHandler<dim>::active_cell_iterator,
+				T> const & b) {
 
-					Point<dim> bot_left_a = a.first->vertex(0);
-					Point<dim> top_right_a = a.first->vertex(vertices_per_cell-1);
-					Point<dim> bot_left_b = b.first->vertex(0);
-					Point<dim> top_right_b = b.first->vertex(vertices_per_cell-1);
+			Point<dim> bot_left_a = a.first->vertex(0);
+			Point<dim> top_right_a = a.first->vertex(vertices_per_cell-1);
+			Point<dim> bot_left_b = b.first->vertex(0);
+			Point<dim> top_right_b = b.first->vertex(vertices_per_cell-1);
 
-					std::cout << "before bool" << std::endl;
+			std::cout << "before bool" << std::endl;
 
-					bool A =  bot_left_a[0] <= bot_left_b[0];
-					bool B = top_right_b[0] <= top_right_a[0];
-					bool C = bot_left_a[1] <= bot_left_b[1];
-					bool D = top_right_b[1] <= top_right_a[1];
-					return !(A^B^C^D);
-				};
+			bool A = bot_left_a[0] <= bot_left_b[0];
+			bool B = top_right_b[0] <= top_right_a[0];
+			bool C = bot_left_a[1] <= bot_left_b[1];
+			bool D = top_right_b[1] <= top_right_a[1];
+			return !(A^B^C^D);
+		};
+
 		std::sort(v->begin(), v->end(), cmp);
 		std::cout << "AFTER THE BIG SORT" << std::endl;
 	}
@@ -232,54 +235,80 @@ public:
 
 	template<unsigned dim>
 	static void write_gnu_error_data_file(std::string file,
-			std::vector<std::pair<double, std::pair<double, double>>>data) {
+			std::vector<std::pair<double, std::pair<double, double> > > data) {
 
-				std::ofstream gnu_graph;
-				gnu_graph.open(file, std::fstream::in | std::fstream::out | std::fstream::trunc);
+		std::ofstream gnu_graph;
+		gnu_graph.open(file,
+				std::fstream::in | std::fstream::out | std::fstream::trunc);
 
-				if(gnu_graph.is_open()) {
+		if (gnu_graph.is_open()) {
 
-					gnu_graph << "# X\tY\tZ" << std::endl;
-					for(unsigned i = 0; i < data.size(); i++) {
+			gnu_graph << "# X\tY\tZ" << std::endl;
+			for (unsigned i = 0; i < data.size(); i++) {
 
-						gnu_graph << data[i].first << "\t"
-						<< data[i].second.first << "\t"
-						<< data[i].second.second << std::endl;;
-					}
-				}
-				gnu_graph.close();
+				gnu_graph << data[i].first << "\t" << data[i].second.first
+						<< "\t" << data[i].second.second << std::endl;
+				;
 			}
+		}
+		gnu_graph.close();
+	}
 
-			static bool is_even(int nbr) {
-				return nbr%2 == 0;
+	static bool is_even(int nbr) {
+		return nbr % 2 == 0;
+	}
+
+	static bool is_odd(int nbr) {
+		return !is_even(nbr);
+	}
+
+	template<typename T1, typename T2>
+	static void write_vector_of_pair(std::string out_file_path,
+			std::vector<std::pair<T1, T2> > &vec_of_pair, bool header,
+			std::string var_name1, std::string var_name2) {
+
+		std::ofstream out_file;
+		out_file.open(out_file_path, std::fstream::trunc);
+
+		if (out_file.is_open()) {
+
+			if (header)
+				out_file << var_name1 << "    " << var_name2 << std::endl;
+
+			for (unsigned i = 0; i < vec_of_pair.size(); i++) {
+				out_file << vec_of_pair[i].first << "    ";
+				out_file << vec_of_pair[i].second << std::endl;
 			}
+		} else {
+			std::cout << "Error, unable to open file: " << out_file_path
+					<< std::endl;
+		}
 
-			static bool is_odd(int nbr) {
-				return !is_even(nbr);
-			}
+		out_file.close();
+	}
 
-			template <typename T1, typename T2>
-			static void write_vector_of_pair(std::string out_file_path,
-			std::vector<std::pair<T1, T2> > &vec_of_pair,
-			bool header, std::string var_name1, std::string var_name2) {
 
-				std::ofstream out_file;
-				out_file.open(out_file_path, std::fstream::trunc);
+	typedef boost::geometry::model::point<double, 2,
+			boost::geometry::cs::cartesian> bpoint;
 
-				if (out_file.is_open()) {
+	/**
+	 *  Extract the points of a DoFHandler<dim>::active_cell_iterator object
+	 *  and store them as boost geometry point type:
+	 *  "bg::model::point<double, 2, bg::cs::cartesian>"  alias "bpoint"
+	 *  in the vector "bpoints" passed in parameters.
+	 */
+	template<unsigned dim>
+	static void cell_to_bpoints(
+			const unsigned int vertices_per_cell,
+			typename DoFHandler<dim>::active_cell_iterator cell,
+			std::vector<bpoint> &bpoints){
 
-					if(header)
-					out_file << var_name1 << "    " << var_name2 << std::endl;
+		for(unsigned i=0; i<vertices_per_cell; i++){
+			Point<dim> p = cell->vertex(i);
+			bpoints[i].set<0>(p[0]);
+			bpoints[i].set<1>(p[1]);
+		}
+	}
 
-					for(unsigned i=0; i<vec_of_pair.size(); i++) {
-						out_file << vec_of_pair[i].first << "    ";
-						out_file << vec_of_pair[i].second << std::endl;
-					}
-				}
-				else {
-					std::cout << "Error, unable to open file: " << out_file_path << std::endl;
-				}
 
-				out_file.close();
-			}
-		};
+};

@@ -130,7 +130,7 @@ double Detector2D::get_first_townsend_coefficient(Point<2> &pos,
 			double alpha = 0; //1/µm
 
 			//10^6 V/m is the threshold value of the electric field to have townsend avalanche
-			double width = geo_info->get_width();
+			//double width = geo_info->get_width();
 			if(E > 1) 
 				alpha = a*p*exp(-b*p/E);
 
