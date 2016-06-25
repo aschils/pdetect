@@ -141,14 +141,19 @@ private:
 	 * This function searched among the rtree results for the cell
 	 * containing the point "query_point".
 	 *
+	 * @return
+	 * - RETURN_FAILURE if rtree_search_results has no elements
+	 * - the index i of the cell including the point query_point (a point is
+	 * still considered as being part of a cell if it is located on the boundary)
+	 * - the index of the last element of rtree_search_results if no such cell
+	 * has been found
+	 *
 	 */
 	int index_of_cell_containing_pt(std::vector<cell_coord_pair> &rtree_search_results,
 			bpoint &query_point){
 
 		if(rtree_search_results.size() == 0)
 			return RETURN_FAILURE;
-		if(rtree_search_results.size() == 1)
-			return 0;
 
 		const unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
 
@@ -161,13 +166,11 @@ private:
 			bg::model::polygon<bpoint> polygon;
 			bg::assign_points(polygon, boost_points);
 
-			//std::cout << bg::wkt<bg::model::polygon<bpoint>>(polygon) << std::endl;
-
 			if(boost::geometry::covered_by(query_point, polygon))
 				return i;
 		}
 
-		return RETURN_FAILURE;
+		return rtree_search_results.size()-1;
 	}
 
 	PhysicalValues<dim> extrapolate_values(Point<dim> const &point) {
