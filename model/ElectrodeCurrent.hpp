@@ -118,7 +118,8 @@ private:
 
 		bool no_moves = false;
 		double time = 0.0;
-		double delta_t = (user_delta_t_on) ? user_delta_t : adaptive_delta_t(LIGHT_SPEED);
+		double delta_t = (user_delta_t_on) ? user_delta_t
+				: adaptive_delta_t(LIGHT_SPEED);
 
 		while (!punctual_charges.empty() && !no_moves) {
 
@@ -333,20 +334,20 @@ private:
 
 			if (geo_info->is_point_inside_geometry(new_pos)) {
 
-				int charge_sign = charge->get_charge_sign();
-				if(charge_sign < 0 && tot_electrons < 1e12) { //if electron, townsend avalanche
-					generate_new_charges(charge, pos, new_pos, values_at_pos,
-							electric_charge);
-				}
-				else { //if hole
+				//int charge_sign = charge->get_charge_sign();
+				//if(charge_sign < 0 && tot_electrons < 1e12) { //if electron, townsend avalanche
+				//	generate_new_charges(charge, pos, new_pos, values_at_pos,
+				//			electric_charge);
+				//}
+				//else { //if hole
 					std::tuple<Point<2>, Charge*, double> new_charge(new_pos, charge,
 										electric_charge);
 					punctual_charges.push(new_charge);
-				}			
+				//}
 			}
 		}
-		if(current_tot*ELECTRON_CHARGE < -1e-05)
-				current_tot = -1e-05/ELECTRON_CHARGE;
+		//if(current_tot*ELECTRON_CHARGE < -1e-05)
+		//		current_tot = -1e-05/ELECTRON_CHARGE;
 		return current_tot * ELECTRON_CHARGE;
 	}
 
