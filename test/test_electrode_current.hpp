@@ -37,7 +37,9 @@ void test_electrode_current_serrated() {
 			half_pitch, strip_potential, refine_accuracy, max_iter,
 			stop_accuracy, TYPE_SILICON);
 	srdd.comp_potential();
+	std::cout << "after comp pot" << std::endl;
 	srdd.comp_weight_potential();
+	std::cout << "after comp weight pot" << std::endl;
 	srdd.draw_vtk_graph_potential(output_dir + "electrode_pot.vtk");
 	srdd.draw_vtk_graph_weight_potential(
 			output_dir + "electrode_pot_weight.vtk");
@@ -45,9 +47,6 @@ void test_electrode_current_serrated() {
 			output_dir + "electrode_pot_grad.vtk");
 
 	double x = half_pitch + (double) strip_length / 2.0;
-	Point<2> p1(x, 0.0);
-	Point<2> p2(x, 100);
-	Segment seg(p1, p2);
 
 	Line particle_traj(0, 149);
 
@@ -64,8 +63,6 @@ void test_electrode_current_serrated() {
 	Utils::write_gnu_data_file<2>(output_graph, current_vs_time);
 	ResultsOut::write_current_vs_time("../src/plots/pdetect_I_vs_t_5_strip.txt",
 			current_vs_time);
-
-	std::cout << "detector params: " << srdd.params_to_string() << std::endl;
 }
 
 void test_electrode_current_mid_rect_rect() {
