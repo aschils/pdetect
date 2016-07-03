@@ -13,3 +13,5 @@
 #define NOT_YET_IMPLEMENTED 4
 
 #define RETURN_FAILURE -1
+#define RETURN_OK 0
+
