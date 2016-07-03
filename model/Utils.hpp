@@ -26,13 +26,18 @@
 #include <math.h>
 
 #include <boost/geometry.hpp>
-
+#include <boost/fusion/include/for_each.hpp>
+#include <boost/fusion/include/as_vector.hpp>
 
 using namespace dealii;
 
 class Utils {
 
 public:
+
+	typedef boost::geometry::model::point<double, 2,
+			boost::geometry::cs::cartesian> bpoint;
+
 	static bool equals_double(double a, double b, double epsilon) {
 		return fabs(a - b) <= epsilon;
 	}
@@ -157,6 +162,36 @@ public:
 			return false;
 		};
 		std::sort(v->begin(), v->end(), cmp);
+	}
+
+	//Increasing order, smaller if x1 < x2 or x1==x1 and y1<y2...
+	static void sort_points_by_coord(
+			std::vector<
+					boost::geometry::model::point<double, 2,
+							boost::geometry::cs::cartesian> > *v) {
+		auto cmp = [](boost::geometry::model::point<
+				double, 2, boost::geometry::cs::cartesian> & a,
+				boost::geometry::model::point<
+				double, 2, boost::geometry::cs::cartesian> & b) {
+
+			if(a.get<0>() < b.get<0>())
+			return true;
+			else if(a.get<0>() > b.get<0>())
+			return false;
+			if(a.get<1>() < b.get<1>())
+			return true;
+			else if(a.get<1>() > b.get<1>())
+			return false;
+			return false;
+		};
+		std::sort(v->begin(), v->end(), cmp);
+	}
+
+	static bpoint mul_coords_by_const(bpoint &p, double c) {
+		double x = p.get<0>();
+		double y = p.get<1>();
+		bpoint new_p(x, y);
+		return new_p;
 	}
 
 	/*********** WARNING ***********/
@@ -287,10 +322,6 @@ public:
 		out_file.close();
 	}
 
-
-	typedef boost::geometry::model::point<double, 2,
-			boost::geometry::cs::cartesian> bpoint;
-
 	/**
 	 *  Extract the points of a DoFHandler<dim>::active_cell_iterator object
 	 *  and store them as boost geometry point type:
@@ -298,17 +329,110 @@ public:
 	 *  in the vector "bpoints" passed in parameters.
 	 */
 	template<unsigned dim>
-	static void cell_to_bpoints(
-			const unsigned int vertices_per_cell,
+	static void cell_to_bpoints(const unsigned int vertices_per_cell,
 			typename DoFHandler<dim>::active_cell_iterator cell,
-			std::vector<bpoint> &bpoints){
+			std::vector<bpoint> &bpoints) {
 
-		for(unsigned i=0; i<vertices_per_cell; i++){
+		for (unsigned i = 0; i < vertices_per_cell; i++) {
 			Point<dim> p = cell->vertex(i);
 			bpoints[i].set<0>(p[0]);
 			bpoints[i].set<1>(p[1]);
 		}
 	}
 
+	static bool equals_bpoints(bpoint &p1, bpoint &p2) {
+		return p1.get<0>() == p2.get<0>() && p1.get<1>() == p2.get<1>();
+	}
 
-};
+	/**
+	 * Pre: points is sorted
+	 */
+	static std::vector<bpoint> unique_bpoints(std::vector<bpoint> &points) {
+
+		std::vector<bpoint> unique_points;
+
+		if (points.size() > 0) {
+			unique_points.push_back(points[0]);
+		}
+
+		for (unsigned i = 1; i < points.size(); i++) {
+
+			if (!equals_bpoints(points[i - 1], points[i])) {
+				unique_points.push_back(points[i]);
+			}
+		}
+		return unique_points;
+	}
+
+	template<unsigned dim>
+	static bpoint dealii_point_to_bpoint(const Point<dim> &dp) {
+
+		switch (dim) {
+		case 1:
+			return bpoint(dp[0]);
+		case 2:
+			return bpoint(dp[0], dp[1]);
+		case 3:
+			return bpoint(dp[0], dp[1], dp[2]);
+		default:
+			return bpoint(dp[0], dp[1]);
+		}
+	}
+
+	/*
+	 template <unsigned dim, unsigned dim>
+	 static Point<dim> bpoint_to_deailii_point(const bpoint &bp)
+	 {
+
+	 }*/
+
+	/*static double get_comp(bpoint &bp, unsigned i) {
+		switch (i) {
+		case 0:
+			return bp.get<0>();
+		case 1:
+			return bp.get<1>();
+		case 2:
+			return bp.get<2>();
+		default:
+			return bp.get<0>();
+		}
+	}*/
+
+	/**
+	 * Following code uses template specialization to iterate on template
+	 * since it is not allowed to set a standard variable as template
+	 * parameter.
+	 */
+	template<unsigned dim, unsigned d>
+	class DimRecursion {
+	public:
+		/**
+		 * Simply set the components of the deal.ii type point p to the
+		 * corresponding components of the boost geometry type point bp.
+		 */
+		static void bpoint_to_deailii_point(const bpoint &bp, Point<dim> &p) {
+			p[d-1] = bp.get<d-1>();
+			DimRecursion<dim, d-1>::bpoint_to_deailii_point(bp, p);
+		}
+
+		/**
+		 * Compute the sum of the squared of components of point p, i.e.
+		 * x^2 + y^2 in 2D, x^2 + y^2 + z^2 in 3D
+		 */
+		static double norm_squared(const bpoint &p){
+			double component_squared = std::pow(boost::geometry::get<d-1>(p),2);
+			return component_squared+DimRecursion<dim, d-1>::norm_squared(p);
+		}
+	};
+
+	template<unsigned dim>
+	class DimRecursion<dim, 0> {
+	public:
+		static void bpoint_to_deailii_point(const bpoint &bp, Point<dim> &p) {}
+		static double norm_squared(const bpoint &p){ return 0.0; }
+	};
+
+}
+;
+
