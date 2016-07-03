@@ -76,7 +76,7 @@ class Solution {
 
 public:
 
-	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
+	typedef bg::model::point<double, dim, bg::cs::cartesian> bpoint;
 	typedef bg::model::box<bpoint> box;
 	typedef std::pair<box, std::pair<
 				typename DoFHandler<dim>::active_cell_iterator, float>>
