@@ -8,6 +8,7 @@
 #pragma once
 
 #include <deal.II/base/function.h>
+#include "../Utils.hpp"
 
 using namespace dealii;
 
@@ -15,6 +16,7 @@ template<unsigned dim>
 class MidRectRect2DBoundaryValuesWeight: public Function<dim> {
 
 public:
+
 	MidRectRect2DBoundaryValuesWeight(MidRectRectGeoInfo *geo_info,
 			double potential) {
 

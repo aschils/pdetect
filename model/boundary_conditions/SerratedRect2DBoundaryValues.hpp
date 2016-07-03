@@ -47,6 +47,7 @@ SerratedRect2DBoundaryValues<dim>::SerratedRect2DBoundaryValues(
 template<unsigned dim>
 double SerratedRect2DBoundaryValues<dim>::value(const Point<dim> &p,
 		const unsigned int /*component*/) const {
+
 	if (nbr_of_strips > 0
 			&& geo_info->is_strip<dim>(p))
 		return strip_potential;

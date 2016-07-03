@@ -14,6 +14,9 @@ class SerratedRect2DBoundaryValuesWeight: public SerratedRect2DBoundaryValues<
 		dim> {
 
 public:
+
+	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
+
 	SerratedRect2DBoundaryValuesWeight(unsigned nbr_of_strips,
 			double strip_potential,
 			SerratedRectGeoInfo *geo_info) :
@@ -23,10 +26,12 @@ public:
 
 	double value(const Point<dim> &p, const unsigned int /*component*/) const {
 
-		bool (SerratedRectGeoInfo::*func)(const Point<dim> &p);
+		bpoint bp = Utils::dealii_point_to_bpoint<dim>(p);
+
+		bool (SerratedRectGeoInfo::*func)(const bpoint &bp);
 		func = &SerratedRectGeoInfo::is_middle_strip<dim>;
 
-		if ((this->geo_info->*func)(p)) {
+		if ((this->geo_info->*func)(bp)) {
 			return this->strip_potential;
 		} else
 			return 0.0;
