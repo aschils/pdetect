@@ -13,7 +13,7 @@
 class MidCircleRectGeoInfo: public MyGeometryInfo {
 	//TODO
 
-	bool is_point_inside_geometry(Point<2> point_coord){ return false; }
+	bool is_point_inside_geometry(bpoint point_coord){ return false; }
 
 	//Return the maximum width of the domain
 	unsigned get_width(){ return 0; }
@@ -29,9 +29,9 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 
 	unsigned get_strip_width(){return 0;}
 
-	std::vector<Point<2>> boundaries_intersections(
+	std::vector<bpoint> boundaries_intersections(
 				Line line){
-		std::vector<Point<2>> v;
+		std::vector<bpoint> v;
 		return v;
 	}
 
@@ -40,8 +40,8 @@ class MidCircleRectGeoInfo: public MyGeometryInfo {
 		return l;
 	}
 
-	std::vector<Segment> get_geometry_segments(){
-		std::vector<Segment> v;
+	std::vector<bg::model::segment<bpoint> > get_geometry_segments(){
+		std::vector<bg::model::segment<bpoint> > v;
 		return v;
 	}
 

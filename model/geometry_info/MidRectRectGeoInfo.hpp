@@ -38,14 +38,14 @@ public:
 		strip_top_boundary_y = half_width + half_strip_width;
 	}
 
-	bool is_strip(Point<2> p) {
+	bool is_strip(bpoint p) {
 
-		double y = p[1];
+		double y = p.get<1>();
 
 		if (y > strip_top_boundary_y || y < strip_bottom_boundary_y)
 			return false;
 
-		double x = p[0];
+		double x = p.get<0>();
 		unsigned periodic_struct_lgth = strip_length + 2*half_inter_strip_dist;
 		unsigned nbr_of_periodic_struct_before = x / periodic_struct_lgth;
 
@@ -56,15 +56,20 @@ public:
 				&& x <= periodic_struct_lgth - half_inter_strip_dist;
 	}
 
-	bool is_middle_strip(const Point<2> &p) const {
-		double x = p[0];
-		double y = p[1];
+	bool is_middle_strip(const bpoint &p) const {
+		double x = p.get<0>();
+		double y = p.get<1>();
 		return x >= middle_strip_left_boundary_x
 				&& x <= middle_strip_right_boundary_x
 				&& y <= strip_top_boundary_y && y >= strip_bottom_boundary_y;
 	}
 
-	bool is_point_inside_geometry(Point<2> p) {
+	bool is_middle_strip(const Point<2> &p){
+		bpoint bp = Utils::dealii_point_to_bpoint<2>(p);
+		return is_middle_strip(bp);
+	}
+
+	bool is_point_inside_geometry(bpoint p) {
 		return !coord_outside_geo_coord_range(p) && !is_strip(p);
 	}
 
@@ -108,25 +113,25 @@ public:
 
 	Line get_mid_length_vertical_line() {
 		double mid_length = length / 2.0;
-		Point<2> p1(mid_length, 0);
-		Point<2> p2(mid_length, 1);
+		bpoint p1(mid_length, 0);
+		bpoint p2(mid_length, 1);
 		Line l(p1, p2);
 		return l;
 	}
 
-	std::vector<Segment> get_geometry_segments() {
-		std::vector<Segment> segments;
+	std::vector<bg::model::segment<bpoint> > get_geometry_segments() {
+		std::vector<bg::model::segment<bpoint> > segments;
 
 		//Add external rectangle borders
-		Point<2> top_left(0.0, width);
-		Point<2> top_right(length, width);
-		Point<2> bot_left(0.0, 0.0);
-		Point<2> bot_right(length, 0.0);
+		bpoint top_left(0.0, width);
+		bpoint top_right(length, width);
+		bpoint bot_left(0.0, 0.0);
+		bpoint bot_right(length, 0.0);
 
-		Segment bot(bot_left, bot_right);
-		Segment top(top_left, top_right);
-		Segment left(bot_left, top_left);
-		Segment right(bot_right, top_right);
+		bg::model::segment<bpoint> bot(bot_left, bot_right);
+		bg::model::segment<bpoint> top(top_left, top_right);
+		bg::model::segment<bpoint> left(bot_left, top_left);
+		bg::model::segment<bpoint> right(bot_right, top_right);
 
 		segments.push_back(bot);
 		segments.push_back(top);
@@ -147,15 +152,15 @@ public:
 
 			x_shift += i * periodic_struct_length;
 
-			Point<2> top_left_strip(left_x_strip + x_shift, top_y_strip);
-			Point<2> bot_left_strip(left_x_strip + x_shift, bot_y_strip);
-			Point<2> top_right_strip(right_x_strip + x_shift, top_y_strip);
-			Point<2> bot_right_strip(right_x_strip + x_shift, bot_y_strip);
+			bpoint top_left_strip(left_x_strip + x_shift, top_y_strip);
+			bpoint bot_left_strip(left_x_strip + x_shift, bot_y_strip);
+			bpoint top_right_strip(right_x_strip + x_shift, top_y_strip);
+			bpoint bot_right_strip(right_x_strip + x_shift, bot_y_strip);
 
-			Segment bot_strip(bot_left_strip, bot_right_strip);
-			Segment top_strip(top_left_strip, top_right_strip);
-			Segment left_strip(bot_left_strip, top_left_strip);
-			Segment right_strip(bot_right_strip, top_right_strip);
+			bg::model::segment<bpoint> bot_strip(bot_left_strip, bot_right_strip);
+			bg::model::segment<bpoint> top_strip(top_left_strip, top_right_strip);
+			bg::model::segment<bpoint> left_strip(bot_left_strip, top_left_strip);
+			bg::model::segment<bpoint> right_strip(bot_right_strip, top_right_strip);
 
 			segments.push_back(bot_strip);
 			segments.push_back(top_strip);
@@ -174,9 +179,9 @@ private:
 	unsigned middle_strip_right_boundary_x, strip_bottom_boundary_y;
 	unsigned strip_top_boundary_y;
 
-	bool coord_outside_geo_coord_range(Point<2> p) {
-		double x = p[0];
-		double y = p[1];
+	bool coord_outside_geo_coord_range(bpoint p) {
+		double x = p.get<0>();
+		double y = p.get<1>();
 		return x < 0 || x > length || y < 0 || y > width;
 	}
 

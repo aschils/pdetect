@@ -7,38 +7,48 @@
 
 #pragma once
 
+#include <boost/geometry/geometries/segment.hpp>
+#include <boost/geometry/geometries/point.hpp>
+
 #include "../geometry_info/BasicGeometry.hpp"
+
+namespace bg = boost::geometry;
 
 class MyGeometryInfo {
 
 public:
+
+	typedef bg::model::point<double, 2, bg::cs::cartesian> bpoint;
 
 	/**
 	 * Note: a point inside a strip is not considered as being
 	 * part of the geometry, since a strip is a hole in the
 	 * geometry
 	 */
-	virtual bool is_point_inside_geometry(Point<2> p) = 0;
+	virtual bool is_point_inside_geometry(bpoint p) = 0;
 
 	/* Returns the intersection points between the particle trajectory
 	 * and the domain boundaries
 	 * intersections are placed in increasing x position
 	 */
-	std::vector<Point<2>> boundaries_intersections(Line line) {
+	std::vector<bpoint> boundaries_intersections(Line line) {
 
-		std::vector<Segment> segments = get_geometry_segments();
+		std::vector<bg::model::segment<bpoint> > segments = get_geometry_segments();
+		//std::vector<bg::model::segment<bpoint> > segments = get_geometry_segments();
 
 		//Compute intersections with all segments of detector boundary
-		std::vector<Point<2>> intersections;
+		std::vector<bpoint> intersections;
 
 		for (unsigned i = 0; i < segments.size(); i++) {
 			add_intersection(line, segments[i], intersections);
 		}
 
-		Utils::sort_points_by_coord<2>(&intersections);
-		intersections.erase(unique(intersections.begin(), intersections.end()),
-				intersections.end());
-		intersections.shrink_to_fit();
+		Utils::sort_points_by_coord(&intersections);
+		intersections = Utils::unique_bpoints(intersections);
+		//unique(intersections.begin(), intersections.end());
+		//intersections.erase(unique(intersections.begin(), intersections.end()),
+		//		intersections.end());
+		//intersections.shrink_to_fit();
 		return intersections;
 	}
 
@@ -61,26 +71,33 @@ public:
 
 protected:
 
-	virtual std::vector<Segment> get_geometry_segments() = 0;
+	virtual std::vector<bg::model::segment<bpoint> > get_geometry_segments() = 0;
 
-	bool intersect_segment(Line line, Segment seg, Point<2> &intersect_pt) {
+	bool intersect_segment(Line line, bg::model::segment<bpoint> seg,
+			bpoint &intersect_pt) {
 		return line.intersection_point(seg, intersect_pt);
 	}
 
-	void add_intersection(Line line, Segment seg,
-			std::vector<Point<2>> &intersections) {
-		Point<2> intersect;
+	void add_intersection(Line line, bg::model::segment<bpoint> seg,
+			std::vector<bpoint> &intersections) {
+		bpoint intersect;
 		if (intersect_segment(line, seg, intersect)) {
 
 			//We must remove the intersection point
 			//if at + and -epsilon not in detector OR
 			// if at + and - epsilon in detector
 
-			double epsilon = 0.001;
-			Point<2> eps_direction_vec = epsilon * line.get_direction_vector();
-			Point<2> before(intersect[0] - eps_direction_vec[0],
-					intersect[1] - eps_direction_vec[1]);
-			Point<2> after = intersect + eps_direction_vec;
+			const double epsilon = 0.001;
+
+			//bpoint temp = line.get_direction_vector();
+			//bpoint eps_direction_vec = Utils::mul_coords_by_const(
+			//		temp, epsilon);
+			bpoint eps_direction_vec = line.get_direction_vector();
+			bg::multiply_value(eps_direction_vec, epsilon);
+			bpoint before(intersect.get<0>() - eps_direction_vec.get<0>(),
+					intersect.get<1>() - eps_direction_vec.get<1>());
+			bpoint after = intersect;
+			bg::add_point(after, eps_direction_vec);
 
 			bool before_in_det = is_point_inside_geometry(before);
 			bool after_in_det = is_point_inside_geometry(after);
@@ -93,4 +110,22 @@ protected:
 			}
 		}
 	}
+
+	/**
+	 * Get segment of particle trajectory line that may intersects the
+	 * detector boundaries. Required because boost geometry library
+	 * does not compute intersections between a line and a segment
+	 * (only between segments).
+	 */
+	bg::model::segment<bpoint> segment_from_line(Line &line){
+
+		bg::model::segment<bpoint> seg;
+
+		if(line.is_vertical())
+			line.get_vertical_segment(-1.0, get_width()+1.0, &seg);
+		else
+			line.get_segment(-1.0, get_length()+1.0, &seg);
+		return seg;
+	}
+
 };

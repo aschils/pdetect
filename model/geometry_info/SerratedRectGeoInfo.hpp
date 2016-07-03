@@ -54,7 +54,7 @@ public:
 		return half_pitch;
 	}
 
-	bool is_point_inside_geometry(Point<2> p) {
+	bool is_point_inside_geometry(bpoint p) {
 
 		switch (dim) {
 		case 2:
@@ -78,7 +78,7 @@ public:
 	 * |  ---    ---  |
 	 */
 	template<unsigned dim>
-	bool is_strip(const Point<dim> &p) {
+	bool is_strip(const bpoint &p) {
 
 		if (coord_outside_geo_coord_range(p))
 			return false;
@@ -88,8 +88,8 @@ public:
 
 		double epsilon = 0.00000001;
 
-		double x = p[0];
-		double y = p[1];
+		double x = p.get<0>();
+		double y = p.get<1>();
 
 		double bottom_of_strip = width - strip_width;
 
@@ -113,49 +113,61 @@ public:
 	}
 
 	template<unsigned dim>
-	bool is_middle_strip(const Point<dim> &p) {
+	bool is_strip(const Point<dim> &p){
+		bpoint bp = Utils::dealii_point_to_bpoint<dim>(p);
+		return is_strip<dim>(bp);
+	}
+
+	template<unsigned dim>
+	bool is_middle_strip(const bpoint &p) {
 
 		unsigned periodic_str_length = 2 * half_pitch + strip_length;
 		unsigned periodic_str_before_mid_strip = this->nbr_of_strips / 2;
-		unsigned nbr_of_prev_periodic_str = p[0] / periodic_str_length;
+		unsigned nbr_of_prev_periodic_str = p.get<0>() / periodic_str_length;
 
 		//Fixed bug when half_pitch == 0, we must take the last point at the right
 		//side of the strip
 		if (half_pitch == 0
-				&& p[0]
+				&& p.get<0>()
 						== (periodic_str_before_mid_strip + 1)
 								* periodic_str_length) {
 			nbr_of_prev_periodic_str -= 1;
 		}
 
 		return this->nbr_of_strips > 0
-				&& is_strip < dim > (p) &&nbr_of_prev_periodic_str
-						== periodic_str_before_mid_strip;
+				&& is_strip<dim>(p)
+				&& nbr_of_prev_periodic_str == periodic_str_before_mid_strip;
+	}
+
+	template<unsigned dim>
+	bool is_middle_strip(const Point<dim> &p) {
+		bpoint bp = Utils::dealii_point_to_bpoint<dim>(p);
+		return is_middle_strip<dim>(bp);
 	}
 
 	Line get_mid_length_vertical_line() {
 		double mid_length = length / 2.0;
-		Point<2> p1(mid_length, 0);
-		Point<2> p2(mid_length, 1);
-		Segment seg(p1, p2);
+		bpoint p1(mid_length, 0);
+		bpoint p2(mid_length, 1);
+		bg::model::segment<bpoint> seg(p1, p2);
 		return Line(seg);
 	}
 
 protected:
-	std::vector<Segment> get_geometry_segments() {
+	std::vector<bg::model::segment<bpoint> > get_geometry_segments() {
 
-		std::vector<Segment> segments;
+		std::vector<bg::model::segment<bpoint> > segments;
 
 		//left side
-		Point<2> left_side_bot(0.0, 0.0);
-		Point<2> left_side_top(0.0, width);
-		Segment left_side(left_side_bot, left_side_top);
+		bpoint left_side_bot(0.0, 0.0);
+		bpoint left_side_top(0.0, width);
+		bg::model::segment<bpoint> left_side(left_side_bot, left_side_top);
 		segments.push_back(left_side);
 
 		//half pitch at left
-		Point<2> left_half_pitch_left(0.0, width);
-		Point<2> left_half_pitch_right(half_pitch, width);
-		Segment left_half_pitch(left_half_pitch_left, left_half_pitch_right);
+		bpoint left_half_pitch_left(0.0, width);
+		bpoint left_half_pitch_right(half_pitch, width);
+		bg::model::segment<bpoint> left_half_pitch(left_half_pitch_left, left_half_pitch_right);
 		segments.push_back(left_half_pitch);
 
 		unsigned x = half_pitch;
@@ -165,21 +177,21 @@ protected:
 		for (unsigned i = 0; i < nbr_of_strips; i++) {
 
 			//Add vertical segment "between pitch and strip"
-			Point<2> vert_bot(x, strip_y);
-			Point<2> vert_top(x, width);
-			Segment vert_seg(vert_bot, vert_top);
+			bpoint vert_bot(x, strip_y);
+			bpoint vert_top(x, width);
+			bg::model::segment<bpoint> vert_seg(vert_bot, vert_top);
 			segments.push_back(vert_seg);
 
 			if (i % 2 == 0) { //strip
-				Point<2> left(x, strip_y);
-				Point<2> right(x + strip_length, strip_y);
-				Segment strip_seg(left, right);
+				bpoint left(x, strip_y);
+				bpoint right(x + strip_length, strip_y);
+				bg::model::segment<bpoint> strip_seg(left, right);
 				segments.push_back(strip_seg);
 				x += strip_length;
 			} else { //pitch
-				Point<2> left(x, width);
-				Point<2> right(x + pitch, width);
-				Segment pitch_seg(left, right);
+				bpoint left(x, width);
+				bpoint right(x + pitch, width);
+				bg::model::segment<bpoint> pitch_seg(left, right);
 				segments.push_back(pitch_seg);
 				x += pitch;
 			}
@@ -187,28 +199,28 @@ protected:
 
 		//Add last vert segment
 		if (nbr_of_strips > 0) {
-			Point<2> vert_bot(x, strip_y);
-			Point<2> vert_top(x, width);
-			Segment vert_seg(vert_bot, vert_top);
+			bpoint vert_bot(x, strip_y);
+			bpoint vert_top(x, width);
+			bg::model::segment<bpoint> vert_seg(vert_bot, vert_top);
 			segments.push_back(vert_seg);
 		}
 
 		//half pitch at right
-		Point<2> right_half_pitch_left(length - half_pitch, width);
-		Point<2> right_half_pitch_right(length, width);
-		Segment right_half_pitch(right_half_pitch_left, right_half_pitch_right);
+		bpoint right_half_pitch_left(length - half_pitch, width);
+		bpoint right_half_pitch_right(length, width);
+		bg::model::segment<bpoint> right_half_pitch(right_half_pitch_left, right_half_pitch_right);
 		segments.push_back(right_half_pitch);
 
 		//Right side
-		Point<2> right_side_bot(length, 0.0);
-		Point<2> right_side_top(length, width);
-		Segment right_side(right_side_bot, right_side_top);
+		bpoint right_side_bot(length, 0.0);
+		bpoint right_side_top(length, width);
+		bg::model::segment<bpoint> right_side(right_side_bot, right_side_top);
 		segments.push_back(right_side);
 
 		//Bottom side
-		Point<2> bot_side_left(0.0, 0.0);
-		Point<2> bot_side_right(length, 0.0);
-		Segment bot_side_seg(bot_side_left, bot_side_right);
+		bpoint bot_side_left(0.0, 0.0);
+		bpoint bot_side_right(length, 0.0);
+		bg::model::segment<bpoint> bot_side_seg(bot_side_left, bot_side_right);
 		segments.push_back(bot_side_seg);
 
 		return segments;
@@ -219,19 +231,19 @@ private:
 			length;
 	unsigned dim;
 
-	bool coord_outside_geo_coord_range(Point<2> p) {
-		double x = p[0];
-		double y = p[1];
+	bool coord_outside_geo_coord_range(bpoint p) {
+		double x = p.get<0>();
+		double y = p.get<1>();
 		return x < 0 || x > length || y < 0 || y > width;
 	}
 
-	bool is_point_inside_detector_2D(Point<2> point) {
+	bool is_point_inside_detector_2D(bpoint point) {
 
 		//Quick check to exclude points obviously not inside detector domain
 		if (coord_outside_geo_coord_range(point))
 			return false;
 
-		double y = point[1];
+		double y = point.get<1>();
 
 		if (y > width - strip_width) {
 			return !is_strip<2>(point);
